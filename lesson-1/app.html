@@ -1,0 +1,277 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet"></head><body>
+<title>המסע של טיפה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--rich:#FF4D5E;--poor:#5B8CFF;--lumen:#52234A;--muscle:#F3B8A8;--vessel:#6B3A62;--case:#3B1534;--ink:#FFE9DE;--okc:#7BE0A8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#3B1534;padding-inline:16px;color:var(--ink);font-family:Fredoka,Arial,sans-serif;font-size:18px;line-height:1.5;overflow-x:hidden}
+.page{max-width:760px;margin:auto;padding:22px 16px 40px;display:flex;flex-direction:column;gap:14px}
+h1{font-size:clamp(30px,6vw,46px);font-weight:700;text-align:center}
+h1 span{color:var(--rich)}
+.trail{display:flex;justify-content:center;gap:6px}
+.trail span{width:56px;height:8px;border-radius:4px;background:#5C2D55}.trail span.cur{background:var(--ink)}.trail span.past{background:var(--rich)}
+.stage{position:relative}
+.bubble{background:var(--ink);color:#3B1534;border-radius:22px;padding:16px 18px;position:relative;display:flex;flex-direction:column;gap:10px}
+.bubble::before{content:"";position:absolute;top:-12px;right:50%;border:12px solid transparent;border-top:0;border-bottom-color:var(--ink)}
+#stName{font-size:13px;font-weight:700;letter-spacing:.06em;color:#9A4D86}
+#say{font-style:italic;color:#7A3B6C}
+#prompt{font-size:19px;font-weight:600}#prompt small{display:block;font-weight:400;font-size:15px}
+#opts,#chips{display:flex;flex-wrap:wrap;gap:8px}#opts:empty,#chips:empty{display:none}
+#opts button,#chips button,.fin button{font:inherit;font-weight:600;border:0;background:#3B1534;color:var(--ink);padding:9px 14px;border-radius:30px;cursor:pointer;text-align:right}
+#chips button.on{background:var(--rich)}
+#opts button.good{background:#2E8B57}#opts button.bad{background:#8A3A4A;opacity:.6}
+#pal{display:flex;gap:10px}#pal button{flex:1;font:inherit;font-weight:700;border:0;border-radius:30px;padding:11px;color:#fff;cursor:pointer;opacity:.6}
+#pal [data-c=rich]{background:var(--rich)}#pal [data-c=poor]{background:var(--poor)}#pal button.on{opacity:1;box-shadow:0 0 0 4px #3B1534,0 0 0 7px currentColor}
+#fb{min-height:1.4em;font-weight:600}#fb.good{color:#1E7B4D}#fb.bad{color:#B3261E}
+.fin{display:flex;flex-wrap:wrap;gap:8px}.fin[hidden]{display:none}.fin button.on{background:var(--rich)}
+#drop{filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))}
+#hs{width:100%;height:auto;display:block;overflow:visible}
+#gl stop:first-child,#gb stop:last-child{stop-color:var(--poor)}
+#gl stop:last-child,#gb stop:first-child{stop-color:var(--rich)}
+.hid{display:none}
+.part{cursor:pointer}
+.ch{fill:var(--lumen);stroke:var(--muscle);transition:fill .35s}
+.ch.rich{fill:var(--rich)}.ch.poor{fill:var(--poor)}
+.ves{fill:none;stroke:var(--vessel);stroke-width:18;stroke-linecap:round;stroke-linejoin:round;transition:stroke .35s}
+.ves.rich{stroke:var(--rich)}.ves.poor{stroke:var(--poor)}
+.case{fill:none;stroke:var(--case);stroke-width:30}
+.vf{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.vl.ok .vf{stroke:var(--okc)}
+.target{animation:tg 1.1s ease-in-out infinite}
+@keyframes tg{50%{opacity:.45}}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.ztag{font-size:17px;font-weight:700;fill:#fff;text-anchor:middle}
+.zsub{font-size:13px;fill:var(--ink);text-anchor:middle;opacity:.75}
+#lungs .zsub{fill:#fff;opacity:.9}
+.gxt{font-size:15px;font-weight:700;text-anchor:middle;transform-box:fill-box}
+.gxt.dn{fill:var(--rich)}.gxt.up{fill:var(--poor)}
+.gx .up{animation:gup 2.2s linear infinite}.gx .dn{animation:gdn 2.2s linear infinite}
+#gxL .up{animation-name:gup2}#gxL .dn{animation-name:gdn2}
+@keyframes gup{from{transform:translateY(16px);opacity:0}30%{opacity:1}to{transform:translateY(-34px);opacity:0}}
+@keyframes gdn{from{transform:translateY(-34px);opacity:0}30%{opacity:1}to{transform:translateY(16px);opacity:0}}
+@keyframes gup2{from{transform:translateY(20px);opacity:0}30%{opacity:1}to{transform:translateY(-24px);opacity:0}}
+@keyframes gdn2{from{transform:translateY(-10px);opacity:0}30%{opacity:1}to{transform:translateY(28px);opacity:0}}
+.lt{font-size:15px;font-weight:700;text-anchor:middle;fill:#fff;pointer-events:none}
+.ch:not(.rich):not(.poor)~#lbl .lt{fill:var(--ink)}
+.ltd{font-size:15px;font-weight:700;text-anchor:middle;pointer-events:none}
+.tagbg{fill:var(--ink)}
+.tagtx{font-size:13px;font-weight:700;fill:#fff;text-anchor:middle;pointer-events:none}
+.flow{fill:none;stroke:#fff;stroke-width:4;stroke-dasharray:3 16;stroke-linecap:round;animation:fl 1s linear infinite;pointer-events:none}
+@keyframes fl{to{stroke-dashoffset:-19}}
+.dim{opacity:.15;transition:opacity .3s}
+
+.sep{fill:var(--muscle);filter:brightness(.72)}
+.pump{font-size:13px;font-weight:700;text-anchor:middle;fill:var(--ink)}
+#heart{transform-box:view-box;transform-origin:300px 337px}
+#hs.beating #heart{animation:hb .857s ease-in-out infinite}
+@keyframes hb{0%,100%{transform:scale(1)}14%{transform:scale(1.045)}28%{transform:scale(1)}}
+
+</style>
+<div class="page">
+<h1>המסע של <span>טיפה</span></h1><div style="max-width:760px;margin:0 auto"><div class="who" style="display:flex;gap:10px;flex-wrap:wrap;font-family:Assistant,Arial,sans-serif;font-weight:700"><label style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:160px">שם התלמיד/ה<input type="text" style="font:inherit;font-weight:400;padding:8px 12px;border:1px solid #DCE3EA;border-radius:8px;background:#fff;color:#13233A"></label><label style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px">כיתה<input type="text" style="font:inherit;font-weight:400;padding:8px 12px;border:1px solid #DCE3EA;border-radius:8px;background:#fff;color:#13233A"></label></div></div>
+<div class="trail"><span data-st="1"></span><span data-st="2"></span><span data-st="3"></span><span data-st="4"></span></div>
+<div class="stage"><svg id="hs" viewBox="150 200 300 280" role="img" aria-label="סכמה של הלב וכלי הדם">
+  <defs>
+    <linearGradient id="gl" x1="0" x2="1"><stop offset="0" stop-color="var(--poor)"/><stop offset="1" stop-color="var(--rich)"/></linearGradient>
+    <linearGradient id="gb" x1="1" x2="0"><stop offset="0" stop-color="var(--rich)"/><stop offset="1" stop-color="var(--poor)"/></linearGradient>
+  </defs>
+  <g id="lungs" class="hid">
+    <rect x="180" y="40" width="240" height="90" rx="40" fill="url(#gl)"/>
+    <text x="300" y="80" class="ztag">נימי הריאות</text>
+    <text x="300" y="104" class="zsub">אוויר בנאדיות</text>
+  </g>
+  <g id="gxL" class="hid gx">
+    <text x="255" y="34" class="gxt up">CO₂</text>
+    <text x="345" y="22" class="gxt dn">O₂</text>
+  </g>
+  <g id="body" class="hid">
+    <rect x="60" y="560" width="480" height="60" rx="30" fill="url(#gb)"/>
+    <text x="300" y="597" class="ztag">נימי הגוף</text>
+    <text x="300" y="676" class="zsub">תאי הגוף</text>
+  </g>
+  <g id="gxB" class="hid gx">
+    <text x="345" y="640" class="gxt dn">O₂</text>
+    <text x="255" y="660" class="gxt up">CO₂</text>
+  </g>
+  <path id="vc" class="ves part hid" d="M90 560 V268 H200"/>
+  <path class="case hid" data-of="pa" d="M200 390 H150 V85 H180"/>
+  <path id="pa" class="ves part hid" d="M200 390 H150 V85 H180"/>
+  <path id="pv" class="ves part hid" d="M420 85 H450 V268 H400"/>
+  <path id="ao" class="ves part hid" d="M400 390 H510 V560"/>
+  <g id="flows" class="hid">
+    <path class="flow" data-f="ao" d="M400 390 H510 V560"/><path class="flow" data-f="vc" d="M90 560 V268 H200" style="animation-direction:reverse"/>
+    <path class="flow" data-f="pa" d="M200 390 H150 V85 H180" style="animation-direction:reverse"/><path class="flow" data-f="pv" d="M420 85 H450 V268 H400"/>
+  </g>
+  <g id="heart">
+  <text x="247" y="218" class="pump">משאבה ימנית</text><text x="352" y="218" class="pump">משאבה שמאלית</text>
+  <rect id="ra" class="ch part poor" x="200" y="230" width="95" height="75" rx="14" style="stroke-width:6"/>
+  <rect id="la" class="ch part rich" x="305" y="230" width="95" height="75" rx="14" style="stroke-width:6"/>
+  <rect id="rv" class="ch part poor" x="200" y="320" width="95" height="125" rx="16" style="stroke-width:9"/>
+  <rect id="lv" class="ch part rich" x="305" y="320" width="95" height="125" rx="16" style="stroke-width:18"/>
+  <g id="v1" class="vl part"><rect x="222" y="298" width="50" height="30" fill="transparent"/><path class="vf" d="M230 304 L247 324 L264 304"/></g>
+  <g id="v2" class="vl part"><rect x="328" y="298" width="50" height="30" fill="transparent"/><path class="vf" d="M335 304 L352 324 L369 304"/></g>
+  <g id="v3" class="vl part"><rect x="180" y="366" width="34" height="48" fill="transparent"/><path class="vf" d="M208 372 L190 390 L208 408"/></g>
+  <g id="v4" class="vl part"><rect x="386" y="366" width="34" height="48" fill="transparent"/><path class="vf" d="M392 372 L410 390 L392 408"/></g>
+    <rect id="sep" class="part sep" x="292" y="232" width="16" height="211" rx="4"/>
+  </g>
+  <g id="lbl"></g>
+</svg>
+</div>
+<div class="bubble">
+  <div id="stName"></div><div id="say"></div><div id="prompt"></div>
+  <div id="pal"><button type="button" data-c="rich">אדומה · עשירה בחמצן</button><button type="button" data-c="poor">כחולה · ענייה בחמצן</button></div>
+  <div id="chips"></div><div id="opts"></div><div id="fb" aria-live="polite"></div>
+  <div class="fin" id="fin" hidden><button type="button" data-hl="big">המחזור הגדול</button><button type="button" data-hl="small">המחזור הקטן</button><button type="button" data-hl="all">הכול</button><button type="button" id="restart">עוד סיבוב</button></div>
+</div></div>
+<script>
+const svg=document.getElementById('hs');
+svg.insertAdjacentHTML('beforeend','<g id="drop" style="pointer-events:none"><path d="M0 -22 C10 -8 14 0 14 6 A14 14 0 0 1 -14 6 C-14 0 -10 -8 0 -22Z" fill="#FFE9DE"/><circle cx="-5" cy="4" r="2.2" fill="#3B1534"/><circle cx="5" cy="4" r="2.2" fill="#3B1534"/><path d="M-4 10 Q0 13 4 10" stroke="#3B1534" stroke-width="1.8" fill="none"/></g>');
+const drop=document.getElementById('drop'),dp=drop.querySelector('path');
+svg.insertAdjacentHTML('afterbegin','<path id="route" d="M352 428 V390 H510 V590 H90 V268 H247 V248 V428 V390 H150 V85 H450 V268 H352 V248 V428" fill="none" stroke="none"/>');
+const route=document.getElementById('route'),TOT=route.getTotalLength();
+const ST=[['lv',352,428],['ao',510,470],['body',300,590],['vc',90,420],['ra',247,248],['rv',247,428],['pa',150,240],['lungs',300,85],['pv',450,180],['la',352,248]];
+const AT={};{let from=0;for(const [id,x,y] of ST){let best=from,bd=1e9;for(let l=from;l<=TOT;l+=2){const p=route.getPointAtLength(l),d=(p.x-x)**2+(p.y-y)**2;if(d<bd){bd=d;best=l}}AT[id]=best;from=best}}
+AT.end=TOT;let L=0,anim=null,tinted=false;
+function place(l){const p=route.getPointAtLength(l);drop.style.transform=`translate(${p.x}px,${p.y}px) scale(.8)`;
+  if(tinted)dp.setAttribute('fill',(l>AT.body+1&&l<AT.lungs-1)?'#5B8CFF':'#FF4D5E')}
+function travel(to,cb){if(anim)cancelAnimationFrame(anim);let target=to;if(target<L-1)target+=TOT;
+  const from=L,dist=target-from,dur=Math.max(400,dist/220*1000),t0=performance.now();
+  (function f(t){const p=Math.min(1,(t-t0)/dur),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;let l=from+dist*e;if(l>=TOT)l-=TOT;L=l;place(l);
+    if(p<1)anim=requestAnimationFrame(f);else{anim=null;cb&&cb()}})(t0)}
+const SAY={0:'עוקבים אחרי טיפת דם אחת. הלב בנוי משתי משאבות.',1:'תנו שם לכל חלק בלב.',2:'הטיפה נמצאת בחדר השמאלי, עשירה בחמצן.',3:'החדר מתכווץ, והטיפה נדחפת החוצה.',4:'הטיפה מגיעה לנימים צרים, בין תאי הגוף.',5:'חמצן עבר מהטיפה לתאים. הטיפה זורמת חזרה.',6:'הטיפה חזרה ללב. לאיזה חלק נכנסה?',7:'המסתם נפתח, והטיפה זורמת למטה.',8:'הטיפה ענייה בחמצן.',9:'מכאן הדם זורם לאיבר עשיר באוויר.',10:'הטיפה נדחפה מהחדר הימני לכלי דם חדש.',11:'הטיפה בנימי הריאות. כאן מתרחש חילוף גזים.',12:'הטיפה שוב עשירה בחמצן.',13:'הטיפה חזרה ללב, לצד השני.',14:'עוד צעד אחד, והטיפה בחדר השמאלי, נקודת ההתחלה.',15:'עכשיו תנו שמות לכלי הדם שהטיפה עברה בהם.',16:'סיבוב שלם: שני מעגלים, לב אחד.'};
+const POS={4:'body',6:'vc',7:'ra',8:'rv',11:'lungs',13:'pv',14:'la'};
+drop.style.opacity=0;drop.style.transition='opacity .5s';place(0);
+window.HOOK={step(s,k){document.getElementById('say').textContent=SAY[k]||'';if(k>=2){drop.style.opacity=1;tinted=true;place(L)}if(POS[k])travel(AT[POS[k]])},
+  color(id){if(AT[id]!=null)travel(AT[id])},
+  done(){travel(AT.end,function loop(){L=0;travel(TOT-0.01,loop)})}};
+(function(){
+const $=id=>document.getElementById(id);
+const CH=['ra','la','rv','lv'],VL=['v1','v2','v3','v4'],VS=['ao','pa','pv','vc'];
+const LP={sep:[300,468],ra:[247,272],la:[352,272],rv:[247,390],lv:[352,390],ao:[510,480],pa:[150,180],pv:[450,180],vc:[90,450],v1:[247,348],v2:[352,348],v3:[195,466],v4:[405,466]};
+const STAGES={1:'שתי משאבות',2:'הלב והגוף',3:'חוליה חסרה',4:'שמות וסיכום'};
+const STEPS=[
+ {st:1,t:'find',id:'sep',prompt:'הלב פועם כמו <b>שתי משאבות</b> צמודות.<br>במשאבה השמאלית (אדום) יש דם <b>עשיר בחמצן</b>. במשאבה הימנית (כחול) יש דם <b>עני בחמצן</b>.<br>מה מפריד בין שתי המשאבות? לחצו עליו.',
+  miss:'חפשו את הדופן שעוברת באמצע הלב, בין הצד האדום לצד הכחול.',ok:'נכון, זו <b>המחיצה</b>. היא אטומה, ולכן הדם העשיר והדם העני לא מתערבבים.'},
+ {st:1,t:'label',prompt:'בחרו שם ולחצו על החלק המתאים בלב.<br><small>היעזרו בשמות של שתי המשאבות.</small>',
+  chips:[['ra','עלייה ימנית'],['la','עלייה שמאלית'],['rv','חדר ימני'],['lv','חדר שמאלי'],['av','מסתם בין עלייה לחדר'],['av','מסתם בין עלייה לחדר'],['sl','מסתם בין חדר לעורק'],['sl','מסתם בין חדר לעורק']]},
+ {st:1,t:'q',prompt:'השוו את עובי הדופן סביב כל חלל. לאיזה חדר יש דופן שרירית עבה יותר?',
+  opts:[['לחדר השמאלי',1,'נכון. כדאי לזכור את זה: הוא יצטרך לדחוף דם רחוק.'],['לחדר הימני',0,'הסתכלו שוב על עובי המסגרת סביב כל חדר.'],['העובי זהה',0,'הסתכלו שוב על עובי המסגרת סביב כל חדר.']]},
+ {st:2,t:'color',id:'ao',c:'rich',show:['ao'],prompt:'נתחיל מהמשאבה השמאלית. החדר השמאלי מתכווץ, המסתם בין החדר לעורק נפתח, והדם יוצא לכלי דם גדול. באיזה צבע תצבעו אותו?',bad:'הדם עוד לא מסר חמצן לאף תא.'},
+ {st:2,t:'q',show:['body','gxB'],prompt:'הדם הגיע לנימים בכל הגוף. מה קורה כאן?',
+  opts:[['חמצן עובר מהדם לתאים, ופחמן דו־חמצני עובר מהתאים לדם',1,'נכון. זהו חילוף הגזים ברקמות.'],['חמצן עובר מהתאים לדם',0,'התאים צורכים חמצן בנשימה התאית. מי נותן למי?'],['לא קורה כלום, הדם רק עובר',0,'אם כך, מה קורה לתאים שאין דם זורם אליהם?']]},
+ {st:2,t:'color',id:'vc',c:'poor',show:['vc'],prompt:'הדם יוצא מנימי הגוף, ובכלי דם גדול הוא חוזר אל הלב. צבעו אותו.',bad:'מה קרה לחמצן בנימי הגוף?'},
+ {st:2,t:'find',id:'ra',prompt:'הדם חוזר אל הלב. לאיזה חלל הוא נכנס? לחצו עליו.',miss:'עקבו אחרי כלי הדם שצבעתם. לאיזה חלל הוא נכנס?',bad:'הדם לא קיבל חמצן בדרך.'},
+ {st:2,t:'find',id:'rv',prompt:'המסתם שבין העלייה לחדר נפתח. לאן ממשיך הדם? לחצו על החלל.',miss:'המסתם נפתח רק בכיוון אחד, כלפי מטה.',bad:'הדם עדיין לא קיבל חמצן.'},
+ {st:2,t:'q',prompt:'הדם בחדר הימני <b>עני בחמצן</b>. לאן הוא זורם עכשיו?',
+  opts:[['שוב לגוף',0,'הוא כבר מסר את החמצן. מה יקבלו התאים?'],['לחדר השמאלי, דרך המחיצה',0,'זה מה שחשב גלנוס. אבל המחיצה אטומה.'],['למקום שבו יקבל חמצן וייפטר מפחמן דו־חמצני',1,'בדיוק. אבל איפה זה?']]},
+ {st:3,t:'q',prompt:'איזה איבר מכניס חמצן לגוף ומוציא ממנו פחמן דו־חמצני?',
+  opts:[['הכבד',0,'גלנוס חשב שהכבד מרכזי. ומה מכניס אוויר לגוף?'],['הריאות',1,'נכון! עכשיו נחבר אותן.'],['הכליות',0,'הכליות מסננות את הדם. ומה מכניס אוויר?']]},
+ {st:3,t:'color',id:'pa',c:'poor',show:['pa'],prompt:'מהחדר הימני, דרך מסתם בין חדר לעורק, יוצא כלי דם אל הריאות. צבעו אותו.',bad:'הדם עוד לא הגיע לריאות.'},
+ {st:3,t:'q',show:['lungs','gxL'],prompt:'הדם הגיע לנימי הריאות. מה קורה כאן?',
+  opts:[['פחמן דו־חמצני עובר מהדם לאוויר, וחמצן עובר מהאוויר לדם',1,'נכון. זהו חילוף הגזים בריאות.'],['חמצן עובר מהדם לאוויר',0,'הדם הגיע עני בחמצן. מה עובר מהאוויר אל הדם?'],['רק פחמן דו־חמצני יוצא',0,'נכון בחלקו. ומה נכנס?']]},
+ {st:3,t:'color',id:'pv',c:'rich',show:['pv'],prompt:'הדם יוצא מהריאות וחוזר אל הלב. צבעו את כלי הדם.',bad:'מה קרה לדם בריאות?'},
+ {st:3,t:'find',id:'la',prompt:'לאיזה חלל בלב נכנס הדם שחוזר מהריאות? לחצו עליו.',miss:'עקבו אחרי כלי הדם שחוזר מהריאות.',bad:'הדם קיבל חמצן בריאות.'},
+ {st:3,t:'q',prompt:'ומכאן?',
+  opts:[['לחדר השמאלי, ומשם שוב לגוף',1,'המעגל נסגר!'],['לחדר הימני',0,'המחיצה אטומה. המסתם מוביל כלפי מטה.'],['חזרה לריאות',0,'המסתמים מאפשרים זרימה בכיוון אחד בלבד.']]},
+ {st:4,t:'label',prompt:'תנו שמות לכלי הדם הגדולים. בחרו שם ולחצו על כלי הדם.<br><small>עורק מוביל דם מהלב, וריד מחזיר דם אל הלב.</small>',
+  chips:[['ao','אבי העורקים'],['pa','עורק הריאה'],['vc','וריד נבוב'],['pv','וריד הריאה']]},
+ {st:4,t:'done',prompt:'גיליתם שני מעגלים שעוברים דרך לב אחד.'}
+];
+const NAME={ra:'עלייה ימנית',la:'עלייה שמאלית',rv:'חדר ימני',lv:'חדר שמאלי',ao:'אבי העורקים',pa:'עורק הריאה',vc:'וריד נבוב',pv:'וריד הריאה'};
+const NQ={ra:['נכון! איך נקרא החלל הזה, שאליו חוזר הדם מהגוף?',[['עלייה ימנית',1],['עלייה שמאלית',0,'העלייה השמאלית נמצאת מעל החדר השמאלי, ושום כלי דם מהגוף לא מגיע אליה.'],['חדר ימני',0,'זה חלל עליון שמקבל דם. איך קוראים לחללים כאלה?']]],
+ rv:['ואיך נקרא החלל הזה?',[['חדר ימני',1],['חדר שמאלי',0,'החדר השמאלי כבר מסומן באיור.'],['עלייה ימנית',0,'זה חלל תחתון ושרירי שדוחף דם החוצה.']]],
+ la:['איך נקרא החלל שאליו חוזר הדם מהריאות?',[['עלייה שמאלית',1],['עלייה ימנית',0,'לעלייה הימנית חוזר הדם מהגוף.'],['חדר שמאלי',0,'החדר השמאלי כבר מסומן. זה החלל שמעליו.']]]};
+const BIG=['lv','v4','ao','body','gxB','vc','ra'],SMALL=['rv','v3','pa','lungs','gxL','pv','la'];
+const ALL=[...CH,...VL,...VS,'body','lungs','gxB','gxL'];
+let k=-1,brush=null,chip=null,labels={},colors={ra:'poor',rv:'poor',la:'rich',lv:'rich'},busy=false,naming=false;
+const H=window.HOOK||{};
+function fb(m,g){const f=$('fb');f.innerHTML=m||'';f.className=m?(g?'good':'bad'):''}
+function show(ids){(ids||[]).forEach(id=>document.querySelectorAll('#'+id+',[data-of="'+id+'"]').forEach(e=>e.classList.remove('hid')))}
+function shake(id){const e=$(id);if(!e)return;e.classList.remove('shake');void e.getBBox();e.classList.add('shake')}
+let vb=[150,200,300,280];
+function zoom(){const hs=$('hs'),to=!$('lungs').classList.contains('hid')?[0,0,600,690]:!$('ao').classList.contains('hid')?[30,195,540,495]:[150,200,300,280];
+  const from=vb.slice(),t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/900),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    vb=from.map((v,i)=>v+(to[i]-v)*e);hs.setAttribute('viewBox',vb.join(' '));if(p<1)requestAnimationFrame(f)})(t0)}
+function next(){k++;busy=false;const s=STEPS[k];document.querySelectorAll('.target').forEach(e=>e.classList.remove('target'));show(s.show);zoom();
+  document.querySelectorAll('[data-st]').forEach(e=>{const n=+e.dataset.st;e.classList.toggle('cur',n===s.st);e.classList.toggle('past',n<s.st)});
+  $('stName').textContent=STAGES[s.st];$('prompt').innerHTML=s.prompt||'';$('opts').innerHTML='';$('chips').innerHTML='';fb('');
+  $('pal').style.display=s.t==='color'?'':'none';chip=null;
+  if(s.t==='color'&&!s.find)$(s.id).classList.add('target');
+  if(s.t==='label'){s.left=s.chips.slice();drawChips(s)}
+  if(s.t==='q'){$('opts').innerHTML=s.opts.map((o,j)=>`<button type="button" data-j="${j}">${o[0]}</button>`).join('');
+    [...$('opts').children].forEach(b=>b.onclick=()=>{if(busy)return;const o=s.opts[+b.dataset.j];
+      if(o[1]){busy=true;b.classList.add('good');fb(o[2],true);setTimeout(next,1500)}else{b.classList.add('bad');fb(o[2])}})}
+  if(s.t==='done')finish();
+  H.step&&H.step(s,k,STEPS.length);
+}
+function drawChips(s){$('chips').innerHTML=s.left.map((c,j)=>`<button type="button" data-j="${j}">${c[1]}</button>`).join('');
+  [...$('chips').children].forEach(b=>b.onclick=()=>{chip=s.left[+b.dataset.j];[...$('chips').children].forEach(x=>x.classList.toggle('on',x===b))})}
+function match(c,id){return c===id||(c==='atr'&&(id==='ra'||id==='la'))||(c==='ven'&&id==='rv')||(c==='av'&&(id==='v1'||id==='v2'))||(c==='sl'&&(id==='v3'||id==='v4'))}
+function hint(c,id){
+  if(id==='sep')return 'זו המחיצה, לא חלל ולא מסתם.';
+  const cc=CH.includes(c[0]),pc=CH.includes(id),cv=c[0]==='av'||c[0]==='sl',pv=VL.includes(id);
+  if(cc&&pv)return 'זה מסתם, לא חלל.';
+  if(cv&&pc)return 'זה חלל, לא מסתם.';
+  if(cv)return c[0]==='av'?'מסתם בין עלייה לחדר נמצא בין החלל העליון לחלל התחתון.':'מסתם בין חדר לעורק נמצא ביציאה מהחדר אל כלי הדם.';
+  if(cc){if(c[0][1]!==id[1])return 'עליות: קטנות, דופן דקה, מקבלות דם. חדרים: גדולים ושריריים, שואבים את הדם החוצה.';return 'בדקו לאיזו משאבה שייך החלל הזה.'}
+  if(VS.includes(c[0]))return 'עורק מוביל דם מהלב, וריד מחזיר דם אל הלב. ומאיפה לאן הוא זורם?';
+  return 'לא כאן. נסו שוב.';}
+function label(s,id){
+  if(!chip){fb('בחרו קודם שם מהרשימה.');return}
+  if(labels[id]){fb('לחלק הזה כבר יש שם.');return}
+  if(!match(chip[0],id)){fb(hint(chip,id));shake(id);return}
+  labels[id]=chip[1];const j=s.left.indexOf(chip);s.left.splice(j,1);chip=null;drawChips(s);renderLabels();fb('נכון!',true);
+  if(VL.includes(id))$(id).classList.add('ok');
+  H.label&&H.label(id);
+  if(!s.left.length){busy=true;setTimeout(next,900)}}
+function renderLabels(){const g=$('lbl');g.innerHTML='';
+  for(const id in labels){const [x,y]=LP[id];
+    if(CH.includes(id))g.insertAdjacentHTML('beforeend',`<text x="${x}" y="${y+5}" class="ltd" style="fill:${colors[id]?'#fff':'var(--ink)'}">${labels[id]}</text>`);
+    else if(VL.includes(id))g.insertAdjacentHTML('beforeend',`<text x="${x}" y="${y}" class="ltd" style="font-size:12px;fill:var(--ink)">מסתם</text>`);
+    else{const w=labels[id].length*8+22;g.insertAdjacentHTML('beforeend',`<rect class="tagbg" x="${x-w/2}" y="${y-14}" width="${w}" height="28" rx="7"/><text class="tagtx" x="${x}" y="${y+5}">${labels[id]}</text>`)}}}
+function find(s,id){
+  if(id!==s.id){fb(s.miss||'עקבו אחרי כלי הדם. לאיזה חלל הוא נכנס?');shake(id);return}
+  busy=true;if(id==='sep'){labels.sep='מחיצה';renderLabels();fb(s.ok,true);setTimeout(next,2600);return}
+  fb('נכון!',true);setTimeout(next,900)}
+function paint(s,id){
+  if(!brush){fb('בחרו קודם צבע: אדום או כחול.');return}
+  if(colors[id])return;
+  if(id!==s.id){fb(s.find?s.miss:'הדם עוד לא הגיע לשם. צבעו את החלק שמהבהב.');shake(id);return}
+  if(brush!==s.c){fb(s.bad);shake(id);return}
+  busy=true;colors[id]=brush;$(id).classList.remove('target');$(id).classList.add(brush);renderLabels();fb('נכון!',true);
+  H.color&&H.color(id,brush);if(NQ[id])setTimeout(()=>askName(id),700);else setTimeout(next,750)}
+function askName(id){const [p,o]=NQ[id];naming=true;busy=false;$('pal').style.display='none';$('prompt').innerHTML=p;fb('');
+  $('opts').innerHTML=o.map((x,j)=>`<button type="button" data-j="${j}">${x[0]}</button>`).join('');
+  [...$('opts').children].forEach(b=>b.onclick=()=>{if(busy)return;const x=o[+b.dataset.j];
+    if(x[1]){busy=true;naming=false;b.classList.add('good');labels[id]=NAME[id];renderLabels();fb('נכון!',true);setTimeout(next,1200)}else{b.classList.add('bad');fb(x[2])}})}
+document.querySelectorAll('#hs .part').forEach(p=>p.addEventListener('click',()=>{if(busy)return;if(naming){fb('ענו קודם על השאלה.');return}const s=STEPS[k];
+  if(s.t==='label')label(s,p.id);else if(s.t==='color')paint(s,p.id);else if(s.t==='find')find(s,p.id);else if(s.t==='q')fb('ענו קודם על השאלה.')}));
+document.querySelectorAll('#pal [data-c]').forEach(b=>b.onclick=()=>{brush=b.dataset.c;document.querySelectorAll('#pal [data-c]').forEach(x=>x.classList.toggle('on',x===b));H.brush&&H.brush(brush)});
+function hl(set){ALL.forEach(id=>{const e=$(id);if(e)e.classList.toggle('dim',!!set&&!set.includes(id))});
+  document.querySelectorAll('.case').forEach(e=>e.classList.toggle('dim',!!set&&!set.includes('pa')));
+  document.querySelectorAll('.flow').forEach(e=>e.classList.toggle('dim',!!set&&!set.includes(e.dataset.f)));
+  $('lbl').classList.toggle('dim',!!set);}
+function finish(){$('flows').classList.remove('hid');$('pal').style.display='none';const f=$('fin');if(f)f.hidden=false;
+  document.querySelectorAll('[data-hl]').forEach(b=>b.onclick=()=>{const v=b.dataset.hl;hl(v==='big'?BIG:v==='small'?SMALL:null);
+    document.querySelectorAll('[data-hl]').forEach(x=>x.classList.toggle('on',x===b))});
+  H.done&&H.done()}
+const r=$('restart');if(r)r.onclick=()=>location.reload();
+renderLabels();next();
+})();</script>
+
+<p class="credit">היחידה מתבססת על חומרי מט״ח ומורחבת בחומרים נוספים · ביולוגיה, כיתה י'</p><style id="atlas">
+:root{color-scheme:light;--rich:#D7263D;--poor:#2457C5;--lumen:#EADBD8;--muscle:#E7C7C3;--vessel:#C9D3DE;--case:#F4F7FA;--ink:#13233A;--okc:#1E7B4D}
+body{background:#F4F7FA;color:#13233A;font-family:Assistant,Arial,sans-serif}
+h1{color:#13233A;font-weight:800}h1 span{color:#D7263D}
+.trail span{background:#DCE3EA}.trail span.cur{background:#13233A}.trail span.past{background:#D7263D}
+.bubble{background:#fff;color:#13233A;border:1px solid #DCE3EA;box-shadow:0 2px 10px rgba(19,35,58,.06)}
+.bubble::before{border-bottom-color:#fff}
+#stName{color:#5E6E82}#say{color:#5E6E82;font-style:normal}
+#opts button,#chips button,.fin button{background:#13233A;color:#fff;border-radius:10px}
+#chips button.on,.fin button.on{background:#D7263D}
+#opts button.good{background:#1E7B4D}#opts button.bad{background:#B3261E}
+#pal button{border-radius:10px}#pal button.on{box-shadow:0 0 0 3px #fff,0 0 0 6px currentColor}
+.ch:not(.rich):not(.poor)~#lbl .lt{fill:#13233A}
+.credit{max-width:760px;margin:0 auto 24px;color:#5E6E82;font-size:14px;text-align:center}
+</style><style>@media print{.pdfbtn,.pdfhint{display:none!important}body{background:#fff!important}}</style><div style="max-width:760px;margin:0 auto 30px;text-align:center;font-family:Assistant,Arial,sans-serif"><button type="button" class="pdfbtn" onclick="window.print()" style="font:inherit;font-weight:800;background:#fff;color:#13233A;border:2px solid #13233A;border-radius:10px;padding:10px 20px;cursor:pointer">📄 שמירה כ־PDF</button><p class="pdfhint" style="font-size:14px;color:#5E6E82;margin-top:6px">בחלון שנפתח בחרו "שמירה כ־PDF" (Save as PDF), ושמרו או הגישו את הקובץ.</p></div></body></html>
