@@ -55,7 +55,7 @@ th{background:var(--ink);color:#fff}
 @media (max-width:760px){.split{grid-template-columns:1fr}.bar{grid-template-columns:6em 1fr 4em}.credit{display:none}}
 .fig{display:flex;justify-content:center;max-height:70vh}.fig svg{max-height:70vh;width:auto;max-width:100%}.art{display:flex;justify-content:center;align-items:center}</style>
 </head>
-<body>
+<body><nav class="homefix" aria-label="ניווט"><a href="../index.html">🏠 דף הבית</a><a href="index.html">→ לשיעור</a></nav>
 <div class="deck" id="deck">
 
 <section class="s">
@@ -237,5 +237,10 @@ document.getElementById('next').onclick=()=>go(i+1);document.getElementById('pre
 addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key===' '||e.key==='PageDown')go(i+1);if(e.key==='ArrowRight'||e.key==='PageUp')go(i-1)});
 go((parseInt(location.hash.slice(2))||1)-1);
 </script>
-</body>
+<style id="homenav">.homebar{max-width:1080px;margin:12px auto 0;padding-inline:16px;display:flex;gap:8px;flex-wrap:wrap;font-family:Assistant,Arial,sans-serif;position:relative;z-index:20}
+.homefix{position:fixed;top:10px;inset-inline-end:12px;display:flex;gap:8px;z-index:50;font-family:Assistant,Arial,sans-serif}
+.homebar a,.homefix a{background:#fff;color:#13233A;border:2px solid #13233A;border-radius:20px;padding:4px 14px;font-weight:800;font-size:14px;text-decoration:none;line-height:1.5}
+.homebar a:hover,.homefix a:hover{background:#13233A;color:#fff}
+.s>.sn{top:56px!important}
+@media print{.homebar,.homefix{display:none!important}}</style></body>
 </html>

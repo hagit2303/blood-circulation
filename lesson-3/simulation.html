@@ -65,7 +65,7 @@ h2{font-size:clamp(20px,2.6vw,26px);font-weight:800}
 @media (max-width:640px){.org{grid-template-columns:1fr}.fb{grid-column:1}.row{grid-template-columns:6.5em 40px 1fr 4.4em;font-size:15px}}
 .explore{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:20px;align-items:start}.bodyfig{background:var(--bg);border-radius:14px;padding:8px}@media (max-width:760px){.explore{grid-template-columns:1fr}.bodyfig{max-width:320px;margin:auto}}</style>
 </head>
-<body>
+<body><nav class="homebar" aria-label="ניווט"><a href="../index.html">🏠 דף הבית</a><a href="index.html">→ לשיעור</a></nav>
 <div class="page">
   <div class="kick">ביולוגיה · כיתה י' · שיעור 3 · סימולציה</div>
   <h1>חלוקת <span>הדם</span></h1>
@@ -204,5 +204,10 @@ show(0);
 </script>
 <style id="pdf">.pdfbtn{font:inherit;font-weight:800;background:#fff;color:#13233A;border:2px solid #13233A;border-radius:10px;padding:10px 20px;cursor:pointer;margin-top:12px}
 .pdfhint{font-size:14px;color:#5E6E82;margin-top:6px}
-@media print{.pdfbtn,.pdfhint,.send,#send,.trail,.btn,.nav,.seg{display:none!important}body{background:#fff!important}fieldset,.q,.card{break-inside:avoid}.step{display:flex!important}.res{display:block}}</style></body>
+@media print{.pdfbtn,.pdfhint,.send,#send,.trail,.btn,.nav,.seg{display:none!important}body{background:#fff!important}fieldset,.q,.card{break-inside:avoid}.step{display:flex!important}.res{display:block}}</style><style id="homenav">.homebar{max-width:1080px;margin:12px auto 0;padding-inline:16px;display:flex;gap:8px;flex-wrap:wrap;font-family:Assistant,Arial,sans-serif;position:relative;z-index:20}
+.homefix{position:fixed;top:10px;inset-inline-end:12px;display:flex;gap:8px;z-index:50;font-family:Assistant,Arial,sans-serif}
+.homebar a,.homefix a{background:#fff;color:#13233A;border:2px solid #13233A;border-radius:20px;padding:4px 14px;font-weight:800;font-size:14px;text-decoration:none;line-height:1.5}
+.homebar a:hover,.homefix a:hover{background:#13233A;color:#fff}
+.s>.sn{top:56px!important}
+@media print{.homebar,.homefix{display:none!important}}</style></body>
 </html>

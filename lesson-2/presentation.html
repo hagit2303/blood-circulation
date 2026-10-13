@@ -88,7 +88,7 @@ thead th:nth-child(2){color:var(--poor)}thead th:nth-child(3){color:var(--rich)}
 .dia .rc{fill:none;stroke:#fff;stroke-width:11;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
 .dia .rt2{fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:9 9;animation:rflow 1s linear infinite}
 @keyframes rflow{to{stroke-dashoffset:-18}}
-</style></head><body>
+</style></head><body><nav class="homefix" aria-label="ניווט"><a href="../index.html">🏠 דף הבית</a><a href="index.html">→ לשיעור</a></nav>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="gL" x1="0" x2="1"><stop offset="0" style="stop-color:var(--poor)"/><stop offset="1" style="stop-color:var(--rich)"/></linearGradient>
 <linearGradient id="gB" x1="1" x2="0"><stop offset="0" style="stop-color:var(--rich)"/><stop offset="1" style="stop-color:var(--poor)"/></linearGradient>
@@ -137,4 +137,9 @@ const m=/#s(\d+)/.exec(location.hash);go(m?+m[1]-1:0);
 const w=document.createElement('div');w.className='illwrap';const t=document.createElement('div');t.className='illtxt';
 t.style.gap=getComputedStyle(s).rowGap||'16px';
 [...s.childNodes].forEach(n=>{if(n===il)return;if(n.nodeType===1&&(n.classList.contains('sn')||getComputedStyle(n).position==='absolute'||getComputedStyle(n).position==='fixed'))return;t.appendChild(n)});
-w.appendChild(t);w.appendChild(il);s.appendChild(w)});</script></body></html>
+w.appendChild(t);w.appendChild(il);s.appendChild(w)});</script><style id="homenav">.homebar{max-width:1080px;margin:12px auto 0;padding-inline:16px;display:flex;gap:8px;flex-wrap:wrap;font-family:Assistant,Arial,sans-serif;position:relative;z-index:20}
+.homefix{position:fixed;top:10px;inset-inline-end:12px;display:flex;gap:8px;z-index:50;font-family:Assistant,Arial,sans-serif}
+.homebar a,.homefix a{background:#fff;color:#13233A;border:2px solid #13233A;border-radius:20px;padding:4px 14px;font-weight:800;font-size:14px;text-decoration:none;line-height:1.5}
+.homebar a:hover,.homefix a:hover{background:#13233A;color:#fff}
+.s>.sn{top:56px!important}
+@media print{.homebar,.homefix{display:none!important}}</style></body></html>
