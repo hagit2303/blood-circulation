@@ -108,10 +108,10 @@ const HINT={1:'חלל תחתון בצד הכחול. ממנו יוצא כלי ד�
 const ROUNDS=[{name:'דרך הראש והידיים',via:7,vein:9},{name:'דרך הרגליים והבטן',via:8,vein:10}];
 const POOR=new Set(['7-9','8-10','9-11','10-11','11-1','1-2','2-3']);
 const SMALL=[1,2,3,4],GAS=[3,7,8];
-const WAY={'5-6':[[255,299],[250,240],[245,200],[253,165]],
- '6-7':[[253,165],[278,158],[295,130],[300,80],[290,50],[260,36],[230,25],[203,13]],
- '6-8':[[253,165],[285,170],[303,192],[303,410],[290,440],[255,458],[232,489]],
- '7-9':[[203,13],[170,30],[150,60],[150,100],[151,134]],
+const WAY={'5-6':[[256,294],[245,264],[242,235],[232,217],[218,210],[214,192],[222,176],[239,168],[256,164]],
+ '6-7':[[256,164],[278,158],[295,130],[300,80],[292,58],[270,44],[245,40],[222,42]],
+ '6-8':[[256,164],[285,170],[303,192],[303,410],[290,440],[255,458],[232,489]],
+ '7-9':[[222,42],[200,42],[178,48],[160,62],[152,90],[151,134]],
  '9-11':[[151,134],[165,180],[178,215],[172,255]],
  '8-10':[[232,489],[200,455],[160,440],[154,400],[154,334]],
  '10-11':[[154,334],[154,290],[165,265],[172,255]],
@@ -212,9 +212,31 @@ p0();
 </script>
 <p class="credit" style="max-width:1080px;margin:8px auto 24px;color:#5E6E82;font-size:13px;text-align:center;font-family:Assistant,Arial,sans-serif">היחידה מתבססת על חומרי מט״ח ומורחבת בחומרים נוספים · ביולוגיה, כיתה י'</p><style id="mobile-fix">@media (max-width:760px){.grid{grid-template-columns:minmax(0,1fr)!important}}</style><style id="pdf">.pdfbtn{font:inherit;font-weight:800;background:#fff;color:#13233A;border:2px solid #13233A;border-radius:10px;padding:10px 20px;cursor:pointer;margin-top:12px}
 .pdfhint{font-size:14px;color:#5E6E82;margin-top:6px}
-@media print{.pdfbtn,.pdfhint,.send,#send,.trail,.btn,.nav,.seg{display:none!important}body{background:#fff!important}fieldset,.q,.card{break-inside:avoid}.step{display:flex!important}.res{display:block}}</style><div style="max-width:1080px;margin:0 auto 30px;text-align:center;font-family:Assistant,Arial,sans-serif"><button type="button" class="pdfbtn" onclick="window.print()">📄 שמירה כ־PDF</button><p class="pdfhint">בחלון שנפתח בחרו "שמירה כ־PDF" (Save as PDF), ושמרו או הגישו את הקובץ.</p></div><style id="homenav">.homebar{max-width:1080px;margin:12px auto 0;padding-inline:16px;display:flex;gap:8px;flex-wrap:wrap;font-family:Assistant,Arial,sans-serif;position:relative;z-index:20}
+@media print{.pdfbtn,.pdfhint,.send,#send,.trail,.btn,.nav,.seg{display:none!important}body{background:#fff!important}fieldset,.q,.card{break-inside:avoid}.step{display:flex!important}.res{display:block}}</style><div id="pdfwrap" hidden style="max-width:1080px;margin:0 auto 30px;text-align:center;font-family:Assistant,Arial,sans-serif"><p style="font-weight:800;color:#1E7B4D;margin-bottom:6px">✓ הסימולציה נבדקה. עכשיו שמרו אותה:</p><button type="button" class="pdfbtn" onclick="window.print()">📄 שמירה כ־PDF</button><p class="pdfhint">בחלון שנפתח בחרו "שמירה כ־PDF" (Save as PDF), ואז העלו את הקובץ הבדוק למשימה ב־Classroom.</p></div><style id="homenav">.homebar{max-width:1080px;margin:12px auto 0;padding-inline:16px;display:flex;gap:8px;flex-wrap:wrap;font-family:Assistant,Arial,sans-serif;position:relative;z-index:20}
 .homefix{position:fixed;top:10px;inset-inline-end:12px;display:flex;gap:8px;z-index:50;font-family:Assistant,Arial,sans-serif}
 .homebar a,.homefix a{background:#fff;color:#13233A;border:2px solid #13233A;border-radius:20px;padding:4px 14px;font-weight:800;font-size:14px;text-decoration:none;line-height:1.5}
 .homebar a:hover,.homefix a:hover{background:#13233A;color:#fff}
 .s>.sn{top:56px!important}
-@media print{.homebar,.homefix{display:none!important}}</style></body></html>
+@media print{.homebar,.homefix{display:none!important}}</style><div id="gate" role="dialog" aria-modal="true" aria-labelledby="g_t"><div class="gbox">
+<h2 id="g_t">לפני שמתחילים</h2><p>כתבו שם וכיתה. הם יופיעו בבדיקה ובקובץ ה־PDF.</p>
+<label>שם התלמיד/ה<input id="g_nm" type="text" autocomplete="name"></label>
+<label>כיתה<input id="g_cl" type="text" placeholder="לדוגמה: י'3"></label>
+<button type="button" id="g_go" disabled>התחלה ←</button><p class="g_hint" id="g_hint">צריך לכתוב שם (לפחות 2 אותיות).</p></div></div>
+<style id="gatecss">#gate{position:fixed;inset:0;background:rgba(19,35,58,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;font-family:Assistant,Arial,sans-serif;direction:rtl}
+#gate .gbox{background:#fff;border-radius:16px;padding:22px;max-width:420px;width:100%;display:flex;flex-direction:column;gap:12px;color:#13233A;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+#gate h2{font-size:26px;font-weight:800;margin:0}#gate p{margin:0;color:#5E6E82}
+#gate label{display:flex;flex-direction:column;gap:4px;font-weight:700}
+#gate input{font:inherit;font-weight:400;padding:9px 12px;border:2px solid #DCE3EA;border-radius:10px}#gate input:focus{border-color:#13233A;outline:none}
+#g_go{font:inherit;font-weight:800;background:#13233A;color:#fff;border:0;border-radius:10px;padding:11px;cursor:pointer}#g_go:disabled{opacity:.35;cursor:not-allowed}
+.g_hint{font-size:14px}@media print{#gate{display:none!important}}</style>
+<script>(function(){const g=document.getElementById('gate'),nm=document.getElementById('g_nm'),cl=document.getElementById('g_cl'),go=document.getElementById('g_go');
+try{nm.value=localStorage.getItem('stu_nm')||'';cl.value=localStorage.getItem('stu_cl')||''}catch(e){}
+const ok=()=>{const v=nm.value.trim().length>=2;go.disabled=!v;document.getElementById('g_hint').style.visibility=v?'hidden':'visible'};
+nm.addEventListener('input',ok);ok();setTimeout(()=>nm.focus(),50);
+[nm,cl].forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter'&&!go.disabled)go.click()}));
+go.onclick=()=>{const n=nm.value.trim(),c=cl.value.trim();try{localStorage.setItem('stu_nm',n);localStorage.setItem('stu_cl',c)}catch(e){}
+ const set=(el,v)=>{if(el){el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}))}};
+ set(document.getElementById('nm'),n);set(document.getElementById('cl'),c);set(document.getElementById('sname'),n);set(document.getElementById('sclass'),c);
+ const w=document.querySelectorAll('.who input');set(w[0],n);set(w[1],c);
+ g.remove();document.body.style.overflow=''};
+document.body.style.overflow='hidden';})();</script><script>(function(){const w=document.getElementById("pdfwrap"),t=document.getElementById("score");if(!w||!t)return;const chk=()=>{if(!t.hidden&&t.offsetParent!==null){w.hidden=false}};new MutationObserver(chk).observe(t,{attributes:true,childList:true,subtree:true});chk()})();</script></body></html>
