@@ -1,16 +1,113 @@
-<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>מערכת הדם · יחידת לימוד</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
-<style>:root{--bg:#F4F7FA;--ink:#13233A;--mut:#5E6E82;--rich:#D7263D;--poor:#2457C5;--card:#fff;--line:#DCE3EA}
-*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:Assistant,Arial,sans-serif;font-size:18px;line-height:1.5;padding-inline:16px}
-.w{max-width:980px;margin:auto;padding-block:28px 48px;display:flex;flex-direction:column;gap:18px}
-.kick{font-weight:800;color:var(--rich);font-size:15px}h1{font-size:clamp(34px,6vw,64px);font-weight:800;line-height:1.02;letter-spacing:-.5px}h1 span{color:var(--rich)}
-.lead{color:var(--mut);max-width:60ch}.back{color:var(--poor);font-weight:700;text-decoration:none}
-.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.c{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;transition:transform .15s,box-shadow .15s}
-a.c:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(19,35,58,.08)}
-.c .n{font-size:14px;font-weight:800;color:var(--rich)}.c h2{font-size:22px;font-weight:800;line-height:1.2}.c p{color:var(--mut);font-size:16px}
-.c .go{margin-top:auto;font-weight:800}.c.soon{opacity:.55;border-style:dashed}
-.steps{counter-reset:s}.steps .c .n::before{counter-increment:s;content:"שלב " counter(s) " · "}
-video{width:100%;border-radius:12px;background:#000}
-.credit{color:var(--mut);font-size:14px;border-top:1px solid var(--line);padding-top:14px}</style></head><body><div class="w"><div class="kick">ביולוגיה · כיתה י' · מערכת ההובלה</div><h1>מערכת הדם <span>כצנרת</span></h1>
-<p class="lead">יחידת לימוד מקוונת. כל שיעור כולל מצגת, סימולציה ושאלות. שיעורים חדשים יתווספו במהלך השנה.</p><div class="g"><a class="c" href="lesson-1/"><span class="n">שיעור 1</span><h2>גילוי מחזור הדם</h2><p>מגלנוס להארווי: איך תצפית, חשבון וניסוי הפילו תיאוריה שהחזיקה 1,500 שנה. מצגת, סרטון ו"המסע של טיפה".</p><span class="go">פתיחה ←</span></a><a class="c" href="lesson-2/"><span class="n">שיעור 2</span><h2>המחזור הגדול והמחזור הקטן</h2><p>תרגול על איור לב אמיתי: מצגת, מעבדת המסלולים ובוחן.</p><span class="go">פתיחה ←</span></a><a class="c" href="lesson-3/"><span class="n">שיעור 3</span><h2>ויסות זרימת הדם לרקמות</h2><p>כמות הדם בגוף מוגבלת. לאן הוא זורם במנוחה ובמאמץ?</p><span class="go">פתיחה ←</span></a><div class="c soon"><span class="n">שיעור 4</span><h2>מבנה הלב</h2><p>התאמה בין מבנה לתפקוד.</p><span class="go">בקרוב</span></div><div class="c soon"><span class="n">שיעור 5</span><h2>כלי הדם</h2><p>עורקים, ורידים ונימים: התאמה בין מבנה לתפקוד.</p><span class="go">בקרוב</span></div><div class="c soon"><span class="n">שיעור 6</span><h2>לחץ דם ומהירות זרימה</h2><p>לחץ סיסטולי ודיאסטולי, ומה קורה לדם בנימים.</p><span class="go">בקרוב</span></div></div><p class="credit">היחידה מתבססת על חומרי מט״ח ומורחבת בחומרים נוספים. נבנתה על ידי חגית ברגמן.</p></div></body></html>
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>מערכת הדם · יחידת לימוד</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* Atlas: hero with the real drawing, one row per lesson with direct activity buttons */
+:root{--bg:#F4F7FA;--ink:#13233A;--mut:#5E6E82;--rich:#D7263D;--poor:#2457C5;--card:#fff;--line:#DCE3EA;--soft:#EAF0F6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:Assistant,Arial,sans-serif;font-size:18px;line-height:1.5;padding-inline:16px}
+.w{max-width:1080px;margin:auto;padding-block:28px 56px;display:flex;flex-direction:column;gap:30px}
+a{color:inherit}
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:28px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:clamp(20px,4vw,40px);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset-inline:0;bottom:0;height:6px;background:linear-gradient(to left,var(--rich),var(--poor))}
+.kick{font-weight:800;color:var(--rich);font-size:15px;letter-spacing:.04em}
+h1{font-size:clamp(38px,6.4vw,68px);font-weight:800;line-height:1;letter-spacing:-.5px;margin-top:6px;text-wrap:balance}
+h1 span{color:var(--rich)}
+.lead{color:var(--mut);max-width:48ch;margin-top:12px}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.stat{background:var(--soft);border-radius:30px;padding:5px 14px;font-size:15px;font-weight:600}
+.stat b{color:var(--rich);font-variant-numeric:tabular-nums}
+.pic{display:flex;justify-content:center}
+.pic img{width:100%;max-width:330px;height:auto;display:block}
+h2.sec{font-size:15px;font-weight:800;color:var(--mut);letter-spacing:.06em;margin-bottom:12px}
+.lessons{display:flex;flex-direction:column;gap:14px}
+.lesson{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 20px;align-items:start;transition:box-shadow .15s}
+.lesson:hover{box-shadow:0 8px 22px rgba(19,35,58,.07)}
+.num{grid-row:1/4;width:64px;height:64px;border-radius:16px;background:var(--ink);color:#fff;font-size:30px;font-weight:800;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.lesson:nth-child(2) .num{background:var(--poor)}.lesson:nth-child(3) .num{background:var(--rich)}
+.lesson h3{font-size:clamp(22px,2.6vw,28px);font-weight:800;line-height:1.15}
+.lesson p{color:var(--mut);font-size:16px;max-width:62ch}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.act{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;font-size:16px;border:1.5px solid var(--line);border-radius:12px;padding:8px 14px;background:#fff;transition:border-color .15s}
+.act:hover,.act:focus-visible{border-color:var(--ink);outline:none}
+.act i{font-style:normal;width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex:none}
+.i-p{background:var(--ink)}.i-v{background:#6B4FD8}.i-s{background:var(--poor)}.i-q{background:var(--rich)}
+.act.page{border-style:dashed;color:var(--mut);font-weight:600}
+.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.soon{border:1.5px dashed var(--line);border-radius:16px;padding:14px 16px;color:var(--mut);font-size:16px}
+.soon b{display:block;color:var(--ink);font-size:19px}
+.soon small{font-weight:800;font-size:13px;letter-spacing:.04em}
+.credit{color:var(--mut);font-size:14px;border-top:1px solid var(--line);padding-top:14px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.pic{order:-1}.pic img{max-width:220px}.lesson{grid-template-columns:1fr}.num{grid-row:auto;width:48px;height:48px;font-size:22px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="w">
+  <header class="hero">
+    <div>
+      <div class="kick">ביולוגיה · כיתה י' · מערכת ההובלה</div>
+      <h1>מערכת הדם <span>כצנרת</span></h1>
+      <p class="lead">יחידת לימוד מקוונת. בכל שיעור יש מצגת, סימולציה ובוחן, וכל אחד מהם נפתח ישירות מכאן.</p>
+      <div class="stats"><span class="stat"><b>3</b> שיעורים פתוחים</span><span class="stat"><b>3</b> סימולציות</span><span class="stat"><b>2</b> בחנים</span></div>
+    </div>
+    <div class="pic"><img src="assets/circulation.png" alt="איור מחזור הדם: הלב, הריאות ורשתות הנימים בגוף"></div>
+  </header>
+
+  <section>
+    <h2 class="sec">השיעורים</h2>
+    <div class="lessons">
+      <article class="lesson">
+        <div class="num">1</div>
+        <h3>גילוי מחזור הדם</h3>
+        <p>מגלנוס להארווי: איך תצפית, חשבון וניסוי הפילו תיאוריה שהחזיקה 1,500 שנה.</p>
+        <div class="acts">
+          <a class="act" href="lesson-1/presentation.html"><i class="i-p">▤</i>מצגת</a>
+          <a class="act" href="lesson-1/#video"><i class="i-v">▶</i>סרטון</a>
+          <a class="act" href="lesson-1/app.html"><i class="i-s">◎</i>סימולציה: המסע של טיפה</a>
+          <a class="act page" href="lesson-1/">דף השיעור ←</a>
+        </div>
+      </article>
+      <article class="lesson">
+        <div class="num">2</div>
+        <h3>המחזור הגדול והמחזור הקטן</h3>
+        <p>תרגול על איור לב אמיתי: שני המעגלים, עורק או וריד, וחילוף חומרים בנימים.</p>
+        <div class="acts">
+          <a class="act" href="lesson-2/presentation.html"><i class="i-p">▤</i>מצגת</a>
+          <a class="act" href="lesson-2/simulation.html"><i class="i-s">◎</i>סימולציה: מעבדת המסלולים</a>
+          <a class="act" href="lesson-2/quiz.html"><i class="i-q">✓</i>בוחן</a>
+          <a class="act page" href="lesson-2/">דף השיעור ←</a>
+        </div>
+      </article>
+      <article class="lesson">
+        <div class="num">3</div>
+        <h3>ויסות זרימת הדם לרקמות</h3>
+        <p>כמות הדם בגוף קבועה. איך היא מתחלקת בין האיברים במנוחה ובמאמץ?</p>
+        <div class="acts">
+          <a class="act" href="lesson-3/presentation.html"><i class="i-p">▤</i>מצגת</a>
+          <a class="act" href="lesson-3/simulation.html"><i class="i-s">◎</i>סימולציה: חלוקת הדם</a>
+          <a class="act" href="lesson-3/quiz.html"><i class="i-q">✓</i>בוחן</a>
+          <a class="act page" href="lesson-3/">דף השיעור ←</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec">בהמשך השנה</h2>
+    <div class="road">
+      <div class="soon"><small>שיעור 4</small><b>מבנה הלב</b>התאמה בין מבנה לתפקוד.</div>
+      <div class="soon"><small>שיעור 5</small><b>כלי הדם</b>עורקים, ורידים ונימים: התאמה בין מבנה לתפקוד.</div>
+      <div class="soon"><small>שיעור 6</small><b>לחץ דם ומהירות זרימה</b>לחץ סיסטולי ודיאסטולי, ומה קורה לדם בנימים.</div>
+    </div>
+  </section>
+
+  <p class="credit">היחידה מתבססת על חומרי מט״ח ומורחבת בחומרים נוספים. נבנתה על ידי חגית ברגמן.</p>
+</div>
+</body>
+</html>
