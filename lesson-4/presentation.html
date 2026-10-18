@@ -8,48 +8,59 @@
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
 <script src="heart.js"></script>
 <style>
-/* Atlas deck: one idea per slide, real images from Matach next to the text */
+/* Atlas teaching deck: roles, then structure only, then structure-function with full cause-and-effect chains */
 :root{--bg:#F4F7FA;--ink:#13233A;--mut:#5E6E82;--rich:#D7263D;--poor:#2457C5;--muscle:#E9C3BE;--card:#fff;--line:#DCE3EA;--ok:#1E7B4D;--gold:#F2B705}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:Assistant,Arial,sans-serif;overflow:hidden}
 .deck{position:relative;height:100%}
-.s{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;gap:clamp(10px,2vh,22px);padding:clamp(56px,7vh,70px) clamp(16px,6vw,96px) 84px;overflow-y:auto}
+.s{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;gap:clamp(10px,1.8vh,20px);padding:clamp(56px,7vh,70px) clamp(16px,5vw,80px) 84px;overflow-y:auto}
 .s.on{display:flex}
 .kick{font-size:clamp(14px,1.4vw,18px);font-weight:800;color:var(--rich);letter-spacing:.3px}
+.part{display:inline-block;background:var(--ink);color:#fff;border-radius:20px;padding:2px 12px;font-size:13px;font-weight:800;margin-inline-end:8px;vertical-align:middle}
 h1{font-size:clamp(44px,7vw,92px);font-weight:800;line-height:1;letter-spacing:-.5px;text-wrap:balance}
 h1 span,h2 em{color:var(--rich);font-style:normal}
-h2{font-size:clamp(28px,4vw,52px);font-weight:800;line-height:1.1;text-wrap:balance}
-p,li{font-size:clamp(17px,2vw,26px);line-height:1.45;max-width:52ch}
+h2{font-size:clamp(26px,3.6vw,46px);font-weight:800;line-height:1.12;text-wrap:balance}
+h3{font-size:clamp(19px,2vw,26px);font-weight:800}
+p,li{font-size:clamp(16px,1.8vw,23px);line-height:1.5;max-width:60ch}
 .lead{color:var(--mut)}
-ul{padding-inline-start:1.1em}li{margin:.25em 0}
-.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(16px,4vw,56px);align-items:center}
-.tx{display:flex;flex-direction:column;gap:14px}
+ul{padding-inline-start:1.1em}li{margin:.3em 0}
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(16px,3.5vw,48px);align-items:center}
+.tx{display:flex;flex-direction:column;gap:12px}
 .pic{display:flex;flex-direction:column;align-items:center;gap:6px}
-.pic img{max-width:100%;max-height:62vh;height:auto;border-radius:14px;display:block;background:#fff}
-.pic .heart{max-height:64vh}
+.pic img{max-width:100%;max-height:60vh;height:auto;border-radius:14px;display:block;background:#fff}
+.pic .heart{max-height:62vh}
 .src{font-size:13px;color:var(--mut)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.card b{display:block;font-size:clamp(17px,1.8vw,23px);margin-bottom:4px}
-.card p{font-size:clamp(15px,1.6vw,20px)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card b{display:block;font-size:clamp(17px,1.7vw,22px);margin-bottom:4px}
+.card p{font-size:clamp(15px,1.5vw,19px)}
 .card.r{border-top:6px solid var(--rich)}.card.b{border-top:6px solid var(--poor)}.card.g{border-top:6px solid var(--gold)}
-.chain{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:clamp(20px,2.6vw,34px);font-weight:800}
-.chain span{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px}
-.chain i{font-style:normal;color:var(--mut)}
-.reveal{background:var(--ink);color:#fff;border:0;border-radius:10px;padding:10px 18px;font:inherit;font-weight:800;font-size:clamp(15px,1.5vw,19px);cursor:pointer;align-self:flex-start}
-.ans{display:none;background:var(--card);border:2px dashed var(--rich);border-radius:12px;padding:12px 16px}
-.ans.show{display:block}
+.chain{list-style:none;padding:0;display:flex;flex-direction:column;gap:0;max-width:62ch}
+.chain li{background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--rich);border-radius:10px;padding:7px 14px;margin:0;max-width:none;font-size:clamp(15px,1.6vw,21px);position:relative}
+.chain li+li{margin-top:22px}
+.chain li+li::before{content:"↓";position:absolute;top:-22px;inset-inline-start:18px;font-weight:800;color:var(--mut);font-size:18px;line-height:22px}
+.chain li:first-child{border-inline-start-color:var(--ink);font-weight:800}
+.chain li:last-child{border-inline-start-color:var(--ok);font-weight:700}
+.chain.bad li{border-inline-start-color:var(--poor)}.chain.bad li:first-child{border-inline-start-color:var(--ink)}.chain.bad li:last-child{border-inline-start-color:var(--no,#B3261E)}
+.q{background:#FFF8E1;border-inline-start:6px solid var(--gold);border-radius:12px;padding:10px 16px;display:flex;flex-direction:column;gap:8px}
+.q>b{font-size:clamp(17px,1.8vw,23px)}
+.reveal{background:var(--ink);color:#fff;border:0;border-radius:10px;padding:8px 16px;font:inherit;font-weight:800;font-size:clamp(15px,1.4vw,18px);cursor:pointer;align-self:flex-start}
+.ans{display:none}.ans.show{display:flex;flex-direction:column;gap:10px}
 .opts{list-style:none;padding:0;display:flex;flex-direction:column;gap:6px}
-.opts li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 14px;max-width:none}
+.opts li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 14px;max-width:none;margin:0}
 .opts.done li.ok{border:2px solid var(--ok);background:#E8F4EE;font-weight:800}
-table{border-collapse:collapse;font-size:clamp(15px,1.6vw,21px);background:var(--card);border-radius:12px;overflow:hidden;width:100%}
-th,td{padding:8px 14px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+table{border-collapse:collapse;font-size:clamp(14px,1.5vw,19px);background:var(--card);border-radius:12px;overflow:hidden;width:100%}
+th,td{padding:7px 12px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
 th{background:var(--ink);color:#fff}
 td.hid span{visibility:hidden}td.hid.show span{visibility:visible}
-.walls{display:flex;flex-direction:column;gap:12px}
-.wall{display:grid;grid-template-columns:7.5em 1fr;gap:12px;align-items:center;font-weight:700;font-size:clamp(16px,1.8vw,22px)}
-.wall .t{height:26px;border-radius:8px;background:var(--muscle);border:2px solid #B8857E}
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.strip figure{background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.strip img{max-width:100%;max-height:30vh;height:auto}
+.strip figcaption{font-size:clamp(13px,1.3vw,16px);font-weight:700;text-align:center}
+.walls{display:flex;flex-direction:column;gap:10px}
+.wall{display:grid;grid-template-columns:7.5em 1fr;gap:12px;align-items:center;font-weight:700;font-size:clamp(15px,1.6vw,20px)}
+.wall .t{height:24px;border-radius:8px;background:var(--muscle);border:2px solid #B8857E}
 .btnrow{display:flex;gap:12px;flex-wrap:wrap}
 .go{background:var(--rich);color:#fff;text-decoration:none;font-weight:800;border-radius:12px;padding:12px 22px;font-size:clamp(17px,1.8vw,22px)}
 .go.alt{background:var(--card);color:var(--ink);border:2px solid var(--ink)}
@@ -60,197 +71,319 @@ td.hid span{visibility:hidden}td.hid.show span{visibility:visible}
 .homefix{position:fixed;top:10px;inset-inline-end:12px;display:flex;gap:8px;z-index:50}
 .homefix a{background:#fff;color:#13233A;border:2px solid #13233A;border-radius:20px;padding:4px 14px;font-weight:800;font-size:14px;text-decoration:none;line-height:1.5}
 .homefix a:hover{background:#13233A;color:#fff}
-@media (max-width:760px){.split{grid-template-columns:1fr}.pic img{max-height:38vh}.credit{display:none}}
+@media (max-width:760px){.split{grid-template-columns:1fr}.pic img{max-height:36vh}.credit{display:none}.strip{grid-template-columns:repeat(2,1fr)}}
 @media print{.homefix,.nav{display:none!important}}
 </style>
 </head>
 <body><nav class="homefix" aria-label="ניווט"><a href="../index.html">🏠 דף הבית</a><a href="index.html">→ לשיעור</a></nav>
 <div class="deck" id="deck">
 
+<!-- ========== פתיחה ========== -->
 <section class="s">
   <div class="kick">ביולוגיה · כיתה י' · מערכת הדם · שיעור 4</div>
   <div class="split"><div class="tx"><h1>מבנה <span>הלב</span></h1>
-  <p class="lead">התאמה בין מבנה לתפקוד</p></div>
+  <p class="lead">התאמה בין מבנה לתפקוד</p>
+  <p>שלושה חלקים: <b>1 · התפקידים</b> של הלב, <b>2 · המבנה</b> שלו, <b>3 · ההתאמה</b> בין המבנה לתפקידים.</p></div>
   <div class="pic"><img src="img/chest.jpg" alt="הלב בבית החזה, בין שתי הריאות"><span class="src">מקור: מט״ח</span></div></div>
 </section>
 
 <section class="s">
   <div class="kick">איפה הלב?</div>
   <div class="split"><div class="tx"><h2>בבית החזה, בין שתי הריאות, <em>עם נטייה שמאלה</em></h2>
-  <p>הלב בגודל של אגרוף בערך. רוב הדופן שלו בנויה מרקמת שריר: שריר הלב.</p></div>
+  <p>הלב בגודל של אגרוף בערך. הוא פועם כ־70 פעמים בדקה במנוחה, כ־100,000 פעמים ביממה, לאורך כל החיים.</p></div>
   <div class="pic"><img src="img/position.png" alt="מיקום הלב בבית החזה, באישה ובגבר"><span class="src">מקור: מט״ח</span></div></div>
 </section>
 
 <section class="s">
-  <div class="kick">שאלה לפתיחה</div>
+  <div class="kick">שאלה לפתיחה · מט״ח</div>
   <div class="split"><div class="tx"><h2>למה במערכת ההובלה יש <em>משאבה</em>?</h2>
-  <p class="lead">רמז: בגוף יש בין 10 ל־40 מיליארד נימים, וחלק מהדם זורם למעלה, אל הראש.</p>
+  <div class="q"><b>רמז: בגוף יש בין 10 ל־40 מיליארד נימים, וחלק מהדם זורם למעלה, אל הראש.</b>
   <button class="reveal" type="button">תשובה</button>
-  <div class="ans"><p>הלב מתכווץ, והלחץ שנוצר מזרים את הדם במהירות לכל חלקי הגוף: גם דרך מיליארדי נימים, וגם נגד כוח הכובד.</p></div></div>
+  <div class="ans"><ul class="chain"><li>הלב מתכווץ</li><li>נוצר לחץ דם גבוה בעורקים</li><li>הדם זורם במהירות גם דרך מיליארדי נימים, וגם נגד כוח הכובד</li><li>הדם מגיע לכל תאי הגוף בכל רגע</li></ul></div></div></div>
   <div class="pic"><img src="img/body.png" alt="מערכת כלי הדם בגוף האדם"><span class="src">מקור: מט״ח</span></div></div>
 </section>
 
+<!-- ========== חלק 1: התפקידים ========== -->
 <section class="s">
-  <div class="kick">מה כבר יודעים</div>
+  <div class="kick"><span class="part">חלק 1</span>התפקידים</div>
   <h2>ארבעת התפקידים של הלב</h2>
   <div class="cards">
-    <div class="card r"><b>1 · הזרמה לגוף</b><p>הזרמת דם עשיר בחמצן לכל הגוף</p></div>
-    <div class="card b"><b>2 · הזרמה לריאות</b><p>הזרמת דם דל בחמצן לריאות</p></div>
-    <div class="card b"><b>3 · קליטה מהגוף</b><p>קליטת הדם שחוזר מהגוף, דל בחמצן</p></div>
-    <div class="card r"><b>4 · קליטה מהריאות</b><p>קליטת הדם שחוזר מהריאות, עשיר בחמצן</p></div>
+    <div class="card r"><b>1 · הזרמה לגוף</b><p>הזרמת דם עשיר בחמצן לכל תאי הגוף, דרך המחזור הגדול.</p></div>
+    <div class="card b"><b>2 · הזרמה לריאות</b><p>הזרמת דם דל בחמצן לריאות, דרך המחזור הקטן.</p></div>
+    <div class="card b"><b>3 · קליטה מהגוף</b><p>קליטת הדם שחוזר מהגוף. הדם הזה דל בחמצן ועשיר בפחמן דו־חמצני.</p></div>
+    <div class="card r"><b>4 · קליטה מהריאות</b><p>קליטת הדם שחוזר מהריאות. הדם הזה עשיר בחמצן.</p></div>
   </div>
-  <p class="lead">השאלה של השיעור: <b>איך המבנה של הלב מתאים לכל אחד מהתפקידים?</b></p>
+  <div class="q"><b>שאלה: למה חשוב שהדם שמגיע לתאי הגוף יהיה עשיר בחמצן?</b><button class="reveal" type="button">תשובה</button>
+  <div class="ans"><p>בתאים מתרחשת נשימה תאית אווירנית: פירוק גלוקוז בנוכחות חמצן ויצירת ATP. ככל שמגיע לתאים יותר חמצן, הנשימה התאית מתרחשת בקצב גבוה יותר, ונוצר יותר ATP לתהליכי החיים.</p></div></div>
+</section>
+
+<!-- ========== חלק 2: המבנה ========== -->
+<section class="s">
+  <div class="kick"><span class="part">חלק 2</span>המבנה · ממה בנוי הלב?</div>
+  <div class="split"><div class="tx"><h2>הלב הוא <em>שריר</em>: שריר הלב</h2>
+  <ul><li>רוב הדופן של הלב בנויה מרקמת שריר מיוחדת: <b>שריר הלב</b>.</li>
+  <li>שריר הלב שונה משרירי השלד: הוא מתכווץ <b>באופן קצבי ובלתי רצוני</b>, בלי מנוחה, לאורך כל החיים.</li>
+  <li>בתאי שריר הלב יש <b>מספר רב מאוד של מיטוכונדריות</b>.</li>
+  <li>הצד הפנימי של הדופן <b>חלק</b>.</li></ul></div>
+  <div class="pic"><img src="img/dissected.jpg" alt="לב מנותח: רואים את דופן השריר העבה"><span class="src">ניתוח לב · מקור: מט״ח</span></div></div>
 </section>
 
 <section class="s">
-  <div class="kick">המבנה · 1</div>
-  <div class="split"><div class="tx"><h2>שני חצאים נפרדים, <em>בכל חצי עלייה וחדר</em></h2>
-  <ul><li><b>עליות</b> (למעלה): קולטות את הדם שמגיע בוורידים.</li><li><b>חדרים</b> (למטה): מזרימים את הדם החוצה, לעורקים.</li><li>בין החצי הימני לחצי השמאלי יש <b>מחיצה</b>.</li></ul></div>
+  <div class="kick"><span class="part">חלק 2</span>המבנה · החללים</div>
+  <div class="split"><div class="tx"><h2>ארבעה חללים ו<em>מחיצה</em></h2>
+  <ul><li>הלב מחולק ל<b>חצי ימני</b> ול<b>חצי שמאלי</b>.</li>
+  <li>בין שני החצאים יש <b>מחיצה</b> שלמה, בלי פתחים.</li>
+  <li>בכל חצי יש <b>עלייה</b> למעלה ו<b>חדר</b> למטה.</li>
+  <li>סך הכול: עלייה ימנית, חדר ימני, עלייה שמאלית, חדר שמאלי.</li></ul>
+  <div class="q"><b>בכל רגע נתון יש בלב (מט״ח):</b>
+  <ol class="opts"><li>א. דם עשיר בחמצן</li><li>ב. דם עשיר בפחמן דו־חמצני</li><li>ג. דם עשיר בחמצן ובפחמן דו־חמצני</li><li class="ok">ד. דם עשיר בחמצן, ודם עשיר בפחמן דו־חמצני</li></ol>
+  <button class="reveal" type="button" data-t="opts">תשובה</button><div class="ans"><p>ד. בחצי השמאלי יש דם עשיר בחמצן, ובחצי הימני דם עשיר בפחמן דו־חמצני. אלה שני סוגי דם נפרדים.</p></div></div></div>
   <div class="pic"><img src="img/section.png" alt="חתך אורך של הלב: ארבעה חללים, מסתמים וכלי דם"><span class="src">חתך אורך של הלב · מקור: מט״ח</span></div></div>
 </section>
 
 <section class="s">
-  <div class="kick">המבנה · 2</div>
-  <div class="split"><div class="tx"><h2>מי מבצע כל תפקיד?</h2>
-  <table><thead><tr><th>תפקיד</th><th>חלל בלב</th><th>כלי דם</th></tr></thead><tbody>
-  <tr><td>הזרמה לגוף</td><td class="hid"><span>חדר שמאלי</span></td><td class="hid"><span>אבי העורקים</span></td></tr>
-  <tr><td>הזרמה לריאות</td><td class="hid"><span>חדר ימני</span></td><td class="hid"><span>עורק הריאה</span></td></tr>
-  <tr><td>קליטה מהגוף</td><td class="hid"><span>עלייה ימנית</span></td><td class="hid"><span>הוורידים הנבובים (עליון ותחתון)</span></td></tr>
-  <tr><td>קליטה מהריאות</td><td class="hid"><span>עלייה שמאלית</span></td><td class="hid"><span>ורידי הריאה</span></td></tr>
+  <div class="kick"><span class="part">חלק 2</span>המבנה · כלי הדם שמחוברים ללב</div>
+  <div class="split"><div class="tx"><h2>לכל חלל, <em>כלי הדם שלו</em></h2>
+  <table><thead><tr><th>חלל</th><th>כלי דם</th><th>כיוון</th></tr></thead><tbody>
+  <tr><td>עלייה ימנית</td><td class="hid"><span>וריד נבוב עליון ווריד נבוב תחתון</span></td><td class="hid"><span>מהגוף אל הלב</span></td></tr>
+  <tr><td>חדר ימני</td><td class="hid"><span>עורק הריאה</span></td><td class="hid"><span>מהלב אל הריאות</span></td></tr>
+  <tr><td>עלייה שמאלית</td><td class="hid"><span>ורידי הריאה</span></td><td class="hid"><span>מהריאות אל הלב</span></td></tr>
+  <tr><td>חדר שמאלי</td><td class="hid"><span>אבי העורקים</span></td><td class="hid"><span>מהלב אל הגוף</span></td></tr>
   </tbody></table>
-  <button class="reveal" type="button" data-t="table">חשיפה</button></div>
+  <button class="reveal" type="button" data-t="table">חשיפה</button>
+  <p class="lead">ורידים מגיעים לעליות. עורקים יוצאים מהחדרים.</p></div>
   <div class="pic"><div class="fig" data-h='{"labels":true}'></div></div></div>
 </section>
 
 <section class="s">
-  <div class="kick">המבנה · 3</div>
-  <div class="split"><div class="tx"><h2>ימין ושמאל: <em>לפי כלי הדם</em></h2>
-  <p>באיור, ימין ושמאל הם של האדם. לכן הצד הימני של הלב מופיע <b>משמאלנו</b>.</p>
-  <p>הדרך הבטוחה לזהות: <b>אבי העורקים יוצא מהחדר השמאלי</b>, ועורק הריאה יוצא מהחדר הימני.</p>
-  <p class="lead">באיור כתוב "שסתום". בשיעור נשתמש במילה "מסתם".</p></div>
+  <div class="kick"><span class="part">חלק 2</span>המבנה · ימין ושמאל</div>
+  <div class="split"><div class="tx"><h2>איך מזהים ימין ושמאל <em>באיור</em>?</h2>
+  <p>באיור, ימין ושמאל הם של האדם. לכן החצי הימני של הלב מופיע <b>משמאלנו</b>.</p>
+  <p>הדרך הבטוחה לזהות: מוצאים את <b>אבי העורקים</b>. הוא יוצא מהחדר השמאלי.</p>
+  <p class="lead">באיורי מט״ח כתוב "שסתום". בשיעור משתמשים במילה "מסתם".</p></div>
   <div class="pic"><img src="img/schema.png" alt="חתך הלב עם שמות החללים, המסתמים וכלי הדם"><span class="src">מקור: מט״ח</span></div></div>
 </section>
 
 <section class="s">
-  <div class="kick">המבנה · 4</div>
-  <h2>כיוון הזרימה בלב</h2>
-  <div class="chain"><span>ורידים</span><i>←</i><span>עליות</span><i>←</i><span>חדרים</span><i>←</i><span>עורקים</span></div>
-  <p>העליות מתכווצות, והדם עובר לחדרים. אחר כך החדרים מתכווצים, והדם יוצא לעורקים. בין התכווצות להתכווצות הלב נרפה ומתמלא בדם.</p>
-</section>
-
-<section class="s">
-  <div class="kick">מבנה ותפקוד · המחיצה</div>
-  <div class="split"><div class="tx"><h2>מחיצה שלמה: <em>אין ערבוב</em></h2>
-  <p>המחיצה מפרידה לחלוטין בין החצי הימני לחצי השמאלי. לכן הדם העשיר בחמצן לא מתערבב עם הדם הדל בחמצן, ולגוף מגיע דם עשיר בחמצן.</p>
-  <p class="lead">לעתים רחוקות נולדים תינוקות עם פתח במחיצה. מה יקרה לדם שלהם?</p>
-  <button class="reveal" type="button">תשובה</button>
-  <div class="ans"><p>דם עשיר בחמצן ודם דל בחמצן מתערבבים דרך הפתח. את הפגם אפשר לתקן בניתוח.</p></div></div>
-  <div class="pic"><img src="img/vsd.jpg" alt="פתח במחיצה בין החדרים"><span class="src">פתח במחיצה בין החדרים · מקור: מט״ח</span></div></div>
-</section>
-
-<section class="s">
-  <div class="kick">מבנה ותפקוד · המסתמים</div>
-  <div class="split"><div class="tx"><h2>מסתמים: <em>זרימה בכיוון אחד</em></h2>
+  <div class="kick"><span class="part">חלק 2</span>המבנה · המסתמים</div>
+  <div class="split"><div class="tx"><h2>ארבעה <em>מסתמים</em></h2>
   <div class="cards">
-    <div class="card"><b>מסתם בין עלייה לחדר</b><p>נפתח כשהעלייה מתכווצת. נסגר כשהחדר מתכווץ, והדם לא חוזר לעלייה.</p></div>
-    <div class="card"><b>מסתם בין חדר לעורק</b><p>נפתח כשהחדר מתכווץ. נסגר כשהחדר נרפה, והדם לא חוזר מהעורק לחדר.</p></div>
+    <div class="card"><b>מסתם בין עלייה לחדר</b><p>בכל חצי של הלב, בין העלייה לחדר שמתחתיה. במט״ח: "שסתומי מפרשים". המסתם מחובר בחוטים דקים לדופן החדר.</p></div>
+    <div class="card"><b>מסתם בין חדר לעורק</b><p>בפתח היציאה של אבי העורקים ושל עורק הריאה. במט״ח: "שסתומי כיסים".</p></div>
   </div>
-  <p>המסתמים נפתחים ונסגרים בהשפעת הפרשי לחץ הדם משני צדיהם.</p></div>
-  <div class="pic"><img src="img/dissected.jpg" alt="לב מנותח: רואים את דופן החדר ואת המסתם"><span class="src">ניתוח לב · מקור: מט״ח</span></div></div>
+  <p>המסתמים הם דשים דקים. הם נפתחים רק לכיוון אחד.</p></div>
+  <div class="pic"><img src="img/schema.png" alt="חתך הלב: מיקום ארבעת המסתמים"><span class="src">מקור: מט״ח</span></div></div>
 </section>
 
 <section class="s">
-  <div class="kick">שאלה מבגרות · תשפ״ב</div>
-  <h2>לאדם יש פגיעה במסתם בין החדר הימני ובין עורק הריאה. המסתם לא נסגר כראוי. למה הפגיעה עלולה לגרום?</h2>
-  <ol class="opts" type="א"><li class="ok">א. לחזרה של דם דל בחמצן לחדר הימני</li><li>ב. לערבוב של דם עשיר בחמצן עם דם דל בחמצן</li><li>ג. לזרימת דם מן החדר הימני לחדר השמאלי</li><li>ד. לחסימה של העורקים הכליליים</li></ol>
-  <button class="reveal" type="button" data-t="opts">תשובה</button>
-  <div class="ans"><p>א. מסתם פגום גורם לזרימה <b>לאחור</b>. ערבוב נגרם מפתח במחיצה, לא ממסתם. בבגרות כ־70% מהנבחנים בחרו בתשובה ב.</p></div>
-</section>
-
-<section class="s">
-  <div class="kick">מבנה ותפקוד · קולות הלב</div>
-  <div class="split"><div class="tx"><h2>מה שומעים <em>בסטטוסקופ</em>?</h2>
-  <p>שני קולות בכל פעימה. הקולות נוצרים מסגירת המסתמים: קודם המסתמים בין העליות לחדרים, ואחר כך המסתמים בין החדרים לעורקים.</p></div>
-  <div class="pic"><img src="img/stethoscope.jpg" alt="רופאה מקשיבה ללב של ילדה בסטטוסקופ"><span class="src">מקור: מט״ח</span></div></div>
-</section>
-
-<section class="s">
-  <div class="kick">מבנה ותפקוד · עובי הדופן</div>
-  <div class="split"><div class="tx"><h2>כמה רחוק <em>מזרימים את הדם?</em></h2>
+  <div class="kick"><span class="part">חלק 2</span>המבנה · עובי הדופן</div>
+  <div class="split"><div class="tx"><h2>לא כל הדפנות <em>באותו עובי</em></h2>
+  <p>השכבה השרירית בדופן של כל חלל בעובי אחר:</p>
   <div class="walls">
-    <div class="wall"><span>העליות</span><span class="t" style="width:22%"></span></div>
-    <div class="wall"><span>החדר הימני</span><span class="t" style="width:45%"></span></div>
+    <div class="wall"><span>העליות</span><span class="t" style="width:20%"></span></div>
+    <div class="wall"><span>החדר הימני</span><span class="t" style="width:42%"></span></div>
     <div class="wall"><span>החדר השמאלי</span><span class="t" style="width:100%"></span></div>
   </div>
-  <p>העליות מזרימות דם לחדרים שמתחתן, מרחק קצר. החדר הימני מזרים דם לריאות. <b>החדר השמאלי מזרים דם לכל הגוף</b>, בלחץ הגבוה ביותר. בדופן העבה יש יותר תאי שריר, וההתכווצות שלה חזקה יותר.</p>
-  <p class="src">על פי בגרות תשע״ז, שאלון 43381, שאלה 2</p></div>
-  <div class="pic"><div class="fig" data-h='{"labels":true}'></div></div></div>
+  <div class="q"><b>שאלה למחשבה: למה הדופן של החדר השמאלי היא העבה ביותר? נחזור לזה בחלק 3.</b></div></div>
+  <div class="pic"><div class="fig" data-h='{"labels":true}'></div><span class="src">באיור: הדופן סביב החדר השמאלי עבה יותר</span></div></div>
 </section>
 
 <section class="s">
-  <div class="kick">שאלה לכיתה</div>
-  <h2>שריר הלב מתכווץ כל החיים, בלי הפסקה. <em>מאיפה התאים שלו מקבלים חמצן וגלוקוז?</em></h2>
-  <button class="reveal" type="button">תשובה</button>
-  <div class="ans"><p>לא מהדם שזורם בתוך החללים: הדופן עבה, והדם בחללים לא מגיע לרוב תאי השריר. לשריר הלב יש כלי דם משלו: <b>כלי הדם הכליליים</b>.</p></div>
-</section>
-
-<section class="s">
-  <div class="kick">מבנה ותפקוד · כלי הדם הכליליים</div>
+  <div class="kick"><span class="part">חלק 2</span>המבנה · על פני הלב</div>
   <div class="split"><div class="tx"><h2>כלי הדם <em>הכליליים</em></h2>
-  <ul><li>העורקים הכליליים מתפצלים מ<b>בסיס אבי העורקים</b>, מיד אחרי היציאה מהחדר השמאלי.</li>
-  <li>הם מתפצלים על פני הלב לעורקים קטנים ולנימים בתוך השריר. כך מגיעים לתאי שריר הלב חמצן וגלוקוז.</li>
-  <li>הדם חוזר בוורידים הכליליים אל העלייה הימנית.</li></ul>
+  <ul><li>על פני הלב עוברים כלי דם: <b>כלי הדם הכליליים</b>.</li>
+  <li>שני <b>עורקים כליליים</b>, ימני ושמאלי, יוצאים מ<b>בסיס אבי העורקים</b>, מיד מעל המסתם.</li>
+  <li>הם מתפצלים לעורקים קטנים ולנימים בתוך שריר הלב.</li>
+  <li>ורידים כליליים מחזירים את הדם לעלייה הימנית.</li></ul>
   <p class="lead">"כליל" = כתר. כלי הדם מקיפים את הלב כמו כתר.</p></div>
   <div class="pic"><img src="img/coronary.jpg" alt="הלב במבט חיצוני עם העורקים הכליליים"><span class="src">מקור: מט״ח</span></div></div>
 </section>
 
 <section class="s">
-  <div class="kick">כלי הדם הכליליים · כשמשהו משתבש</div>
+  <div class="kick"><span class="part">חלק 2</span>המבנה · קוצב הלב</div>
+  <div class="split"><div class="tx"><h2>בדופן העלייה הימנית: <em>קוצב הלב</em></h2>
+  <ul><li><b>קוצב הלב</b> הוא קבוצה קטנה של תאי שריר לב מיוחדים, בדופן העלייה הימנית.</li>
+  <li>תאי הקוצב יוצרים אותות חשמליים בעצמם, בקצב קבוע, גם בלי אות מהמוח.</li>
+  <li>מהקוצב יוצאים מסלולי הולכה בשריר הלב: קודם אל העליות, ואחר כך אל החדרים.</li></ul></div>
+  <div class="pic"><img src="img/sa_av.png" alt="איור הלב: מיקום קוצב הלב בדופן העלייה הימנית" style="max-height:56vh"><span class="src">SA Node = קוצב הלב · מקור: מצגת קוצב הלב</span></div></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 2</span>בדיקת הבנה · מט״ח</div>
+  <h2>לעלייה הימנית של הלב מגיע דם:</h2>
+  <ol class="opts"><li>א. בוורידים, והוא מכיל הרבה חמצן ומעט CO₂</li><li>ב. בעורקים, והוא מכיל הרבה חמצן ומעט CO₂</li><li class="ok">ג. בוורידים, והוא מכיל הרבה CO₂ ומעט חמצן</li><li>ד. בעורקים, והוא מכיל הרבה CO₂ ומעט חמצן</li></ol>
+  <button class="reveal" type="button" data-t="opts">תשובה</button>
+  <div class="ans"><p>ג. העלייה הימנית קולטת את הדם שחוזר מהגוף בוורידים הנבובים. בתאי הגוף הדם מסר חמצן וקלט פחמן דו־חמצני, תוצר של הנשימה התאית.</p></div>
+</section>
+
+<!-- ========== חלק 3: התאמה בין מבנה לתפקוד ========== -->
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>התאמה בין מבנה לתפקוד</div>
+  <h2>עכשיו מחברים: <em>איך כל מבנה מאפשר את התפקוד?</em></h2>
+  <p>לכל מבנה נבנה שרשרת: <b>המבנה ← מה הוא גורם ← התוצאה בגוף</b>. כל שרשרת מסתיימת בתאים: כמה חמצן וגלוקוז מגיעים אליהם, ומה קורה לנשימה התאית.</p>
+  <ul class="chain"><li>מבנה</li><li>מה המבנה גורם או מאפשר</li><li>התוצאה בתאי הגוף</li></ul>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>שריר הלב</div>
+  <div class="split"><div class="tx"><h2>שריר מיוחד: <em>עבודה בלי הפסקה</em></h2>
+  <ul class="chain"><li>בתאי שריר הלב מספר רב מאוד של מיטוכונדריות</li><li>נשימה תאית אווירנית בקצב גבוה בתאי השריר</li><li>נוצר ATP רב, באופן רציף</li><li>שריר הלב מתכווץ שוב ושוב, כל החיים, בלי להתעייף</li><li>הדם זורם בגוף ברציפות, וחמצן וגלוקוז מגיעים לתאים בכל רגע</li></ul></div>
+  <div class="q"><b>שאלה: מה ההבדל בין שריר הלב לשריר הזרוע במהלך ריצה ארוכה?</b><button class="reveal" type="button">תשובה</button>
+  <div class="ans"><p>שריר השלד עלול להתעייף, ובמאמץ חלק מהאנרגיה בו מופקת בתסיסה לקטית. שריר הלב מקבל הרבה חמצן ומפיק ATP כמעט רק בנשימה תאית אווירנית, ולכן ממשיך להתכווץ בלי עייפות.</p></div></div></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>המחיצה</div>
+  <div class="split"><div class="tx"><h2>מחיצה שלמה: <em>אין ערבוב</em></h2>
+  <ul class="chain"><li>מחיצה שלמה בין החצי הימני לחצי השמאלי</li><li>הדם העשיר בחמצן (שמאל) לא מתערבב עם הדם הדל בחמצן (ימין)</li><li>מהחדר השמאלי יוצא לגוף דם בריכוז חמצן גבוה</li><li>לתאי הגוף מגיע הרבה חמצן</li><li>נשימה תאית אווירנית בקצב גבוה, ונוצר ATP רב</li></ul></div>
+  <div class="pic"><img src="img/vsd.jpg" alt="פתח במחיצה בין החדרים"><span class="src">פתח במחיצה בין החדרים · מקור: מט״ח</span></div></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>המחיצה · שאלה ממט״ח</div>
+  <h2>לעתים רחוקות נולדים תינוקות עם פתח בין שני החדרים. אצל התינוקות האלה, הדם היוצא מן החדר השמאלי:</h2>
+  <ol class="opts"><li>א. עשיר בחמצן יותר מהרגיל</li><li class="ok">ב. עשיר בפחמן דו־חמצני יותר מהרגיל</li><li>ג. זורם לריאות במקום אל הגוף</li><li>ד. זורם בלחץ גדול מהרגיל</li></ol>
+  <button class="reveal" type="button" data-t="opts">תשובה</button>
+  <div class="ans"><ul class="chain bad"><li>פתח במחיצה</li><li>דם עשיר בחמצן ודם דל בחמצן מתערבבים</li><li>מהחדר השמאלי יוצא לגוף דם בריכוז חמצן נמוך מהרגיל ובריכוז CO₂ גבוה מהרגיל</li><li>לתאי הגוף מגיע פחות חמצן</li><li>קצב הנשימה התאית האווירנית בתאים יורד, נוצר פחות ATP, והתינוק חלש ומתעייף מהר</li></ul><p class="src">את הפגם אפשר לתקן בניתוח.</p></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>המסתמים · סדר ההתכווצויות</div>
+  <h2>פעימה אחת, <em>שלב אחר שלב</em></h2>
+  <div class="strip">
+    <figure><img src="img/cyc1.png" alt="איור פעולת הלב"></figure><figure><img src="img/cyc2.png" alt="איור פעולת הלב"></figure><figure><img src="img/cyc3.png" alt="איור פעולת הלב"></figure><figure><img src="img/cyc4.png" alt="איור פעולת הלב"></figure>
+  </div>
+  <ol style="padding-inline-start:1.2em"><li>הדם נכנס מהוורידים לעליות.</li><li>העליות מתכווצות, והדם עובר לחדרים.</li><li>החדרים מתכווצים, והדם עובר לעורקים.</li><li>הלב נרפה ומתמלא שוב בדם.</li></ol>
+  <p>כיוון הזרימה: <b>ורידים ← עליות ← חדרים ← עורקים</b>. שתי העליות מתכווצות יחד, ושני החדרים מתכווצים יחד.</p>
+  <span class="src">איורי פעולת הלב: מט״ח</span>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>המסתמים · סיסטולה ודיאסטולה</div>
+  <h2>סיסטולה ו<em>דיאסטולה</em></h2>
+  <div class="cards">
+    <div class="card r"><b>סיסטולה (systole)</b><p>שלב <b>ההתכווצות</b> של חלל בלב. קודם סיסטולה של העליות, ומיד אחריה סיסטולה של החדרים.</p></div>
+    <div class="card b"><b>דיאסטולה (diastole)</b><p>שלב <b>ההרפיה</b> של חלל בלב. בזמן הדיאסטולה החלל מתמלא בדם.</p></div>
+  </div>
+  <table><thead><tr><th>שלב בפעימה (בקצב של כ־75 פעימות בדקה)</th><th>העליות</th><th>החדרים</th><th>משך בערך</th></tr></thead><tbody>
+  <tr><td>1 · סיסטולה של העליות</td><td>מתכווצות</td><td>נרפים ומתמלאים</td><td>0.1 שנייה</td></tr>
+  <tr><td>2 · סיסטולה של החדרים</td><td>נרפות ומתמלאות</td><td>מתכווצים</td><td>0.3 שנייה</td></tr>
+  <tr><td>3 · דיאסטולה של כל הלב</td><td>נרפות</td><td>נרפים</td><td>0.4 שנייה</td></tr>
+  </tbody></table>
+  <p class="lead">פעימה שלמה נמשכת כ־0.8 שנייה. בחצי מהזמן הלב כולו נרפה ומתמלא בדם.</p>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>המסתמים · מתי פתוחים ומתי סגורים</div>
+  <h2>המסתמים בכל שלב <em>של הפעימה</em></h2>
+  <table><thead><tr><th>שלב</th><th>מסתם בין עלייה לחדר</th><th>מסתם בין חדר לעורק</th><th>לאן זורם הדם</th></tr></thead><tbody>
+  <tr><td><b>סיסטולה של העליות</b></td><td class="hid"><span>פתוח: הלחץ בעלייה גבוה מהלחץ בחדר</span></td><td class="hid"><span>סגור: הלחץ בעורק גבוה מהלחץ בחדר</span></td><td class="hid"><span>מהעליות לחדרים</span></td></tr>
+  <tr><td><b>סיסטולה של החדרים</b></td><td class="hid"><span>סגור: הלחץ בחדר גבוה מהלחץ בעלייה</span></td><td class="hid"><span>פתוח: הלחץ בחדר גבוה מהלחץ בעורק</span></td><td class="hid"><span>מהחדרים לעורקים: לאבי העורקים ולעורק הריאה</span></td></tr>
+  <tr><td><b>דיאסטולה</b></td><td class="hid"><span>פתוח: הלחץ בעלייה גבוה מהלחץ בחדר הנרפה</span></td><td class="hid"><span>סגור: הלחץ בעורק גבוה מהלחץ בחדר הנרפה</span></td><td class="hid"><span>מהוורידים לעליות, ומשם לחדרים</span></td></tr>
+  </tbody></table>
+  <button class="reveal" type="button" data-t="table">חשיפת הטבלה</button>
+  <p>המסתמים נפתחים ונסגרים באופן סביל, בהשפעת הפרש הלחצים משני צדיהם. שני סוגי המסתמים אף פעם לא פתוחים יחד.</p>
+  <div class="q"><b>שאלה: בבדיקה נמדד לחץ דם של 120/80 (מ"מ כספית). מה פירוש שני המספרים?</b><button class="reveal" type="button">תשובה</button>
+  <div class="ans"><p><b>120 = לחץ סיסטולי:</b> הלחץ בעורקים בזמן הסיסטולה של החדרים, כשהדם נדחף אליהם. <b>80 = לחץ דיאסטולי:</b> הלחץ בעורקים בזמן הדיאסטולה, כשהחדרים נרפים. שני הלחצים נמדדים בעורק. (על פי מבחן רבעון 1 תש״ף, כיתה י׳)</p></div></div>
+</section>
+
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>המסתמים · השרשרת</div>
+  <div class="split"><div class="tx"><h2>מה המסתמים <em>מאפשרים</em>?</h2>
+  <ul class="chain"><li>המסתמים נסגרים כשהלחץ מאחוריהם גבוה מהלחץ לפניהם</li><li>הדם לא חוזר לאחור, וזורם רק בכיוון אחד: עליות ← חדרים ← עורקים</li><li>כל הדם שבחדר יוצא בכל התכווצות לעורק</li><li>בכל פעימה יוצאת כמות דם גדולה לגוף ולריאות</li><li>חמצן וגלוקוז מגיעים לתאים, והנשימה התאית מתרחשת בקצב גבוה</li></ul></div>
+  <div class="pic"><img src="img/stethoscope.jpg" alt="רופאה מקשיבה ללב של ילדה בסטטוסקופ"><span class="src">קול ראשון: סגירת המסתמים בין העליות לחדרים, בתחילת הסיסטולה של החדרים. קול שני: סגירת המסתמים בין החדרים לעורקים, בתחילת הדיאסטולה. · מקור: מט״ח</span></div></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>המסתמים · שאלה מבגרות תשפ״ב</div>
+  <h2>לאדם יש פגיעה במסתם בין החדר הימני ובין עורק הריאה. המסתם לא נסגר כראוי. למה הפגיעה עלולה לגרום?</h2>
+  <ol class="opts"><li class="ok">א. לחזרה של דם דל בחמצן לחדר הימני</li><li>ב. לערבוב של דם עשיר בחמצן עם דם דל בחמצן</li><li>ג. לזרימת דם מן החדר הימני לחדר השמאלי</li><li>ד. לחסימה של העורקים הכליליים</li></ol>
+  <button class="reveal" type="button" data-t="opts">תשובה</button>
+  <div class="ans"><ul class="chain bad"><li>המסתם לא נסגר כשהחדר הימני נרפה</li><li>חלק מהדם חוזר מעורק הריאה לחדר הימני</li><li>פחות דם מגיע בכל פעימה לריאות, ופחות דם נטען בחמצן</li><li>פחות חמצן מגיע לתאי הגוף, והנשימה התאית בהם יורדת</li></ul>
+  <p>שימו לב: מסתם פגום גורם לזרימה <b>לאחור</b>, לא לערבוב. ערבוב נגרם מפתח במחיצה. בבגרות כ־70% מהנבחנים בחרו בתשובה ב.</p></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>עובי הדופן · החדר השמאלי</div>
+  <div class="split"><div class="tx"><h2>החדר השמאלי: <em>הדופן העבה ביותר</em></h2>
+  <ul class="chain"><li>שכבה שרירית עבה בדופן החדר השמאלי: הרבה תאי שריר</li><li>התכווצות חזקה</li><li>לחץ דם גבוה מאוד באבי העורקים</li><li>הדם זורם לכל הגוף: למרחקים גדולים, נגד כוח הכובד, דרך מיליארדי נימים</li><li>חמצן וגלוקוז מגיעים לכל תאי הגוף, גם הרחוקים ביותר, והנשימה התאית בהם מתרחשת</li></ul>
+  <p class="src">על פי בגרות תשע״ז, שאלון 43381, שאלה 2</p></div>
+  <div class="q"><b>שאלה: הדופן של החדר הימני דקה יותר. למה זה מתאים לתפקיד שלו?</b><button class="reveal" type="button">תשובה</button>
+  <div class="ans"><p>החדר הימני מזרים דם רק לריאות, שנמצאות ליד הלב. התכווצות חלשה יותר יוצרת לחץ נמוך יותר בעורק הריאה, והלחץ הזה מספיק להזרמת הדם דרך נימי הריאה. שם הדם נטען בחמצן.</p></div></div></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>עובי הדופן · העליות</div>
+  <div class="split"><div class="tx"><h2>העליות: <em>דופן דקה, לחץ נמוך</em></h2>
+  <ul class="chain"><li>הדם חוזר ללב בוורידים בלחץ הנמוך ביותר במערכת הדם</li><li>הדופן של העליות דקה וגמישה, ומתמתחת בקלות</li><li>העליות מתמלאות בדם גם בלחץ נמוך</li><li>קליטת כל הדם שחוזר מהגוף ומהריאות</li></ul>
+  <ul class="chain"><li>העליות מזרימות דם רק לחדרים שמתחתן, מרחק קצר</li><li>התכווצות של דופן דקה מספיקה למילוי החדרים</li></ul></div>
+  <div class="pic"><div class="fig" data-h='{"labels":true,"flow":true}'></div><span class="src">הדם חוזר בוורידים אל העליות</span></div></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>הדופן הפנימית</div>
+  <div class="split"><div class="tx"><h2>דופן פנימית <em>חלקה</em></h2>
+  <ul class="chain"><li>הצד הפנימי של דופן הלב חלק</li><li>חיכוך קטן בין הדם לדופן</li><li>הדם זורם בקלות, וחלק קטן מאנרגיית ההתכווצות מתבזבז על חיכוך</li></ul></div>
+  <div class="pic"><img src="img/smooth.jpg" alt="הדופן הפנימית של לב מנותח"><span class="src">מקור: מט״ח</span></div></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>כלי הדם הכליליים</div>
+  <div class="q"><b>שאלה: חללי הלב מלאים בדם כל הזמן. האם תאי שריר הלב מקבלים חמצן מהדם שבתוך החללים?</b><button class="reveal" type="button">תשובה</button>
+  <div class="ans"><p>לא. הדופן עבה, והדם שבחללים לא מגיע לרוב תאי השריר. החמצן מגיע לתאי שריר הלב דרך כלי הדם הכליליים.</p></div></div>
+  <div class="split"><div class="tx">
+  <ul class="chain"><li>העורקים הכליליים יוצאים מבסיס אבי העורקים</li><li>מגיע אליהם דם עשיר בחמצן, בלחץ גבוה, מיד ביציאה מהלב</li><li>הם מתפצלים לנימים בכל שכבת השריר</li><li>חמצן וגלוקוז מגיעים לכל תאי שריר הלב</li><li>נשימה תאית בקצב גבוה, ATP רב, והתכווצות רציפה של הלב</li></ul></div>
+  <div class="pic"><img src="img/aorta_coronary.png" alt="אבי העורקים ומוצא העורקים הכליליים בבסיסו" style="max-height:50vh"><span class="src">מוצא העורקים הכליליים בבסיס אבי העורקים · מקור: מצגת הלב</span></div></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>כלי הדם הכליליים · כשמשהו משתבש</div>
   <div class="split"><div class="tx"><h2>חסימה של <em>עורק כלילי</em></h2>
-  <p>משקעים של שומן מצרים את חלל העורק. כשהעורק נחסם, תאי שריר הלב שמעבר לחסימה לא מקבלים חמצן ומתים: <b>אוטם שריר הלב</b> (התקף לב).</p>
+  <ul class="chain bad"><li>משקעי שומן מצרים את העורק הכלילי, עד חסימה</li><li>לתאי שריר הלב שמעבר לחסימה לא מגיע חמצן</li><li>הנשימה התאית האווירנית בתאים נפסקת, ולא נוצר מספיק ATP</li><li>התאים מתים: <b>אוטם שריר הלב</b> (התקף לב)</li><li>האזור המת לא מתכווץ, והזרמת הדם לגוף נפגעת</li></ul>
   <p>טיפול נפוץ: צנתור, והחדרת תומכן (סטנט) שמרחיב את העורק.</p></div>
   <div class="pic"><img src="img/stent.jpg" alt="עורק מוצר, ואחרי החדרת תומכן"><span class="src">מקור: מט״ח</span></div></div>
 </section>
 
 <section class="s">
-  <div class="kick">מבנה ותפקוד · קוצב הלב</div>
-  <div class="split"><div class="tx"><h2>מי קובע את <em>הקצב</em>?</h2>
-  <ul><li><b>קוצב הלב</b> הוא קבוצה של תאי שריר לב מיוחדים בדופן <b>העלייה הימנית</b>.</li>
-  <li>תאי הקוצב יוצרים אותות חשמליים בעצמם, בקצב קבוע, גם בלי אות מהמוח.</li>
-  <li>האות מתפשט בשריר הלב: קודם מתכווצות העליות, ומיד אחריהן החדרים.</li></ul>
-  <p class="lead">מכשיר אק״ג מודד את הפעילות החשמלית הזו.</p>
-  <img src="img/ecg.png" alt="גרף אק״ג" style="max-width:min(100%,360px);border-radius:8px"></div>
-  <div class="pic"><img src="img/sa_av.png" alt="איור הלב: מיקום קוצב הלב בדופן העלייה הימנית" style="max-height:58vh"><span class="src">SA Node = קוצב הלב · מקור: מצגת קוצב הלב</span></div></div>
+  <div class="kick"><span class="part">חלק 3</span>כלי הדם הכליליים · שאלה ממבחן כיתתי</div>
+  <div class="split"><div class="tx"><h2>אצל תינוק, העורק הכלילי השמאלי יוצא מ<em>עורק הריאה</em> במקום מאבי העורקים. בחלק משריר הלב נמצאה רקמה מתה. מה ההסבר?</h2>
+  <button class="reveal" type="button">תשובה</button>
+  <div class="ans"><ul class="chain bad"><li>בעורק הריאה זורם דם דל בחמצן</li><li>לחלק משריר הלב מגיע דם דל בחמצן</li><li>הנשימה התאית בתאי השריר האלה איטית מאוד, ונוצר מעט ATP</li><li>חלק מהתאים מתים</li></ul></div></div>
+  <div class="pic"><img src="img/coronary_anomaly.jpg" alt="השוואה בין לב תקין ללב שבו העורק הכלילי השמאלי יוצא מעורק הריאה"><span class="src">מקור: מבחן רבעון 1 תש״ף, שאלה 24</span></div></div>
 </section>
 
 <section class="s">
-  <div class="kick">קוצב הלב · ויסות</div>
+  <div class="kick"><span class="part">חלק 3</span>קוצב הלב</div>
+  <div class="split"><div class="tx"><h2>קוצב הלב: <em>סדר ההתכווצות</em></h2>
+  <ul class="chain"><li>תאי הקוצב בדופן העלייה הימנית יוצרים אות חשמלי</li><li>האות מתפשט קודם בעליות, ורק אחר כך בחדרים</li><li>העליות מתכווצות לפני החדרים, והחדרים מתמלאים בדם לפני שהם מתכווצים</li><li>בכל פעימה יוצאת מהחדרים כמות דם גדולה</li><li>הזרמה רציפה של חמצן וגלוקוז לתאים</li></ul></div>
+  <div class="q"><b>שאלה: מה יקרה אם העליות והחדרים יתכווצו באותו זמן?</b><button class="reveal" type="button">תשובה</button>
+  <div class="ans"><p>החדרים יתכווצו לפני שהתמלאו בדם מהעליות. בכל פעימה תצא מהם פחות דם, ולתאי הגוף יגיעו פחות חמצן וגלוקוז.</p></div></div></div>
+</section>
+
+<section class="s">
+  <div class="kick"><span class="part">חלק 3</span>קוצב הלב · ויסות הקצב</div>
   <div class="split"><div class="tx"><h2>הקצב <em>משתנה</em></h2>
-  <p>עצבים מהמוח וההורמון אדרנלין משנים את הקצב של קוצב הלב: במאמץ ובפחד הקצב עולה, ובמנוחה הוא יורד. הם משנים את הקצב, אבל הפעימה עצמה נוצרת בקוצב.</p>
-  <p><b>קוצב מלאכותי:</b> כשהקוצב הטבעי לא פועל כראוי, משתילים בחזה מכשיר קטן. המכשיר שולח אותות חשמליים לשריר הלב.</p></div>
-  <div class="pic"><img src="img/xray.jpg" alt="צילום רנטגן של חזה עם קוצב מלאכותי"><span class="src">צילום רנטגן: קוצב מלאכותי בחזה</span></div></div>
+  <ul class="chain"><li>במאמץ: אותות עצביים מהמוח והורמון האדרנלין</li><li>תאי הקוצב יוצרים אותות בקצב מהיר יותר</li><li>קצב הלב עולה, ותפוקת הלב עולה</li><li>יותר חמצן וגלוקוז מגיעים בכל דקה לשרירים הפעילים</li></ul>
+  <p>המוח והאדרנלין <b>משנים</b> את הקצב. הפעימה עצמה נוצרת בקוצב.</p>
+  <p><b>קוצב מלאכותי:</b> כשהקוצב הטבעי לא פועל כראוי, משתילים בחזה מכשיר שיוצר אותות חשמליים בשריר הלב.</p></div>
+  <div class="pic"><img src="img/xray.jpg" alt="צילום רנטגן של חזה עם קוצב מלאכותי"><span class="src">צילום רנטגן: קוצב מלאכותי בחזה</span><img src="img/ecg_photo.jpg" alt="בדיקת אק״ג" style="max-height:24vh"><span class="src">אק״ג: מדידת הפעילות החשמלית של הלב · מקור: מט״ח</span></div></div>
 </section>
 
 <section class="s">
   <div class="kick">סיכום</div>
   <h2>התאמה בין מבנה לתפקוד</h2>
-  <table><thead><tr><th>מבנה</th><th>תפקוד</th></tr></thead><tbody>
-  <tr><td>מחיצה שלמה</td><td>אין ערבוב בין דם עשיר בחמצן לדם דל בחמצן</td></tr>
-  <tr><td>מסתמים</td><td>זרימה בכיוון אחד: עליות ← חדרים ← עורקים</td></tr>
-  <tr><td>דופן עבה בחדר השמאלי</td><td>הזרמת דם בלחץ גבוה לכל הגוף</td></tr>
-  <tr><td>דופן דקה בעליות</td><td>הזרמת דם למרחק קצר, לחדרים</td></tr>
-  <tr><td>דופן פנימית חלקה</td><td>חיכוך קטן בין הדם לדופן</td></tr>
-  <tr><td>כלי דם כליליים</td><td>אספקת חמצן וגלוקוז לתאי שריר הלב</td></tr>
-  <tr><td>קוצב הלב</td><td>אותות חשמליים והתכווצות סדירה של שריר הלב</td></tr>
+  <table><thead><tr><th>מבנה</th><th>מה המבנה גורם או מאפשר</th><th>התוצאה בגוף</th></tr></thead><tbody>
+  <tr><td>שריר הלב: מיטוכונדריות רבות</td><td>ATP רב, התכווצות רציפה בלי עייפות</td><td>זרימת דם רציפה כל החיים</td></tr>
+  <tr><td>מחיצה שלמה</td><td>אין ערבוב בין דם עשיר בחמצן לדם דל בחמצן</td><td>לגוף מגיע דם בריכוז חמצן גבוה: נשימה תאית בקצב גבוה</td></tr>
+  <tr><td>מסתמים</td><td>זרימה בכיוון אחד, בלי חזרה לאחור</td><td>כמות דם גדולה יוצאת בכל פעימה לגוף ולריאות</td></tr>
+  <tr><td>דופן עבה בחדר השמאלי</td><td>התכווצות חזקה, לחץ גבוה באבי העורקים</td><td>הדם מגיע לכל תאי הגוף, גם הרחוקים</td></tr>
+  <tr><td>דופן דקה בחדר הימני</td><td>לחץ נמוך יותר בעורק הריאה</td><td>הזרמה לריאות הקרובות</td></tr>
+  <tr><td>דופן דקה וגמישה בעליות</td><td>מילוי בדם גם בלחץ נמוך</td><td>קליטת הדם שחוזר בוורידים</td></tr>
+  <tr><td>דופן פנימית חלקה</td><td>חיכוך קטן</td><td>זרימה קלה של הדם</td></tr>
+  <tr><td>כלי דם כליליים</td><td>חמצן וגלוקוז לתאי שריר הלב</td><td>נשימה תאית בשריר הלב והתכווצות רציפה</td></tr>
+  <tr><td>קוצב הלב</td><td>עליות לפני חדרים, בקצב סדיר</td><td>חדרים מלאים בכל פעימה; הקצב עולה במאמץ</td></tr>
   </tbody></table>
-</section>
-
-<section class="s">
-  <div class="kick">בדיקת הבנה · מט״ח</div>
-  <h2>לעלייה הימנית של הלב מגיע דם:</h2>
-  <ol class="opts"><li>א. בוורידים, והוא מכיל הרבה חמצן ומעט CO₂</li><li>ב. בעורקים, והוא מכיל הרבה חמצן ומעט CO₂</li><li class="ok">ג. בוורידים, והוא מכיל הרבה CO₂ ומעט חמצן</li><li>ד. בעורקים, והוא מכיל הרבה CO₂ ומעט חמצן</li></ol>
-  <button class="reveal" type="button" data-t="opts">תשובה</button>
-  <div class="ans"><p>ג. העלייה הימנית קולטת את הדם שחוזר מהגוף בוורידים הנבובים.</p></div>
 </section>
 
 <section class="s">
@@ -274,12 +407,12 @@ td.hid span{visibility:hidden}td.hid.show span{visibility:visible}
 <script>
 document.head.insertAdjacentHTML('beforeend','<style>'+HEART_CSS+'</style>');
 document.querySelectorAll('.fig').forEach(f=>{f.innerHTML=heartSVG(JSON.parse(f.dataset.h||'{}'))});
-document.querySelectorAll('.reveal').forEach(b=>b.onclick=()=>{const s=b.closest('.s');
-  if(b.dataset.t==='table')s.querySelectorAll('td.hid').forEach(td=>td.classList.toggle('show'));
-  if(b.dataset.t==='opts')s.querySelector('.opts').classList.toggle('done');
-  const a=s.querySelector('.ans');if(a)a.classList.toggle('show')});
+document.querySelectorAll('.reveal').forEach(b=>b.onclick=()=>{const box=b.closest('.q')||b.closest('.tx')||b.closest('.s');
+  if(b.dataset.t==='table')box.querySelectorAll('td.hid').forEach(td=>td.classList.toggle('show'));
+  if(b.dataset.t==='opts')box.querySelector('.opts').classList.toggle('done');
+  const a=box.matches('.q')?box.querySelector('.ans'):box.querySelector(':scope > .ans');if(a)a.classList.toggle('show')});
 const S=[...document.querySelectorAll('.s')];let i=0;const cnt=document.getElementById('cnt');
-function go(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach((s,k)=>s.classList.toggle('on',k===i));cnt.textContent=(i+1)+' / '+S.length;history.replaceState(null,'','#s'+(i+1))}
+function go(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach((s,k)=>s.classList.toggle('on',k===i));S[i].scrollTop=0;cnt.textContent=(i+1)+' / '+S.length;history.replaceState(null,'','#s'+(i+1))}
 document.getElementById('next').onclick=()=>go(i+1);document.getElementById('prev').onclick=()=>go(i-1);
 addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key===' '||e.key==='PageDown')go(i+1);if(e.key==='ArrowRight'||e.key==='PageUp')go(i-1)});
 go((parseInt(location.hash.slice(2))||1)-1);
