@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>מעבדת הלב</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="heart.js"></script>
+<style>
+/* Atlas activity: name gate, five steps on one page, self-check per step, PDF after the checks */
+:root{--bg:#F4F7FA;--ink:#13233A;--mut:#5E6E82;--rich:#D7263D;--poor:#2457C5;--card:#fff;--line:#DCE3EA;--ok:#1E7B4D;--no:#B3261E;--gold:#F2B705}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:Assistant,Arial,sans-serif;font-size:17px;line-height:1.5;padding-inline:16px;overflow-x:hidden}
+.page{max-width:1080px;margin:auto;padding-block:16px 40px;display:flex;flex-direction:column;gap:16px}
+.homebar{max-width:1080px;margin:12px auto 0;display:flex;gap:8px;flex-wrap:wrap}
+.homebar a{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:20px;padding:4px 14px;font-weight:800;font-size:14px;text-decoration:none}
+.homebar a:hover{background:var(--ink);color:#fff}
+.kick{font-weight:800;color:var(--rich);font-size:14px}
+h1{font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1.05}h1 span{color:var(--rich)}
+h2{font-size:clamp(20px,2.6vw,26px);font-weight:800}
+.lead,.note{color:var(--mut)}.note{font-size:15px}
+.who{display:flex;gap:10px;flex-wrap:wrap;font-weight:700}
+.who label{display:flex;flex-direction:column;gap:4px;flex:1;min-width:150px}
+input[type=text],select{font:inherit;font-weight:400;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);max-width:100%}
+.trail{display:flex;gap:6px;flex-wrap:wrap}
+.trail button{font:inherit;font-size:14px;font-weight:700;padding:4px 14px;border-radius:20px;border:0;background:var(--line);color:var(--ink);cursor:pointer}
+.trail button.cur{background:var(--ink);color:#fff}.trail button.done{background:var(--rich);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.step{display:none}.step.on{display:flex}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:20px;align-items:start}
+.row{display:grid;grid-template-columns:minmax(7em,1fr) minmax(0,1.4fr) minmax(0,1.4fr);gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}.row b{font-weight:800}
+.row.r b{color:var(--rich)}.row.b b{color:var(--poor)}
+.lrow{display:grid;grid-template-columns:2.4em minmax(0,1fr);gap:8px;align-items:center;padding:4px 0}
+.lrow .n{width:30px;height:30px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;background:#fff}
+.lrow.cur .n{background:var(--gold)}
+.frow{display:grid;grid-template-columns:minmax(9em,1fr) minmax(0,2fr);gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+select.good{border:2px solid var(--ok);background:#E8F4EE}select.bad{border:2px solid var(--no);background:#FBE7E5}
+.q{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid var(--line)}
+.q:last-of-type{border-bottom:0}
+.q>p{font-weight:700}
+.q label{display:flex;gap:8px;align-items:flex-start;padding:5px 10px;border-radius:8px;border:1px solid transparent;cursor:pointer}
+.q label.good{border-color:var(--ok);background:#E8F4EE}.q label.bad{border-color:var(--no);background:#FBE7E5}
+.q .ex{display:none;font-size:15px;color:var(--mut)}.q.checked .ex{display:block}
+.btn{font:inherit;font-weight:800;background:var(--ink);color:#fff;border:0;border-radius:10px;padding:10px 20px;cursor:pointer;align-self:flex-start;text-decoration:none}
+.btn.alt{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+.btn.red{background:var(--rich)}
+.msg{font-weight:700;min-height:1.4em}.msg.good{color:var(--ok)}.msg.bad{color:var(--no)}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.figs figure{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:4px;align-items:center}
+.figs img{max-width:100%;max-height:260px;height:auto;border-radius:8px}
+figcaption{font-size:13px;color:var(--mut)}
+.tip{background:#FFF8E1;border-inline-start:6px solid var(--gold);border-radius:12px;padding:10px 14px}
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi{background:var(--bg);border-radius:12px;padding:12px 14px}
+.kpi .v{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;direction:ltr;text-align:right}
+.kpi .l{color:var(--mut);font-size:14px;font-weight:600}
+.kpi.tot{background:var(--ink);color:#fff}.kpi.tot .l{color:#C9D3DF}
+.credit{color:var(--mut);font-size:14px;border-top:1px solid var(--line);padding-top:14px}
+dialog{border:0;border-radius:18px;padding:24px;max-width:min(92vw,440px);margin:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+[hidden]{display:none!important}
+dialog::backdrop{background:rgba(19,35,58,.55)}
+dialog form{display:flex;flex-direction:column;gap:12px}
+@media(max-width:760px){.two{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}.row b{grid-column:1/-1}.frow{grid-template-columns:1fr}}
+@media print{.homebar,.trail,.btn,dialog,.msg:empty{display:none!important}.step{display:flex!important;break-inside:avoid-page;margin-bottom:12px}body{background:#fff}.card{border:1px solid #999}}
+</style>
+</head>
+<body>
+<nav class="homebar" aria-label="ניווט"><a href="../index.html">🏠 דף הבית</a><a href="index.html">→ לשיעור</a></nav>
+<div class="page">
+  <div class="kick">ביולוגיה · כיתה י' · שיעור 4 · סימולציה</div>
+  <h1>מעבדת <span>הלב</span></h1>
+  <p class="lead">מהתפקידים אל המבנה, ומהמבנה אל ההתאמה ביניהם. בסוף כל שלב לוחצים "בדיקה ✓".</p>
+  <div class="who"><label>שם התלמיד/ה<input type="text" id="nm" autocomplete="name"></label><label>כיתה<input type="text" id="cl"></label></div>
+  <div class="trail" id="trail"><button type="button" data-s="0">1 · התפקידים</button><button type="button" data-s="1">2 · המבנה</button><button type="button" data-s="2">3 · מבנה ותפקוד</button><button type="button" data-s="3">4 · קוצב וכליליים</button><button type="button" data-s="4">5 · סיכום</button></div>
+
+  <section class="card step" id="s0">
+    <h2>שלב 1 · ארבעת התפקידים</h2>
+    <p>לכל תפקיד בחרו את החלל בלב שמבצע אותו, ואת כלי הדם שמחובר לחלל הזה.</p>
+    <div class="two">
+      <div id="roles"></div>
+      <div class="figs"><figure><img src="img/chest.jpg" alt="הלב בבית החזה בין הריאות"><figcaption>הלב בבית החזה · מקור: מט״ח</figcaption></figure></div>
+    </div>
+    <button class="btn" type="button" data-check="0">בדיקה ✓</button><p class="msg" id="m0"></p>
+  </section>
+
+  <section class="card step" id="s1">
+    <h2>שלב 2 · המבנה: זיהוי על האיור</h2>
+    <p class="tip">באיור, ימין ושמאל הם של האדם. לכן הצד הימני של הלב מופיע משמאלכם. רמז: אבי העורקים יוצא מהחדר השמאלי.</p>
+    <div class="two">
+      <div id="fig1"></div>
+      <div id="labels"></div>
+    </div>
+    <button class="btn" type="button" data-check="1">בדיקה ✓</button><p class="msg" id="m1"></p>
+  </section>
+
+  <section class="card step" id="s2">
+    <h2>שלב 3 · התאמה בין מבנה לתפקוד</h2>
+    <p>לכל מבנה בחרו את התפקוד שמתאים לו. כל תפקוד מתאים למבנה אחד.</p>
+    <div id="funcs"></div>
+    <button class="btn" type="button" data-check="2">בדיקה ✓</button><p class="msg" id="m2"></p>
+  </section>
+
+  <section class="card step" id="s3">
+    <h2>שלב 4 · קוצב הלב וכלי הדם הכליליים</h2>
+    <div class="two">
+      <div id="fig3"></div>
+      <div class="figs"><figure><img src="img/sa_av.png" alt="מיקום קוצב הלב בלב"><figcaption>SA Node = קוצב הלב</figcaption></figure><figure><img src="img/coronary.jpg" alt="העורקים הכליליים על פני הלב"><figcaption>כלי הדם הכליליים · מקור: מט״ח</figcaption></figure></div>
+    </div>
+    <div id="qs"></div>
+    <button class="btn" type="button" data-check="3">בדיקה ✓</button><p class="msg" id="m3"></p>
+  </section>
+
+  <section class="card step" id="s4">
+    <h2>שלב 5 · סיכום</h2>
+    <div class="score" id="score"></div>
+    <p class="msg" id="m4"></p>
+    <div id="pdfbox" hidden style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn red" type="button" id="pdf">📄 שמירה כ־PDF</button>
+      <p class="note">בחלון ההדפסה בוחרים "שמירה כ־PDF". את הקובץ מעלים למטלה ב־Classroom.</p>
+    </div>
+  </section>
+
+  <p class="credit">היחידה מתבססת על חומרי מט״ח ומורחבת בחומרים נוספים. נבנתה על ידי חגית ברגמן.</p>
+</div>
+
+<dialog id="gate"><form method="dialog" id="gf">
+  <h2>לפני שמתחילים</h2>
+  <label>שם מלא<input type="text" id="gn" required minlength="2" autocomplete="name"></label>
+  <label>כיתה<input type="text" id="gc" required></label>
+  <p class="msg bad" id="gm"></p>
+  <button class="btn" type="submit">מתחילים ←</button>
+</form></dialog>
+
+<script>
+document.head.insertAdjacentHTML('beforeend','<style>'+HEART_CSS+'</style>');
+const $=id=>document.getElementById(id);
+const opt=(arr,ph)=>`<option value="">${ph||'בחרו…'}</option>`+arr.map((x,i)=>`<option value="${i}">${x}</option>`).join('');
+
+// gate
+const gate=$('gate');
+function openGate(){if(gate.showModal)gate.showModal();else gate.setAttribute('open','')}
+$('gf').addEventListener('submit',e=>{const n=$('gn').value.trim(),c=$('gc').value.trim();
+  if(n.replace(/\s/g,'').length<2||!c){e.preventDefault();$('gm').textContent='כתבו שם מלא וכיתה';return}
+  $('nm').value=n;$('cl').value=c});
+gate.addEventListener('cancel',e=>e.preventDefault());
+openGate();
+
+// step 1: roles
+const CH=['עלייה ימנית','עלייה שמאלית','חדר ימני','חדר שמאלי'];
+const VS=['אבי העורקים','עורק הריאה','הוורידים הנבובים','ורידי הריאה'];
+const ROLES=[['הזרמת דם עשיר בחמצן לגוף','r',3,0],['הזרמת דם דל בחמצן לריאות','b',2,1],['קליטת הדם שחוזר מהגוף','b',0,2],['קליטת הדם שחוזר מהריאות','r',1,3]];
+$('roles').innerHTML=ROLES.map((r,i)=>`<div class="row ${r[1]}"><b>${r[0]}</b><select data-a="${r[2]}" aria-label="חלל בלב: ${r[0]}">${opt(CH,'חלל בלב…')}</select><select data-a="${r[3]}" aria-label="כלי דם: ${r[0]}">${opt(VS,'כלי דם…')}</select></div>`).join('');
+
+// step 2: labels on the drawing
+const NAMES=['עלייה ימנית','עלייה שמאלית','חדר ימני','חדר שמאלי','מחיצה','מסתם בין עלייה לחדר','מסתם בין חדר לעורק','אבי העורקים','עורק הריאה','וריד נבוב עליון','וריד נבוב תחתון','ורידי הריאה'];
+const SPOTS=[{n:1,x:118,y:192,a:0},{n:2,x:130,y:318,a:2},{n:3,x:297,y:192,a:1},{n:4,x:268,y:325,a:3},{n:5,x:209,y:318,a:4},{n:6,x:124,y:256,a:5},{n:7,x:294,y:254,a:5},
+  {n:8,x:233,y:160,a:7},{n:9,x:181,y:172,a:8},{n:10,x:111,y:62,a:9},{n:11,x:43,y:380,a:10},{n:12,x:362,y:186,a:11},{n:13,x:233,y:244,a:6}];
+$('fig1').innerHTML=heartSVG({spots:SPOTS});
+$('labels').innerHTML=SPOTS.map(s=>`<div class="lrow" data-n="${s.n}"><span class="n">${s.n}</span><select data-a="${s.a}" aria-label="מבנה ${s.n}">${opt(NAMES)}</select></div>`).join('');
+function cur(n){document.querySelectorAll('#fig1 .spot').forEach(g=>g.classList.toggle('cur',+g.dataset.n===n));document.querySelectorAll('.lrow').forEach(r=>r.classList.toggle('cur',+r.dataset.n===n))}
+document.querySelectorAll('#fig1 .spot').forEach(g=>{const f=()=>{const n=+g.dataset.n;cur(n);document.querySelector(`.lrow[data-n="${n}"] select`).focus()};g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}})});
+document.querySelectorAll('.lrow select').forEach(s=>s.addEventListener('focus',()=>cur(+s.closest('.lrow').dataset.n)));
+
+// step 3: structure to function
+const FN=['אין ערבוב בין דם עשיר בחמצן לדם דל בחמצן','זרימה בכיוון אחד, בלי חזרה לאחור','הזרמת דם בלחץ גבוה לכל הגוף','הזרמת דם למרחק קצר, אל החדרים','חיכוך קטן בין הדם לדופן','אספקת חמצן וגלוקוז לתאי שריר הלב','יצירת אותות חשמליים והתכווצות סדירה של שריר הלב'];
+const ORDER=[3,6,0,5,2,4,1];
+const ST=[['מסתמים',1],['כלי דם כליליים',5],['מחיצה שלמה',0],['קוצב הלב',6],['דופן עבה בחדר השמאלי',2],['דופן פנימית חלקה',4],['דופן דקה בעליות',3]];
+$('funcs').innerHTML=ST.map(s=>`<div class="frow"><b>${s[0]}</b><select data-a="${s[1]}" aria-label="תפקוד: ${s[0]}"><option value="">בחרו תפקוד…</option>${ORDER.map(k=>`<option value="${k}">${FN[k]}</option>`).join('')}</select></div>`).join('');
+
+// step 4: pacemaker and coronary vessels
+$('fig3').innerHTML=heartSVG({coronary:true,spots:[{n:'א',x:112,y:150},{n:'ב',x:268,y:385},{n:'ג',x:209,y:330},{n:'ד',x:233,y:120}]});
+const QS=[
+ ['באיור מסומנים ארבעה מקומות: א, ב, ג, ד. איפה נמצא קוצב הלב?',['א · בדופן העלייה הימנית','ב · בקצה החדר השמאלי','ג · במחיצה בין החדרים','ד · בדופן אבי העורקים'],0,'קוצב הלב הוא קבוצה של תאי שריר לב מיוחדים בדופן העלייה הימנית.'],
+ ['תאי שריר הלב מקבלים חומרים מהדם המצוי:',['בעורק הריאה','בכלי הדם הכליליים','בחדר השמאלי','בעליות'],1,'על פי מבחן רבעון א, כיתה י׳.'],
+ ['באיור כלי הדם הכליליים מסומנים בקווים כהים. מאיזה כלי דם מתפצלים העורקים הכליליים?',['אבי העורקים','עורק הריאה','הווריד הנבוב העליון','ורידי הריאה'],0,'העורקים הכליליים מתפצלים מבסיס אבי העורקים, ולכן מגיע אליהם דם עשיר בחמצן.'],
+ ['באחד העורקים הכליליים נוצרה חסימה. מה יקרה?',['הדם יתערבב בין צד ימין לצד שמאל של הלב','תאי שריר הלב שמעבר לחסימה לא יקבלו חמצן, וחלק מהם ימותו','הדם יחזור מהחדרים לעליות','קוצב הלב יפסיק ליצור אותות חשמליים'],1,'זהו אוטם שריר הלב (התקף לב).'],
+ ['מה נכון לגבי קוצב הלב?',['הלב מתכווץ רק כשמגיע אליו אות עצבי מהמוח','קוצב הלב נמצא בחדר השמאלי, החלל שהדופן שלו העבה ביותר','תאי הקוצב יוצרים אותות חשמליים בעצמם, גם בלי אות מהמוח','רק קוצב הלב מתכווץ, ושאר הלב לא מתכווץ'],2,'עצבים מהמוח ואדרנלין משנים את קצב הקוצב, אבל האותות נוצרים בקוצב עצמו.']];
+$('qs').innerHTML=QS.map((q,i)=>`<div class="q" data-a="${q[2]}"><p>${i+1}. ${q[0]}</p>${q[1].map(o=>`<label><input type="radio" name="q${i}">${o}</label>`).join('')}<p class="ex">${q[3]}</p></div>`).join('');
+
+// checking
+const RES=[null,null,null,null],TOT=[8,13,7,5],NM=['התפקידים','המבנה','מבנה ותפקוד','קוצב וכליליים'];
+function checkSel(root){let ok=0;root.querySelectorAll('select[data-a]').forEach(s=>{const g=s.value!==''&&s.value===s.dataset.a;s.classList.toggle('good',g);s.classList.toggle('bad',!g);if(g)ok++});return ok}
+const CHECK=[
+ ()=>checkSel($('roles')),
+ ()=>{const ok=checkSel($('labels'));SPOTS.forEach(s=>{const sel=document.querySelector(`.lrow[data-n="${s.n}"] select`),g=sel.value===String(s.a);const sp=document.querySelector(`#fig1 .spot[data-n="${s.n}"]`);sp.classList.toggle('good',g);sp.classList.toggle('bad',!g)});return ok},
+ ()=>checkSel($('funcs')),
+ ()=>{let ok=0;document.querySelectorAll('#qs .q').forEach(q=>{const ls=[...q.querySelectorAll('label')],a=+q.dataset.a;ls.forEach((l,k)=>{l.classList.remove('good','bad');if(k===a)l.classList.add('good');else if(l.querySelector('input').checked)l.classList.add('bad')});if(ls[a].querySelector('input').checked)ok++;q.classList.add('checked')});return ok}];
+document.querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>{const k=+b.dataset.check,ok=CHECK[k]();RES[k]=ok;
+  const m=$('m'+k);m.className='msg '+(ok===TOT[k]?'good':'bad');
+  m.textContent=ok===TOT[k]?`כל הכבוד: ${ok} מתוך ${TOT[k]}. אפשר להמשיך לשלב הבא.`:`${ok} מתוך ${TOT[k]} נכונות. המסומנות באדום שגויות: אפשר לתקן ולבדוק שוב.`;
+  document.querySelector(`#trail button[data-s="${k}"]`).classList.add('done');renderScore()});
+function renderScore(){const done=RES.every(r=>r!==null),sum=RES.reduce((a,r)=>a+(r||0),0),all=TOT.reduce((a,b)=>a+b,0);
+  $('score').innerHTML=NM.map((n,k)=>`<div class="kpi"><div class="v">${RES[k]===null?'—':RES[k]+' / '+TOT[k]}</div><div class="l">${k+1} · ${n}</div></div>`).join('')+
+   `<div class="kpi tot"><div class="v">${done?Math.round(sum/all*100):'—'}</div><div class="l">ציון (מתוך 100)</div></div>`;
+  $('m4').className='msg '+(done?'good':'bad');
+  $('m4').textContent=done?`${$('nm').value||'התלמיד/ה'}, ${$('cl').value}: ${sum} תשובות נכונות מתוך ${all}.`:'יש לבדוק את כל ארבעת השלבים ("בדיקה ✓") לפני השמירה.';
+  $('pdfbox').hidden=!done}
+renderScore();
+$('pdf').onclick=()=>{if(!$('nm').value.trim()){openGate();return}window.print()};
+
+// navigation
+const steps=[...document.querySelectorAll('.step')],tb=[...document.querySelectorAll('#trail button')];
+function show(k){steps.forEach((s,i)=>s.classList.toggle('on',i===k));tb.forEach((b,i)=>b.classList.toggle('cur',i===k));if(k===4)renderScore()}
+tb.forEach(b=>b.onclick=()=>show(+b.dataset.s));
+document.querySelectorAll('.msg').forEach((m,k)=>{if(k<4){const nx=document.createElement('button');nx.type='button';nx.className='btn alt';nx.textContent='לשלב הבא ←';nx.onclick=()=>{show(k+1);scrollTo(0,0)};m.after(nx)}});
+show(0);
+</script>
+</body>
+</html>
