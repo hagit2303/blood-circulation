@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>הלב הפועם</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Atlas simulation: video with pause questions, animated cardiac cycle (3 stages), stage table, written explanations with rubric, PDF report */
+:root{--bg:#F4F7FA;--paper:#fff;--ink:#13233A;--muted:#5E6E82;--rich:#D7263D;--poor:#2457C5;--line:#DCE3EA;--accent:#13233A;--accent-soft:#EAF0F6;--tag:#D7263D;--tag-ink:#fff;--good:#1E7B4D;--good-bg:#E8F4EE;--bad:#B3261E;--bad-bg:#FBE7E5;--warn-bg:#FFF8E1;--gold:#F2B705;--muscle:#E9C3BE}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:Assistant,Arial,sans-serif;font-size:18px;line-height:1.5;padding-inline:16px;overflow-x:hidden}
+button,select,input,textarea{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:1000px;margin:auto;padding-block:14px 40px;display:flex;flex-direction:column;gap:14px}
+.homebar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.homebar a{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:20px;padding:4px 14px;font-weight:800;font-size:14px;text-decoration:none}
+.homebar .who{margin-inline-start:auto;font-weight:800;color:var(--rich)}
+.kick{font-weight:800;color:var(--rich);font-size:14px}
+h1{font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1.05}h1 span{color:var(--rich)}
+h2{font-size:clamp(20px,2.6vw,26px);font-weight:800}
+h3{font-size:1.1rem;font-weight:800}
+.hero{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.routine{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:15px}
+.routine b{background:var(--accent-soft);border-radius:20px;padding:3px 12px}.routine i{font-style:normal;color:var(--muted)}
+.part-h{display:flex;gap:12px;align-items:center;margin-top:14px}
+.part-h .n{width:44px;height:44px;border-radius:12px;background:var(--ink);color:#fff;font-weight:800;font-size:22px;display:flex;align-items:center;justify-content:center;flex:none}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.hint{color:var(--muted);font-size:.92rem}
+.qn{display:inline-block;align-self:flex-start;font-size:.78rem;font-weight:800;padding:2px 10px;border-radius:999px;background:var(--tag);color:var(--tag-ink)}
+.src{font-size:.8rem;color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts label{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;line-height:1.45;cursor:pointer}
+.opts label:hover{border-color:var(--accent)}
+.opts label input{margin-top:5px;accent-color:var(--accent);flex:none}
+.opts label.right{background:var(--good-bg);border-color:var(--good)}
+.opts label.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.fb{border-radius:12px;padding:10px 14px;line-height:1.5}
+.fb:empty{display:none}
+.fb.ok{background:var(--good-bg);border-inline-start:6px solid var(--good)}
+.fb.no{background:var(--bad-bg);border-inline-start:6px solid var(--bad)}
+.note{background:var(--warn-bg);border-inline-start:6px solid var(--gold);border-radius:12px;padding:10px 14px}
+.ri{color:var(--good);font-weight:700}
+.ck,.rv,.sc{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:9px 18px;font-weight:700;align-self:flex-start}
+.rv.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.ck[disabled],.rv[disabled],.sc[disabled]{opacity:.45;cursor:not-allowed}
+select{padding:6px 8px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);min-width:0;max-width:100%}
+select.m-ok{outline:3px solid var(--good)}select.m-no{outline:3px solid var(--bad)}
+.bpart{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:12px;margin-top:6px}
+textarea{width:100%;padding:10px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+textarea[readonly]{opacity:.85}
+.rub{display:flex;flex-direction:column;gap:6px;background:var(--warn-bg);border-radius:12px;padding:10px 14px}
+.rub label{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.rub details summary{cursor:pointer;font-weight:700}
+.mi{border-inline-start:4px solid var(--bad);background:var(--bg);border-radius:8px;padding:8px 12px;margin-bottom:8px}.mi p{margin:2px 0}
+.dl{background:var(--tag);color:var(--tag-ink);border:0;border-radius:14px;font-size:1.15rem;font-weight:800;padding:14px 24px;align-self:flex-start}
+.sgate{position:fixed;inset:0;z-index:100;background:rgba(19,35,58,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+.sgate[hidden]{display:none}
+.sgate .gbox{background:#fff;border:3px solid var(--tag);border-radius:18px;max-width:420px;width:100%;padding:20px;display:grid;gap:10px}
+.sgate label{display:grid;gap:4px;font-weight:700}
+.sgate input{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.sgate .gerr{color:var(--bad);font-weight:700;min-height:1em}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:10px 20px;font-weight:800}
+#report{position:fixed;left:0;top:0;display:none;z-index:-1;pointer-events:none;width:760px;background:#fff;color:#13233A;font-family:Arial,sans-serif;padding:24px;direction:rtl}
+#report h1{font-size:24px;margin-bottom:6px}
+#report .rr{border-bottom:1px solid #DCE3EA;padding:5px 0;font-size:14px;display:flex;gap:8px}
+#report .rr b{min-width:200px}
+#report .y{color:#1E7B4D;font-weight:700}#report .n{color:#B3261E;font-weight:700}
+footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:12px}
+
+/* ---- video ---- */
+.vid{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden}
+.vid iframe,.vid #yt{position:absolute;inset:0;width:100%;height:100%;border:0}
+.terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px 14px;font-size:15px}
+.terms b{color:var(--rich)}
+.vq{position:relative}
+.vq .lockmsg{display:none;font-weight:800;color:var(--muted)}
+.vq.locked{border-style:dashed;background:#FAFBFC}
+.vq.locked>*:not(.qn):not(.lockmsg){display:none}
+.vq.locked .lockmsg{display:block}
+.vq .resume{display:none}
+.vq.answered .resume{display:inline-block}
+.resume{background:var(--rich);color:#fff;border:0;border-radius:12px;padding:9px 18px;font-weight:800;align-self:flex-start}
+
+/* ---- heart simulation ---- */
+.sim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.stage-box{position:relative}
+#hs{width:100%;height:auto;max-height:70vh;display:block;font-family:Assistant,Arial,sans-serif}
+#hs .lb{font-size:15px;font-weight:800;fill:#13233A;paint-order:stroke;stroke:#fff;stroke-width:4px;pointer-events:none}
+#hs .flow path{fill:none;stroke:#fff;stroke-width:4;stroke-dasharray:9 9;stroke-linecap:round;animation:run .7s linear infinite}
+#hs .flow{transition:opacity .15s}
+@keyframes run{to{stroke-dashoffset:-18}}
+.sound{position:absolute;inset-inline:0;bottom:6px;margin:auto;width:max-content;max-width:94%;background:var(--ink);color:#fff;font-weight:800;border-radius:999px;padding:4px 14px;font-size:15px;opacity:0;transition:opacity .2s;text-align:center}
+.sound.on{opacity:1}
+.panel{display:flex;flex-direction:column;gap:12px}
+.stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.stages button{background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:6px 4px;font-weight:800;font-size:14px;line-height:1.2;color:var(--ink)}
+.stages button small{display:block;font-weight:600;color:var(--muted);font-size:12px}
+.stages button.on{border-color:var(--rich);background:#FDECEE}
+.now{font-size:clamp(22px,3vw,28px);font-weight:800;color:var(--rich);line-height:1.15}
+.allclosed{background:var(--warn-bg);border-radius:10px;padding:4px 10px;font-size:14px;font-weight:700;visibility:hidden}
+.allclosed.on{visibility:visible}
+.tl{position:relative;display:flex;height:34px;border-radius:10px;overflow:hidden;border:1.5px solid var(--ink)}
+.tl div{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;transition:flex-basis .3s}
+.tl .s0{background:#7C93C9}.tl .s1{background:var(--rich)}.tl .s2{background:#8A9AAE}
+.tl .cur{position:absolute;top:-2px;bottom:-2px;width:4px;background:var(--gold);border:1px solid var(--ink);inset-inline-start:0;pointer-events:none}
+.tlx{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.press{display:flex;flex-direction:column;gap:4px;background:var(--bg);border-radius:12px;padding:10px 12px}
+.press .row{display:grid;grid-template-columns:7.5em minmax(0,1fr) 3.4em;gap:8px;align-items:center;font-size:15px;font-weight:700}
+.press .bar{height:16px;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.press .bar i{display:block;height:100%;background:var(--rich);width:0}
+.press .val{font-variant-numeric:tabular-nums;text-align:end;direction:ltr}
+.press .vs{font-size:13px;font-weight:800;padding-inline-start:7.5em;color:var(--muted);min-height:1.2em}
+.press .vs b.o{color:var(--good)}.press .vs b.c{color:var(--bad)}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ctrl button{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:6px 12px;font-weight:800;color:var(--ink)}
+.ctrl button.main{background:var(--ink);color:#fff;min-width:7.5em}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+.seg button{border:0;border-radius:0;padding:6px 10px;font-size:14px;background:#fff}
+.seg button.on{background:var(--ink);color:#fff}
+.ctrl label{display:flex;gap:6px;align-items:center;font-size:15px;font-weight:700}
+.ctrl label.dis{opacity:.5}
+.jump{background:transparent;color:var(--rich);border:2px solid var(--rich);border-radius:999px;padding:2px 12px;font-weight:800;font-size:14px;margin-inline-start:6px}
+.stbl{width:100%;border-collapse:collapse;font-size:16px}
+.stbl th,.stbl td{border:1px solid var(--line);padding:8px;text-align:start;vertical-align:top}
+.stbl th{background:var(--accent-soft);font-size:15px}
+.stbl select{width:100%}
+.stbl .fix{display:block;color:var(--good);font-weight:700;font-size:14px;margin-top:4px}
+.tblwrap{overflow-x:auto}
+@media(max-width:760px){.sim{grid-template-columns:1fr}#hs{max-height:56vh}
+ .stbl thead{display:none}.stbl,.stbl tbody,.stbl tr,.stbl td{display:block;width:100%}.stbl tr{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:6px}.stbl td{border:0;padding:4px}.stbl td[data-h]::before{content:attr(data-h);display:block;font-size:13px;color:var(--muted);font-weight:700}}
+@media (prefers-reduced-motion:reduce){#hs .flow path{animation:none}}
+</style>
+</head>
+<body>
+<div class="sgate" id="gate"><div class="gbox" role="dialog" aria-modal="true" aria-labelledby="gTitle"><h2 id="gTitle">לפני שמתחילים</h2><p>כתבו שם מלא וכיתה. הם יופיעו בקובץ שתעלו למשימה ב־Classroom.</p><label>שם מלא<input id="gName" autocomplete="name"></label><label>כיתה<input id="gClass"></label><p class="gerr" id="gErr"></p><button class="btn" id="gGo" type="button">מתחילים ←</button></div></div>
+
+<div class="wrap">
+  <nav class="homebar" aria-label="ניווט"><a href="../index.html">🏠 דף הבית</a><a href="index.html">→ לשיעור</a><span class="who" data-fill="name"></span></nav>
+  <section class="hero">
+    <div class="kick">ביולוגיה · כיתה י' · שיעור 4 · סימולציה</div>
+    <h1>הלב <span>הפועם</span></h1>
+    <p>בכל פעימה של הלב יש שלושה שלבים. בסימולציה תראו בכל שלב אילו חללים מתכווצים, אילו מסתמים פתוחים ואילו סגורים, ומה הלחץ בכל חלל. בכל חלק יש שאלות סגורות עם ניסיון אחד לכל שאלה. אחרי כל תשובה מופיע הסבר.</p>
+    <div class="routine"><b>1 סרטון</b><i>←</i><b>2 הלב הפועם</b><i>←</i><b>3 מה קורה בכל שלב</b><i>←</i><b>4 קצב הלב במאמץ</b><i>←</i><b>5 שאלות ממבחנים</b><i>←</i><b>📒 טעויות</b><i>←</i><b>⬇ קובץ</b></div>
+  </section>
+
+  <!-- ===== 1. video ===== -->
+  <div class="part-h"><span class="n">1</span><h2>סרטון: פעולת הלב</h2></div>
+  <section class="card">
+    <p>צפו בסרטון. הסרטון נעצר ארבע פעמים, ובכל עצירה נפתחת שאלה מתחתיו. עונים, ואז ממשיכים לצפות.</p>
+    <div class="vid"><div id="yt"></div></div>
+    <div class="note"><b>מילון לסרטון</b>
+      <div class="terms">
+        <span><b>תלת־צניפי, דו־צניפי (מיטרלי)</b>: המסתמים בין העליות לחדרים</span>
+        <span><b>פולמונרי, אאורטי</b>: המסתמים בין החדרים לעורקים</span>
+        <span><b>SA node</b>: הקוצב הראשי, בדופן העלייה הימנית</span>
+        <span><b>AV node</b>: הקוצב המשני (בסרטון נאמר "הקשת"; המונח הוא "קשר")</span>
+      </div>
+    </div>
+    <p class="hint" id="ytHelp" hidden>הסרטון לא נטען? אפשר לצפות בו <a href="https://www.youtube.com/watch?v=xaEl6PYsm-A" target="_blank" rel="noopener">ביוטיוב</a>. השאלות פתוחות לכם כאן.</p>
+    <p class="src">הסרטון: "פעולת הלב", ערוץ bhovav ביוטיוב (2:56 דקות).</p>
+  </section>
+  <div id="vqs" style="display:grid;gap:14px"></div>
+
+  <!-- ===== 2. simulation ===== -->
+  <div class="part-h" id="simTop"><span class="n">2</span><h2>הלב הפועם</h2></div>
+  <section class="card">
+    <p>הפעילו בהילוך איטי ועקבו אחרי שלושה דברים: <b>איזה חלל מתכווץ</b>, <b>מה קורה למסתמים</b>, ו<b>מה הלחץ</b> בעלייה, בחדר ובעורק. אחר כך עברו בין השלבים עם הכפתור "השלב הבא", ועצרו על כל שלב.</p>
+    <p class="note">באיור, ימין ושמאל הם של האדם: הצד הימני של הלב (כחול) מופיע משמאלכם. החיצים הלבנים מראים לאן זורם הדם.</p>
+    <div class="sim">
+      <div class="stage-box">
+        <svg id="hs" viewBox="0 0 420 450" role="img" aria-label="איור מונפש של חתך הלב: חללים מתכווצים ומסתמים נפתחים ונסגרים">
+          <defs><marker id="fa" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#fff"/></marker></defs>
+          <path d="M84,134 Q60,138 60,170 L60,250 Q62,312 112,362 Q170,424 236,430 Q304,420 336,346 Q352,296 348,232 L348,170 Q348,134 316,132 Z" fill="#E9C3BE" stroke="#B8857E" stroke-width="3"/>
+          <!-- openings between atria and ventricles -->
+          <rect x="92" y="234" width="60" height="30" fill="#2457C5"/>
+          <rect x="268" y="232" width="56" height="34" fill="#D7263D"/>
+          <!-- chambers (scaled by the script) -->
+          <g id="cRA"><path d="M76,150 Q76,142 86,142 L150,142 Q160,142 160,152 L160,230 Q160,240 150,240 L86,240 Q76,240 76,230z" fill="#2457C5"/></g>
+          <g id="cLA"><path d="M262,142 L322,142 Q332,142 332,152 L332,228 Q332,238 322,238 L272,238 Q262,238 262,228z" fill="#D7263D"/></g>
+          <g id="cRV"><path d="M70,258 L196,258 L196,372 Q176,398 146,382 Q96,338 74,292z" fill="#2457C5"/></g>
+          <g id="cLV"><path d="M222,262 L298,262 Q314,262 314,280 L312,330 Q298,386 252,396 Q226,394 224,370z" fill="#D7263D"/></g>
+          <path d="M196,258 L222,262 L224,370 Q214,382 196,372z" fill="#E9C3BE" stroke="#B8857E" stroke-width="1.5"/>
+          <!-- vessels -->
+          <path d="M165,262 L165,96 Q165,72 186,72 L380,72 L380,98 L197,98 L197,262z" fill="#2457C5" stroke="#13233A" stroke-width="2"/>
+          <path d="M165,98 Q150,80 130,82 L22,82 L22,104 L130,104 Q150,104 165,120z" fill="#2457C5" stroke="#13233A" stroke-width="2"/>
+          <path d="M94,18 L128,18 L128,146 L94,146z" fill="#2457C5" stroke="#13233A" stroke-width="2"/>
+          <path d="M30,440 L30,226 Q30,206 50,206 L80,206 L80,232 L56,232 L56,440z" fill="#2457C5" stroke="#13233A" stroke-width="2"/>
+          <path d="M330,156 L390,152 L390,172 L330,176z M330,196 L390,198 L390,218 L330,216z" fill="#D7263D" stroke="#13233A" stroke-width="2"/>
+          <path d="M220,262 L220,70 Q220,30 262,30 Q304,30 304,70 L304,130 L280,130 L280,72 Q280,56 262,56 Q246,56 246,72 L246,262z" fill="#D7263D" stroke="#13233A" stroke-width="2"/>
+          <path d="M236,34 L232,6 L246,6 L250,32z M262,30 L262,4 L276,4 L276,31z M286,36 L294,8 L307,12 L298,42z" fill="#D7263D" stroke="#13233A" stroke-width="1.5"/>
+          <!-- blood flow arrows -->
+          <g class="flow" id="fVeins"><path d="M111,30 L111,128" marker-end="url(#fa)"/><path d="M43,425 L43,219 L84,219" marker-end="url(#fa)"/><path d="M386,164 L338,165" marker-end="url(#fa)"/><path d="M386,208 L338,207" marker-end="url(#fa)"/></g>
+          <g class="flow" id="fAV"><path d="M122,214 L122,300" marker-end="url(#fa)"/><path d="M296,212 L292,302" marker-end="url(#fa)"/></g>
+          <g class="flow" id="fSL"><path d="M181,330 L181,110" marker-end="url(#fa)"/><path d="M262,340 L233,90" marker-end="url(#fa)"/><path d="M180,85 L300,85" marker-end="url(#fa)"/><path d="M160,93 L40,93" marker-end="url(#fa)"/></g>
+          <!-- valves: flaps rotated by the script -->
+          <g id="valves"></g>
+          <!-- labels -->
+          <text class="lb" x="118" y="196" text-anchor="middle">עלייה ימנית</text><text class="lb" x="297" y="196" text-anchor="middle">עלייה שמאלית</text>
+          <text class="lb" x="128" y="338" text-anchor="middle">חדר ימני</text><text class="lb" x="270" y="352" text-anchor="middle">חדר שמאלי</text>
+          <text class="lb" x="352" y="24" text-anchor="middle">אבי העורקים</text><text class="lb" x="362" y="118" text-anchor="middle">עורק הריאה</text>
+          <text class="lb" x="372" y="244" text-anchor="middle">ורידי הריאה</text><text class="lb" x="111" y="12" text-anchor="middle">וריד נבוב עליון</text><text class="lb" x="112" y="446" text-anchor="middle">וריד נבוב תחתון</text>
+        </svg>
+        <div class="sound" id="sound" aria-live="polite"></div>
+      </div>
+      <div class="panel">
+        <div class="stages" id="stages">
+          <button type="button" data-st="0">1 · סיסטולה<small>של העליות</small></button>
+          <button type="button" data-st="1">2 · סיסטולה<small>של החדרים</small></button>
+          <button type="button" data-st="2">3 · דיאסטולה<small>של כל הלב</small></button>
+        </div>
+        <div class="now" id="now" aria-live="polite"></div>
+        <div class="allclosed" id="allClosed">⏸ רגע קצר: כל ארבעת המסתמים סגורים</div>
+        <div>
+          <div class="tl" id="tl"><div class="s0" id="tl0"></div><div class="s1" id="tl1"></div><div class="s2" id="tl2"></div><span class="cur" id="cur"></span></div>
+          <div class="tlx"><span id="tClock">0.00 שנייה</span><span id="tTotal"></span></div>
+        </div>
+        <div class="press" aria-label="לחצים בצד השמאלי של הלב">
+          <b style="font-size:15px">הלחץ בצד השמאלי של הלב <span class="hint">(בערך, במ"מ כספית)</span></b>
+          <div class="row"><span>עלייה שמאלית</span><span class="bar"><i id="bLA"></i></span><span class="val" id="vLA"></span></div>
+          <div class="vs" id="vsAV"></div>
+          <div class="row"><span>חדר שמאלי</span><span class="bar"><i id="bLV"></i></span><span class="val" id="vLV"></span></div>
+          <div class="vs" id="vsSL"></div>
+          <div class="row"><span>אבי העורקים</span><span class="bar"><i id="bAo"></i></span><span class="val" id="vAo"></span></div>
+        </div>
+        <div class="ctrl">
+          <button type="button" class="main" id="play">▶ הפעלה</button>
+          <button type="button" id="next">⏭ השלב הבא</button>
+        </div>
+        <div class="ctrl">
+          <span class="seg" role="group" aria-label="מהירות"><button type="button" data-speed="8" class="on">הילוך איטי</button><button type="button" data-speed="1">מהירות אמיתית</button></span>
+          <span class="seg" role="group" aria-label="קצב הלב"><button type="button" data-rate="rest" class="on">מנוחה · 75</button><button type="button" data-rate="ex">מאמץ · 150</button></span>
+        </div>
+        <div class="ctrl">
+          <label><input type="checkbox" id="snd"> 🔊 קולות הלב</label>
+          <label class="dis" id="lblWrap"><input type="checkbox" id="lbl" disabled> מצב המסתמים בכתב <span class="hint">(נפתח אחרי הטבלה בחלק 3)</span></label>
+        </div>
+      </div>
+    </div>
+    <p class="hint">בצד הימני של הלב הלחצים נמוכים יותר, אבל המסתמים נפתחים ונסגרים באותם שלבים. הזמנים בציר הם בערך, לפי פעימה אחת.</p>
+  </section>
+
+  <!-- ===== 3. what happens at each stage ===== -->
+  <div class="part-h"><span class="n">3</span><h2>מה קורה בכל שלב?</h2></div>
+  <section class="card">
+    <h3>א. טבלת השלבים</h3>
+    <p>עצרו את הסימולציה על כל שלב ומלאו את השורה שלו. בדיקה אחת לכל הטבלה.</p>
+    <div class="tblwrap"><table class="stbl"><thead><tr><th>שלב</th><th>מה מתכווץ?</th><th>מסתמים בין עלייה לחדר</th><th>מסתמים בין חדר לעורק</th><th>לאן זורם הדם?</th></tr></thead><tbody id="stbl"></tbody></table></div>
+    <button class="ck" id="tblBtn" type="button">בדיקה ✓</button><div class="fb" id="tblFb" role="status"></div>
+    <p class="src">מקור: מצגת השיעור, חלק 3 (המסתמים בכל שלב של הפעימה), ומבחן רבעון 1 תש״ף, כיתה י׳</p>
+  </section>
+  <p class="hint">ב. למה המסתמים נפתחים ונסגרים? בכל שאלה אפשר ללחוץ "הצגה" ולראות את השלב בסימולציה.</p>
+  <div id="why" style="display:grid;gap:14px"></div>
+
+  <!-- ===== 4. heart rate in exertion ===== -->
+  <div class="part-h"><span class="n">4</span><h2>קצב הלב במאמץ</h2></div>
+  <p class="hint">בסימולציה עברו ל"מאמץ · 150" והשוו את ציר הזמן לציר במנוחה.</p>
+  <div id="exq" style="display:grid;gap:14px"></div>
+
+  <!-- ===== 5. exam questions ===== -->
+  <div class="part-h"><span class="n">5</span><h2>שאלות ממבחנים</h2></div>
+  <div id="q5" style="display:grid;gap:14px"></div>
+
+  <section class="card">
+    <h2>📒 דף הטעויות שלי</h2>
+    <div id="mist"></div>
+  </section>
+
+  <section class="card">
+    <h2>⬇ סיימתם? מורידים את הקובץ</h2>
+    <p class="hint">הכפתור נפתח אחרי שעניתם על כל השאלות. בקובץ: השם, כמה תשובות נכונות היו בניסיון הראשון, כל התשובות שלכם ודף הטעויות. אחר כך מעלים אותו למשימה ב־Classroom.</p>
+    <p class="note" id="prog"></p><button class="dl" id="dl" type="button" disabled>⬇ הורדת קובץ PDF</button><p class="hint" id="dlmsg"></p>
+  </section>
+
+  <footer>ביולוגיה · מערכת הדם · שיעור 4: מבנה הלב · סימולציה. השאלות מבוססות על בחינות בגרות, מבחנים כיתתיים ומצגות מט״ח. הסרטון "פעולת הלב" מיוטיוב (ערוץ bhovav). היחידה מתבססת על חומרי מט״ח ומורחבת בחומרים נוספים. נבנתה על ידי חגית ברגמן.</footer>
+</div>
+<div id="report"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script src="../assets/pdf.js"></script>
+<script>
+window.REPORT_FOOT='ביולוגיה · מערכת הדם · שיעור 4: סימולציה – הלב הפועם';
+
+/* =====================================================================
+   2. The beating heart. Heart time t (seconds) runs over one beat.
+   Breakpoints b = [end of atrial systole, AV closed & SL opens, SL closes, AV opens, beat length]
+   ===================================================================== */
+const RATES={rest:{bpm:75,b:[0.10,0.15,0.40,0.48,0.80]},ex:{bpm:150,b:[0.07,0.11,0.29,0.33,0.40]}};
+const STN=['סיסטולה של העליות','סיסטולה של החדרים','דיאסטולה של כל הלב'];
+const Sim=(()=>{
+  let rate='rest',speed=8,playing=false,t=0,last=0,fAV=1,fSL=0,showLbl=false,sound=false,actx=null,sndTimer=0;
+  const B=()=>RATES[rate].b;
+  const lerp=(a,b,x)=>a+(b-a)*x;
+  const kf=(pts,x)=>{for(let i=1;i<pts.length;i++)if(x<=pts[i][0]){const[a,va]=pts[i-1],[b,vb]=pts[i];return lerp(va,vb,b>a?(x-a)/(b-a):1)}return pts[pts.length-1][1]};
+  const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)};
+  function pressures(x){const[a1,i1,v1,i2,T]=B(),pk=i1+(v1-i1)*.4;
+    return{LV:kf([[0,5],[a1,10],[i1,80],[pk,122],[v1,100],[i2,4],[T,5]],x),
+           Ao:kf([[0,84],[a1,81],[i1,79],[pk,120],[v1,98],[i2,95],[T,84]],x),
+           LA:kf([[0,7],[a1*.6,12],[a1,9],[i1,5],[v1,10],[i2,11],[i2+(T-i2)*.25,7],[T,7]],x)}}
+  const stageOf=x=>{const[a1,,v1]=B();return x<a1?0:x<v1?1:2};
+  const avOpen=x=>{const[a1,,,i2]=B();return x<a1||x>=i2};
+  const slOpen=x=>{const[,i1,v1]=B();return x>=i1&&x<v1};
+  const rep=k=>{const[a1,i1,v1,i2,T]=B();return[a1*.55,i1+(v1-i1)*.45,i2+(T-i2)*.5][k]};
+
+  /* valve flaps: [id, hinge x, hinge y, length, direction (+1 points right), closed angle, open angle, type] */
+  const FL=[['ra1',92,249,30,1,0,72,'av'],['ra2',152,249,30,-1,0,-72,'av'],['la1',268,249,28,1,0,72,'av'],['la2',324,249,28,-1,0,-72,'av'],
+            ['pu1',166,261,15.5,1,16,-82,'sl'],['pu2',196,261,15.5,-1,-16,82,'sl'],['ao1',221,261,12.5,1,16,-82,'sl'],['ao2',245,261,12.5,-1,-16,82,'sl']];
+  document.getElementById('valves').innerHTML=FL.map(([id,x,y,L,d])=>`<g transform="translate(${x},${y})"><g id="v_${id}"><rect x="${d>0?0:-L}" y="-3.2" width="${L}" height="6.4" rx="3.2" fill="#fff" stroke="#13233A" stroke-width="1.6"/></g></g>`).join('');
+  const el=id=>document.getElementById(id);
+  const scaleG=(id,cx,cy,sx,sy)=>el(id).setAttribute('transform',`translate(${cx},${cy}) scale(${sx},${sy}) translate(${-cx},${-cy})`);
+
+  function setTimeline(){const[a1,,v1,,T]=B();
+    el('tl0').style.flexBasis=(a1/T*100)+'%';el('tl1').style.flexBasis=((v1-a1)/T*100)+'%';el('tl2').style.flexBasis=((T-v1)/T*100)+'%';
+    el('tl0').textContent=a1.toFixed(2).replace(/0$/,'');el('tl1').textContent=(v1-a1).toFixed(2).replace(/0$/,'')+' ש׳';el('tl2').textContent=(T-v1).toFixed(2).replace(/0$/,'')+' ש׳';
+    el('tTotal').textContent=`פעימה: ${T.toFixed(1)} שנייה · ${RATES[rate].bpm} פעימות בדקה`}
+
+  function draw(){const[a1,i1,v1,i2,T]=B(),x=t;
+    const sA=x<a1?Math.sin(Math.PI*x/a1):0;
+    const pk=i1+(v1-i1)*.4;
+    const cV=x<a1?0:x<pk?smooth((x-a1)/(pk-a1)):x<v1?1:smooth(1-(x-v1)/((i2-v1)*2.2));
+    scaleG('cRA',118,240,1-.10*sA,1-.16*sA);scaleG('cLA',297,238,1-.10*sA,1-.16*sA);
+    scaleG('cRV',133,258,1-.08*cV,1-.16*cV);scaleG('cLV',268,262,1-.08*cV,1-.16*cV);
+    FL.forEach(([id,,,,,c,o,ty])=>{const f=ty==='av'?fAV:fSL;el('v_'+id).setAttribute('transform',`rotate(${lerp(c,o,f)})`)});
+    const av=avOpen(x),sl=slOpen(x),st=stageOf(x);
+    el('fAV').style.opacity=av&&fAV>.6?1:0;el('fSL').style.opacity=sl&&fSL>.6?1:0;el('fVeins').style.opacity=x>=a1?1:0;
+    const p=pressures(x);
+    [['LA',p.LA],['LV',p.LV],['Ao',p.Ao]].forEach(([k,v])=>{el('b'+k).style.width=Math.min(100,v/130*100)+'%';el('v'+k).textContent=Math.round(v)});
+    el('vsAV').innerHTML=showLbl?`מסתם בין עלייה לחדר: ${av?'<b class="o">פתוח</b>':'<b class="c">סגור</b>'}`:'';
+    el('vsSL').innerHTML=showLbl?`מסתם בין חדר לעורק: ${sl?'<b class="o">פתוח</b>':'<b class="c">סגור</b>'}`:'';
+    el('allClosed').classList.toggle('on',!av&&!sl);
+    el('now').textContent=STN[st];
+    document.querySelectorAll('#stages button').forEach((b,k)=>b.classList.toggle('on',k===st));
+    el('cur').style.insetInlineStart=`calc(${x/T*100}% - 2px)`;
+    el('tClock').textContent=`זמן בפעימה: ${x.toFixed(2)} שנייה`}
+
+  function beep(f){if(!sound)return;try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const n=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();
+    o.frequency.setValueAtTime(f,n);o.frequency.exponentialRampToValueAtTime(f*.6,n+.13);g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.9,n+.012);g.gain.exponentialRampToValueAtTime(.0001,n+.17);
+    o.connect(g).connect(actx.destination);o.start(n);o.stop(n+.2)}catch(e){}}
+  function flash(txt){const s=el('sound');s.textContent=txt;s.classList.add('on');clearTimeout(sndTimer);sndTimer=setTimeout(()=>s.classList.remove('on'),speed>1?1600:700)}
+  function crossings(a,b){const[a1,,v1]=B();const hit=v=>a<=b?(a<v&&v<=b):(a<v||v<=b);
+    if(hit(a1)){flash('קול ראשון: המסתמים בין העליות לחדרים נסגרים');beep(58)}
+    if(hit(v1)){flash('קול שני: המסתמים בין החדרים לעורקים נסגרים');beep(82)}}
+
+  function frame(ts){if(playing){const dt=Math.min(.1,(ts-last)/1000)/speed,T=B()[4],prev=t;t=(t+dt)%T;crossings(prev,t);
+      const k=Math.min(1,dt/.018);fAV+=((avOpen(t)?1:0)-fAV)*k;fSL+=((slOpen(t)?1:0)-fSL)*k;draw()}
+    last=ts;requestAnimationFrame(frame)}
+  function setPlay(on){playing=on;el('play').textContent=on?'⏸ עצירה':'▶ הפעלה'}
+  function go(k){setPlay(false);t=rep(k);fAV=avOpen(t)?1:0;fSL=slOpen(t)?1:0;draw()}
+
+  el('play').onclick=()=>setPlay(!playing);
+  el('next').onclick=()=>go((stageOf(t)+1)%3);
+  el('stages').onclick=e=>{const b=e.target.closest('button');if(b)go(+b.dataset.st)};
+  document.querySelectorAll('[data-speed]').forEach(b=>b.onclick=()=>{speed=+b.dataset.speed;document.querySelectorAll('[data-speed]').forEach(x=>x.classList.toggle('on',x===b))});
+  document.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>{const st=stageOf(t),frac=t/B()[4];rate=b.dataset.rate;t=playing?frac*B()[4]:rep(st);
+    document.querySelectorAll('[data-rate]').forEach(x=>x.classList.toggle('on',x===b));fAV=avOpen(t)?1:0;fSL=slOpen(t)?1:0;setTimeline();draw()});
+  el('snd').onchange=e=>{sound=e.target.checked;if(sound)beep(1)};
+  el('lbl').onchange=e=>{showLbl=e.target.checked;draw()};
+
+  setTimeline();go(0);
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){t=0;setPlay(true)}
+  requestAnimationFrame(ts=>{last=ts;requestAnimationFrame(frame)});
+  return{go,unlockLabels(){el('lbl').disabled=false;el('lblWrap').classList.remove('dis');el('lbl').checked=true;showLbl=true;draw()}};
+})();
+
+/* jump buttons inside questions → show the stage in the simulation */
+document.addEventListener('click',e=>{const b=e.target.closest('.jump');if(!b)return;Sim.go(+b.dataset.st);$('simTop').scrollIntoView({behavior:'smooth',block:'start'})});
+
+/* =====================================================================
+   1. Video with pause questions
+   ===================================================================== */
+const VQ=[
+{at:54,src:'בגרות תשפ״ב, שאלה 9 (הטעות הנפוצה), ומצגת השיעור, חלק 2',stem:'בסרטון נאמר: "חללי הלב מופרדים במסתמים". איפה נמצאים המסתמים בלב?',
+ opts:['בין כל עלייה לחדר שמתחתיה, ובין כל חדר לעורק שיוצא ממנו','בין החדר הימני לחדר השמאלי, ובין העלייה הימנית לעלייה השמאלית','רק בין העליות לחדרים','בין הוורידים לעליות, ובין העליות לחדרים'],ans:0,
+ ok:'נכון. בכל צד של הלב יש מסתם בין העלייה לחדר, ומסתם בין החדר לעורק. בין הצד הימני לצד השמאלי אין מסתם: יש מחיצה שלמה.',
+ no:['','בין הצד הימני לצד השמאלי יש מחיצה שלמה, בלי פתחים ובלי מסתמים. זו הטעות הנפוצה בבגרות תשפ״ב.','יש גם מסתם בין כל חדר לעורק שיוצא ממנו: בפתח עורק הריאה ובפתח אבי העורקים. בסרטון הם נקראים "פולמונרי" ו"אאורטי".','בפתח הוורידים שנכנסים לעליות אין מסתמים. חסרים המסתמים בין החדרים לעורקים.']},
+{at:83,src:'מבחן רבעון 1 תש״ף, כיתה י׳, שאלה ח (כלשונה; "שסתומי המפרשים" = המסתמים בין העליות לחדרים)',stem:'בסרטון נאמר: "המסתם מאפשר זרימת דם מהעלייה לחדר, ומונע זרימה בחזרה לעלייה". מה יקרה אם המסתמים בין העליות לחדרים לא יהיו תקינים?',
+ opts:['יהיה ערבוב של דם עשיר בחמצן שמגיע מהריאות עם דם עני בחמצן שמגיע מהגוף','לחץ הדם בעורקים יעלה','תקטן כמות הדם היוצאת מהחדרים לעורקים','לחץ הדם בתוך חדרי הלב יעלה'],ans:2,
+ ok:'נכון. בזמן הסיסטולה של החדרים מסתם פגום לא נסגר עד הסוף, וחלק מהדם זורם מהחדר בחזרה לעלייה. לכן בכל פעימה יוצא פחות דם מהחדרים לעורקים.',
+ no:['ערבוב של דם עשיר בחמצן עם דם דל בחמצן נגרם מפתח במחיצה, לא ממסתם. המסתם נמצא בין עלייה לחדר באותו צד של הלב.','פחות דם יוצא לעורקים בכל פעימה, ולכן הלחץ בעורקים לא עולה.','','חלק מהדם זורם מהחדר בחזרה לעלייה, ולכן הלחץ בחדר לא עולה. התוצאה: פחות דם יוצא לעורקים.']},
+{at:114,src:'שיעור 2: עורק או וריד (מצגת "אטלס המחזורים", על פי מט״ח)',stem:'בסרטון נאמר: "עורקים נושאים דם עם חמצן וחומרי מזון לכל אברי הגוף". איזה עורק לא מתאים לתיאור הזה?',
+ opts:['אבי העורקים','עורק הריאה','העורקים הכליליים','העורק שמגיע לכליה'],ans:1,
+ ok:'נכון. בעורק הריאה זורם דם דל בחמצן, מהחדר הימני לריאות. עורק מוגדר לפי כיוון הזרימה, מהלב החוצה, ולא לפי ריכוז החמצן בדם. שימו לב גם לניסוח בסרטון "לצורך חמצון מחודש": ניסוח מדויק מתאר מה קורה, ולא בשביל מה. למשל: הוורידים מחזירים את הדם ללב, ומשם הדם זורם לריאות ונטען בחמצן.',
+ no:['באבי העורקים זורם דם עשיר בחמצן מהחדר השמאלי לגוף. הוא מתאים לתיאור.','','העורקים הכליליים יוצאים מבסיס אבי העורקים, ובהם זורם דם עשיר בחמצן לשריר הלב.','לכליה מגיע דם עשיר בחמצן, בעורק שמסתעף מאבי העורקים.']},
+{at:175,src:'מצגת השיעור, חלק 3: קוצב ראשי וקוצב משני (מט״ח)',stem:'בסרטון: האות החשמלי מתחיל בקוצב הראשי (SA) בעלייה הימנית, ומגיע לחדרים דרך הקוצב המשני (AV). מה התוצאה של סדר ההולכה הזה?',
+ opts:['העליות מתכווצות לפני החדרים, והחדרים מלאים בדם כשהם מתכווצים','החדרים מתכווצים לפני העליות','כל ארבעת החללים מתכווצים באותו רגע','הצד הימני של הלב מתכווץ לפני הצד השמאלי'],ans:0,
+ ok:'נכון. האות מגיע קודם לעליות, ורק אחר כך, דרך הקוצב המשני, לחדרים. לכן העליות מתכווצות לפני החדרים, והחדרים מלאים בדם כשהם מתכווצים. את הסדר הזה תראו בסימולציה בחלק 2.',
+ no:['','האות מתחיל בעלייה הימנית, ומגיע לחדרים רק אחרי שעבר בקוצב המשני. לכן העליות מתכווצות ראשונות.','בקוצב המשני יש עיכוב קצר. לכן החדרים מתכווצים רק אחרי העליות.','שתי העליות מתכווצות יחד, ושני החדרים מתכווצים יחד.']}];
+renderQuestions($('vqs'),VQ,'v');
+const mmss=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+VQ.forEach((q,i)=>{const c=$('v'+i);c.classList.add('vq','locked');
+  c.querySelector('.qn').textContent=`עצירה ${i+1} בסרטון`;
+  c.insertAdjacentHTML('beforeend',`<p class="lockmsg">🔒 השאלה נפתחת כשהסרטון מגיע ל־${mmss(q.at)}</p><button type="button" class="resume" data-i="${i}">▶ המשך הסרטון</button>`)});
+$('vqs').addEventListener('change',e=>{if(e.target.type==='radio')e.target.closest('.vq').classList.add('answered')});
+$('vqs').addEventListener('click',e=>{const b=e.target.closest('.resume');if(!b)return;if(window.YTP&&YTP.playVideo){YTP.playVideo();document.querySelector('.vid').scrollIntoView({behavior:'smooth',block:'center'})}});
+let vqNext=0;
+function openVQ(i,scroll){const c=$('v'+i);if(!c.classList.contains('locked'))return;c.classList.remove('locked');if(scroll)c.scrollIntoView({behavior:'smooth',block:'center'})}
+function openAllVQ(){VQ.forEach((q,i)=>openVQ(i,false));$('ytHelp').hidden=false}
+window.onYouTubeIframeAPIReady=()=>{window.YTP=new YT.Player('yt',{videoId:'xaEl6PYsm-A',host:'https://www.youtube-nocookie.com',
+  playerVars:{rel:0,playsinline:1,cc_load_policy:1,hl:'he',cc_lang_pref:'he'},
+  events:{onReady:()=>{clearTimeout(ytFail);setInterval(()=>{if(vqNext>=VQ.length||!YTP.getCurrentTime)return;const now=YTP.getCurrentTime();
+      if(now>=VQ[vqNext].at){YTP.pauseVideo();openVQ(vqNext,true);vqNext++}},300)},
+    onStateChange:e=>{if(e.data===0){while(vqNext<VQ.length){openVQ(vqNext,vqNext===VQ.length-1);vqNext++}}},
+    onError:()=>openAllVQ()}})};
+const ytFail=setTimeout(openAllVQ,12000);
+(()=>{const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';s.onerror=openAllVQ;document.head.appendChild(s)})();
+
+/* =====================================================================
+   3. Stage table (one check) + written explanation per stage (rubric)
+   ===================================================================== */
+const CON=['העליות','החדרים','אף חלל: כל הלב נרפה'],VS=['פתוחים','סגורים'],FLOW=['מהעליות לחדרים','מהחדרים לעורקים','מהוורידים לעליות, ומשם לחדרים','מהחדרים בחזרה לעליות'];
+const TA=[[0,0,1,0],[1,1,0,1],[2,0,1,2]],COLS=[['מה מתכווץ?',CON],['מסתמים בין עלייה לחדר',VS],['מסתמים בין חדר לעורק',VS],['לאן זורם הדם?',FLOW]];
+const opt=(arr)=>'<option value="">בחרו…</option>'+arr.map((x,i)=>`<option value="${i}">${x}</option>`).join('');
+$('stbl').innerHTML=STN.map((n,k)=>`<tr><td><b>${k+1}. ${n}</b><br><button type="button" class="jump" data-st="${k}">▶ הצגה</button></td>${COLS.map(([h,a],j)=>`<td data-h="${h}"><select data-k="${k}" data-j="${j}" aria-label="${n}: ${h}">${opt(a)}</select></td>`).join('')}</tr>`).join('');
+$('tblBtn').onclick=()=>{const sels=[...document.querySelectorAll('#stbl select')];
+  if(sels.some(s=>!s.value)){fb($('tblFb'),false,'מלאו את כל התאים בטבלה, ואז לחצו בדיקה.');return}
+  let good=0;
+  STN.forEach((n,k)=>{const row=sels.filter(s=>+s.dataset.k===k);let rowOk=true;const ans=[],right=[];
+    row.forEach(s=>{const j=+s.dataset.j,ok=+s.value===TA[k][j],arr=COLS[j][1];s.className=ok?'m-ok':'m-no';s.disabled=true;if(!ok){rowOk=false;s.insertAdjacentHTML('afterend',`<span class="fix">✘ הנכון: ${arr[TA[k][j]]}</span>`)}
+      ans.push(arr[+s.value]);right.push(arr[TA[k][j]])});
+    if(rowOk)good++;
+    Lab.rec(`טבלת השלבים: ${n}`,rowOk,ans.join(' · '),right.join(' · '),'המסתמים נפתחים ונסגרים לפי הפרש הלחצים משני צדיהם. שני סוגי המסתמים אף פעם לא פתוחים יחד.')});
+  $('tblBtn').disabled=true;Sim.unlockLabels();
+  fb($('tblFb'),good===3,(good===3?'✓ כל שלוש השורות נכונות.':`${good} מתוך 3 שורות נכונות. ליד כל טעות כתוב הנכון.`)+' בסימולציה נפתח עכשיו הכפתור "מצב המסתמים בכתב". בדקו בו את הטבלה שלכם, ועברו לכתיבה.')};
+
+renderQuestions($('why'),[
+{src:'מצגת השיעור, חלק 3: המסתמים בכל שלב של הפעימה (על פי מט״ח)',stem:'שלב 1, סיסטולה של העליות: <button type="button" class="jump" data-st="0">▶ הצגה</button><br>למה המסתמים בין העליות לחדרים <b>פתוחים</b> בשלב הזה?',
+ opts:['הלחץ בעליות גבוה מהלחץ בחדרים','שריר העלייה מושך את המסתמים ופותח אותם','הקוצב הראשי שולח אות חשמלי שפותח את המסתמים','הלחץ בחדרים גבוה מהלחץ בעליות'],ans:0,
+ ok:'נכון. המסתמים נפתחים ונסגרים באופן סביל, לפי הפרש הלחצים משני צדיהם. העליות המתכווצות מעלות את הלחץ בהן מעל הלחץ בחדרים, והדם זורם מהעליות לחדרים.',
+ no:['','המסתמים הם דשים דקים בלי שריר. הם זזים בהשפעת הפרש הלחצים משני צדיהם.','האות החשמלי גורם להתכווצות של שריר הלב, ולא לפתיחה של המסתמים. המסתמים זזים בהשפעת הפרש הלחצים.','אם הלחץ בחדרים היה גבוה יותר, המסתמים היו נסגרים. בדקו בעמודות הלחץ בסימולציה.']},
+{src:'מצגת השיעור, חלק 3: המסתמים בכל שלב של הפעימה (על פי מט״ח)',stem:'שלב 1, סיסטולה של העליות: <button type="button" class="jump" data-st="0">▶ הצגה</button><br>באותו זמן המסתמים בין החדרים לעורקים <b>סגורים</b>. מה הסיבה?',
+ opts:['הלחץ בעורקים גבוה מהלחץ בחדרים הנרפים','החדרים מתכווצים ולוחצים על המסתמים','אין דם בעורקים בזמן הזה','המסתמים האלה פתוחים רק בזמן הדיאסטולה'],ans:0,
+ ok:'נכון. החדרים נרפים, והלחץ בהם נמוך (בערך 10). באבי העורקים הלחץ בערך 80. הלחץ מצד העורק סוגר את המסתם, והדם לא זורם מהעורק בחזרה לחדר.',
+ no:['','בשלב הזה החדרים נרפים ומתמלאים, והעליות מתכווצות.','בעורקים יש דם כל הזמן, והלחץ בהם לא יורד לאפס. בדקו את עמודת אבי העורקים.','בזמן הדיאסטולה המסתמים בין החדרים לעורקים סגורים. הם פתוחים רק בזמן הסיסטולה של החדרים.']},
+{src:'מצגת השיעור, חלק 3: המסתמים בכל שלב של הפעימה (על פי מט״ח); קולות הלב',stem:'שלב 2, סיסטולה של החדרים: <button type="button" class="jump" data-st="1">▶ הצגה</button><br>בתחילת השלב <b>נסגרים</b> המסתמים בין העליות לחדרים (הקול הראשון). מה גורם לסגירה?',
+ opts:['הלחץ בחדרים המתכווצים עולה מעל הלחץ בעליות','העליות מתכווצות ודוחפות את המסתמים','הלחץ בעורקים עולה מעל הלחץ בחדרים','הדם בעליות נגמר'],ans:0,
+ ok:'נכון. החדרים מתכווצים, והלחץ בהם עולה מעל הלחץ בעליות. הלחץ מצד החדר סוגר את המסתם, והדם לא זורם בחזרה לעליות.',
+ no:['','בתחילת הסיסטולה של החדרים העליות כבר נרפות.','כשהלחץ בעורקים גבוה מהלחץ בחדרים, נסגרים המסתמים בין החדרים לעורקים, ולא המסתמים בין העליות לחדרים.','העליות לא מתרוקנות. בשלב הזה הן נרפות ומתמלאות בדם מהוורידים.']},
+{src:'מצגת השיעור, חלק 3: המסתמים בכל שלב של הפעימה (על פי מט״ח)',stem:'שלב 2, סיסטולה של החדרים: <button type="button" class="jump" data-st="1">▶ הצגה</button><br>לרגע קצר כל ארבעת המסתמים סגורים, והחדרים ממשיכים להתכווץ. <b>מתי נפתחים</b> המסתמים בין החדרים לעורקים?',
+ opts:['כשהלחץ בחדרים עולה מעל הלחץ בעורקים','מיד כשהחדרים מתחילים להתכווץ','כשהלחץ בעליות עולה מעל הלחץ בחדרים','כשהחדרים מתחילים להירפות'],ans:0,
+ ok:'נכון. בהתחלה הלחץ בחדר נמוך מהלחץ בעורק (בערך 80), ולכן המסתם עדיין סגור. כשהלחץ בחדר עולה מעל הלחץ בעורק, המסתם נפתח והדם זורם לעורק.',
+ no:['','בתחילת ההתכווצות הלחץ בחדר עוד נמוך מהלחץ בעורק, ולכן לרגע קצר כל המסתמים סגורים. הפעילו בהילוך איטי וחפשו את ההודעה "כל ארבעת המסתמים סגורים".','הלחץ בעליות קובע את המסתמים בין העליות לחדרים, לא את המסתמים בין החדרים לעורקים.','כשהחדרים נרפים, הלחץ בהם יורד, והמסתמים בין החדרים לעורקים נסגרים.']},
+{src:'מצגת השיעור, חלק 3: המסתמים בכל שלב של הפעימה (על פי מט״ח); סיסטולה ודיאסטולה',stem:'שלב 2, סיסטולה של החדרים: <button type="button" class="jump" data-st="1">▶ הצגה</button><br>מה קורה <b>בעליות</b> בזמן שהחדרים מתכווצים?',
+ opts:['העליות נרפות ומתמלאות בדם שמגיע מהוורידים','העליות מתכווצות יחד עם החדרים','העליות ריקות מדם עד הדיאסטולה','הדם זורם מהעליות לחדרים'],ans:0,
+ ok:'נכון. המסתמים בין העליות לחדרים סגורים, והדם שמגיע בוורידים מצטבר בעליות הנרפות. בסימולציה רואים חיצים מהוורידים לעליות.',
+ no:['','העליות מתכווצות לפני החדרים. כשהחדרים מתכווצים, העליות כבר נרפות.','דם זורם מהוורידים לעליות כל הזמן. בזמן הזה הוא מצטבר בעליות.','המסתמים בין העליות לחדרים סגורים בשלב הזה, ולכן הדם לא עובר לחדרים.']},
+{src:'מצגת השיעור, חלק 3: המסתמים בכל שלב של הפעימה (על פי מט״ח); קולות הלב',stem:'שלב 3, דיאסטולה: <button type="button" class="jump" data-st="2">▶ הצגה</button><br>בתחילת השלב <b>נסגרים</b> המסתמים בין החדרים לעורקים (הקול השני). מה גורם לסגירה?',
+ opts:['הלחץ בחדרים הנרפים יורד מתחת ללחץ בעורקים','העורקים מתכווצים ודוחפים את המסתמים','הלחץ בעליות עולה מעל הלחץ בחדרים','העליות מתחילות להתכווץ'],ans:0,
+ ok:'נכון. החדרים נרפים, והלחץ בהם יורד מתחת ללחץ בעורקים. הלחץ מצד העורק סוגר את המסתם, והדם לא חוזר מהעורק לחדר.',
+ no:['','המסתם נסגר בגלל הפרש הלחצים: הלחץ בחדר יורד מתחת ללחץ בעורק.','כשהלחץ בעליות גבוה מהלחץ בחדרים, נפתחים המסתמים בין העליות לחדרים. זה קורה רגע אחרי סגירת המסתמים בין החדרים לעורקים.','בדיאסטולה כל חללי הלב נרפים. העליות מתכווצות רק בתחילת הפעימה הבאה.']},
+{src:'מצגת השיעור, חלק 3: המסתמים בכל שלב של הפעימה (על פי מט״ח)',stem:'שלב 3, דיאסטולה: <button type="button" class="jump" data-st="2">▶ הצגה</button><br>כל חללי הלב נרפים. <b>איך עובר הדם</b> מהעליות לחדרים בשלב הזה?',
+ opts:['הלחץ בעליות גבוה מעט מהלחץ בחדרים, המסתמים ביניהם פתוחים, והדם זורם לחדרים','הדם לא עובר: הוא עובר לחדרים רק כשהעליות מתכווצות','החדרים מתכווצים ושואבים את הדם מהעליות','הדם עובר מהעליות לחדרים דרך המחיצה'],ans:0,
+ ok:'נכון. הדם זורם מהוורידים לעליות, ומשם דרך המסתמים הפתוחים לחדרים. רוב המילוי של החדרים מתרחש בשלב הזה, עוד לפני שהעליות מתכווצות.',
+ no:['','בדיאסטולה המסתמים בין העליות לחדרים פתוחים, והדם זורם לחדרים כבר בשלב הזה. ההתכווצות של העליות רק משלימה את המילוי.','בדיאסטולה החדרים נרפים, לא מתכווצים.','המחיצה שלמה, בלי פתחים. הדם עובר מעלייה לחדר באותו צד, דרך המסתם.']},
+{src:'מצגת השיעור, חלק 3: "שני סוגי המסתמים אף פעם לא פתוחים יחד"',stem:'האם יש רגע בפעימה שבו פתוחים <b>גם</b> המסתם בין העלייה לחדר <b>וגם</b> המסתם בין החדר לעורק באותו צד?',
+ opts:['לא. הלחץ בחדר לא יכול להיות גם נמוך מהלחץ בעלייה וגם גבוה מהלחץ בעורק, כי הלחץ בעורק תמיד גבוה מהלחץ בעלייה','כן, בזמן הסיסטולה של החדרים','כן, בזמן הדיאסטולה','כן, בזמן הסיסטולה של העליות'],ans:0,
+ ok:'נכון. מסתם בין עלייה לחדר פתוח רק כשהלחץ בחדר נמוך מהלחץ בעלייה. מסתם בין חדר לעורק פתוח רק כשהלחץ בחדר גבוה מהלחץ בעורק. הלחץ בעורק תמיד גבוה מהלחץ בעלייה, ולכן שני התנאים לא מתקיימים יחד. אילו שני הסוגים היו פתוחים יחד, הדם היה זורם מהעורק דרך החדר בחזרה לעלייה.',
+ no:['','בזמן הסיסטולה של החדרים המסתמים בין העליות לחדרים סגורים.','בזמן הדיאסטולה המסתמים בין החדרים לעורקים סגורים.','בזמן הסיסטולה של העליות המסתמים בין החדרים לעורקים סגורים.']}],'y');
+
+/* =====================================================================
+   4. Heart rate in exertion
+   ===================================================================== */
+renderQuestions($('exq'),[
+{src:'תצפית בסימולציה (חלק 2)',stem:'בסימולציה עברו מ"מנוחה · 75" ל"מאמץ · 150" (פעימות בדקה), והשוו את ציר הזמן. איזה שלב בפעימה התקצר יותר מכל?',
+ opts:['הסיסטולה של העליות','הסיסטולה של החדרים','הדיאסטולה'],ans:2,
+ ok:'נכון. במנוחה הדיאסטולה נמשכת בערך 0.4 שנייה, ובקצב 150 רק בערך 0.1 שנייה. הסיסטולה של החדרים מתקצרת פחות: מ־0.3 לבערך 0.2 שנייה. בזמן הדיאסטולה החדרים מתמלאים בדם, ובזמן הזה עיקר הזרימה בעורקים הכליליים.',
+ no:['הסיסטולה של העליות קצרה גם במנוחה (בערך 0.1 שנייה), והשינוי בה קטן. השוו לדיאסטולה.','הסיסטולה של החדרים מתקצרת מ־0.3 לבערך 0.2 שנייה. השוו לדיאסטולה.','']},
+{src:'בגרות תשפ״ה (2025), פרק שני: קצב הלב ונפח הפעימה בפעילות גופנית (הותאמה לבחירה מרובה)',stem:'בפעילות גופנית קצב הלב עולה. כיצד העלייה בקצב הלב מאפשרת ביצוע של פעילות גופנית במאמץ?',
+ opts:['יש יותר פעימות בדקה, ולכן יותר דם יוצא מהלב בכל דקה, ולתאי השריר מגיעים יותר חמצן וגלוקוז לנשימה תאית','כל פעימה נמשכת זמן רב יותר, ולכן החדרים מתמלאים ביותר דם','הדם זורם לאט יותר, ולכן תאי השריר קולטים ממנו יותר חמצן','המסתמים נשארים פתוחים זמן רב יותר בכל פעימה'],ans:0,
+ ok:'נכון. יותר פעימות בדקה ← יותר דם יוצא מהלב לגוף בכל דקה ← יותר חמצן וגלוקוז מגיעים לתאי השריר ← קצב הנשימה התאית עולה ונוצר יותר ATP להתכווצות השרירים.',
+ no:['','בקצב גבוה כל פעימה <b>קצרה</b> יותר. בדקו בסימולציה: 0.8 שנייה במנוחה, 0.4 שנייה במאמץ.','בקצב לב גבוה הדם זורם מהר יותר, לא לאט יותר.','בקצב גבוה כל שלב בפעימה קצר יותר, וגם הזמן שבו המסתמים פתוחים.']}],'e');
+
+/* =====================================================================
+   5. Exam questions
+   ===================================================================== */
+renderQuestions($('q5'),[
+{src:'מבחן רבעון 1 תש״ף, כיתה י׳, שאלה ט (כלשונה; "שסתומים" הוחלף ב"מסתמים")',stem:'בזמן הסיסטולה (התכווצות) של החדרים:',
+ opts:['סגורים המסתמים שבין החדרים לעורקים','פתוחים המסתמים שבין החדרים לעורקים','דם זורם מהעליות לחדרים','מתכווצות העליות'],ans:1,
+ ok:'נכון. כשהלחץ בחדרים המתכווצים עולה מעל הלחץ בעורקים, המסתמים בין החדרים לעורקים נפתחים, והדם זורם לעורקים.',
+ no:['המסתמים האלה סגורים רק ברגע הקצר בתחילת הסיסטולה, עד שהלחץ בחדר עולה מעל הלחץ בעורק. ברוב הסיסטולה הם פתוחים, והדם זורם לעורקים.','','בזמן הסיסטולה של החדרים המסתמים בין העליות לחדרים סגורים, כי הלחץ בחדר גבוה מהלחץ בעלייה. הדם לא זורם מהעליות לחדרים.','העליות מתכווצות לפני החדרים. בזמן הסיסטולה של החדרים העליות נרפות ומתמלאות בדם.']},
+{src:'מצגת השיעור, חלק 3: המסתמים וקולות הלב (מט״ח)',stem:'מתי נשמע הקול הראשון של הלב?',
+ opts:['בסגירת המסתמים בין העליות לחדרים, בתחילת הסיסטולה של החדרים','בסגירת המסתמים בין החדרים לעורקים, בתחילת הדיאסטולה','בזמן ההתכווצות של העליות','בפתיחת המסתמים בין החדרים לעורקים'],ans:0,
+ ok:'נכון. החדרים מתחילים להתכווץ, הלחץ בהם עולה מעל הלחץ בעליות, והמסתמים בין העליות לחדרים נסגרים. הפעילו בסימולציה את "קולות הלב" ובדקו מתי נשמע כל קול.',
+ no:['','זה הקול השני: בתחילת הדיאסטולה, כשהלחץ בחדרים יורד מתחת ללחץ בעורקים.','קולות הלב נשמעים בסגירת מסתמים, ולא בהתכווצות של חלל.','קולות הלב נשמעים בסגירת מסתמים, ולא בפתיחה שלהם.']},
+{src:'מבחן פתיחת שנה, כיתה י״ב, תשפ״ז, שאלה 3 (הותאמה לבחירה מרובה), ומבחן רבעון 1 תש״ף, כיתה י׳',stem:'בבדיקה נמדד לחץ דם של 120/80 מ"מ כספית. בסימולציה רואים את הלחץ באבי העורקים עולה ויורד בכל פעימה. מהו הגורם להבדל בין הלחץ הסיסטולי (120) ובין הלחץ הדיאסטולי (80) באבי העורקים?',
+ opts:['בהתכווצות החדרים הדם נדחף לאבי העורקים והלחץ בו עולה; בהרפיית החדרים המסתם בין החדר לעורק סגור, והלחץ בעורק יורד','הלחץ הסיסטולי נמדד בעורק, והלחץ הדיאסטולי נמדד בווריד','הלחץ הסיסטולי נוצר בהתכווצות העליות, והדיאסטולי בהתכווצות החדרים','בזמן הדיאסטולה המסתם בין החדר לעורק פתוח, והדם חוזר מהעורק לחדר'],ans:0,
+ ok:'נכון. 120 = הלחץ באבי העורקים בזמן הסיסטולה של החדרים. 80 = הלחץ בזמן הדיאסטולה, כשהחדרים נרפים. דופן העורק הגמישה נמתחת בסיסטולה וחוזרת בדיאסטולה, ולכן הלחץ בעורק לא יורד לאפס.',
+ no:['','שני הלחצים נמדדים בעורק: הסיסטולי בזמן התכווצות החדרים, והדיאסטולי בזמן ההרפיה.','ההתכווצות של העליות מזרימה דם רק לחדרים. הלחץ בעורקים עולה בהתכווצות החדרים.','בזמן הדיאסטולה המסתם בין החדר לעורק סגור, ולכן הדם לא חוזר לחדר.']}],'p');
+
+/* ---------- download: opens only after every question was answered ---------- */
+const TOTAL=document.querySelectorAll('.opts').length+STN.length;
+function progress(){const n=Object.keys(Lab.log).length,done=n>=TOTAL;$('dl').disabled=!done;
+  $('prog').innerHTML=done?'✓ עניתם על כל השאלות. אפשר להוריד את הקובץ.':`עניתם על <b>${n}</b> מתוך <b>${TOTAL}</b> שאלות (כולל שלוש שורות הטבלה). הכפתור נפתח בסוף.`}
+setInterval(progress,800);progress();
+$('dl').onclick=()=>{if(!(window.STUDENT&&window.STUDENT.name)){$('gate').hidden=false;$('gErr').textContent='לפני ההורדה: כתבו שם וכיתה, הם יופיעו בקובץ.';$('gName').focus();window.AFTER_GATE=()=>$('dl').click();return}labPdf('סימולציה: הלב הפועם','סימולציה-הלב-הפועם')};
+</script>
+<script>(function(){const g=document.getElementById('gate'),n=document.getElementById('gName'),c=document.getElementById('gClass');
+try{const s=JSON.parse(localStorage.getItem('hadam-student')||'{}');n.value=s.name||'';c.value=s.cls||''}catch(e){}
+document.getElementById('gGo').onclick=()=>{const nm=n.value.trim(),cl=c.value.trim();
+ if(nm.replace(/\s/g,'').length<2||!cl){document.getElementById('gErr').textContent='כתבו שם (לפחות 2 אותיות) וכיתה.';return}
+ try{localStorage.setItem('hadam-student',JSON.stringify({name:nm,cls:cl}))}catch(e){}
+ document.querySelectorAll('[data-fill="name"]').forEach(e=>e.textContent='👋 '+nm+' · '+cl);
+ window.STUDENT={name:nm,cls:cl};g.hidden=true;if(window.AFTER_GATE){const f=window.AFTER_GATE;window.AFTER_GATE=null;f()}};
+n.addEventListener('keydown',e=>{if(e.key==='Enter')c.focus()});c.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('gGo').click()});
+n.focus()})();</script>
+</body>
+</html>
