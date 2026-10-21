@@ -6,7 +6,9 @@ function heartSVG(o){
   const P='#2457C5',R='#D7263D',M='#E9C3BE',MS='#B8857E',INK='#13233A';
   const hl=id=>o.hl===id?' class="hl"':'';
   const lab=(x,y,t,a)=>o.labels?`<text x="${x}" y="${y}" text-anchor="${a||'middle'}" class="lb">${t}</text>`:'';
-  const spots=(o.spots||[]).map(s=>`<g class="spot" data-n="${s.n}" tabindex="0" role="button" aria-label="מבנה ${s.n}"><circle cx="${s.x}" cy="${s.y}" r="13"/><text x="${s.x}" y="${s.y+5}" text-anchor="middle">${s.n}</text></g>`).join('');
+  // a spot with tx,ty gets a leader line (with arrowhead) to the structure it marks
+  const lead=s=>s.tx==null?'':`<path d="M${s.x},${s.y} L${s.tx},${s.ty}" class="lead" marker-end="url(#ahk)"/>`;
+  const spots=(o.spots||[]).map(s=>`${lead(s)}<g class="spot" data-n="${s.n}" tabindex="0" role="button" aria-label="מבנה ${s.n}"><circle cx="${s.x}" cy="${s.y}" r="13"/><text x="${s.x}" y="${s.y+5}" text-anchor="middle">${s.n}</text></g>`).join('');
   const cor=o.coronary?`<g class="cor" fill="none" stroke="#8E0E22" stroke-width="5" stroke-linecap="round">
     <path d="M218,246 C190,250 150,252 110,256 C90,262 80,290 86,330"/>
     <path d="M252,246 C280,250 300,262 318,280 C330,320 320,370 280,410"/>
@@ -19,7 +21,7 @@ function heartSVG(o){
     <path d="M110,40 L110,120" stroke="#fff"/><path d="M120,210 L130,290" stroke="#fff"/><path d="M180,320 L181,210" stroke="#fff"/>
     <path d="M386,164 L340,165" stroke="#fff"/><path d="M386,208 L340,207" stroke="#fff"/><path d="M43,430 L43,250" stroke="#fff"/><path d="M290,62 L290,118" stroke="#fff"/><path d="M318,85 L372,85" stroke="#fff"/><path d="M150,93 L40,93" stroke="#fff"/><path d="M290,210 L280,290" stroke="#fff"/><path d="M262,340 L236,200" stroke="#fff"/></g>`:'';
   return `<svg viewBox="0 0 420 450" class="heart" role="img" aria-label="איור סכמטי של חתך הלב">
-  <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#fff"/></marker></defs>
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#fff"/></marker><marker id="ahk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="${INK}"/></marker></defs>
   <!-- heart muscle -->
   <path d="M84,134 Q60,138 60,170 L60,250 Q62,312 112,362 Q170,424 236,430 Q304,420 336,346 Q352,296 348,232 L348,170 Q348,134 316,132 Z" fill="${M}" stroke="${MS}" stroke-width="3"/>
   <!-- pulmonary arteries (behind the aorta) -->
@@ -42,7 +44,7 @@ function heartSVG(o){
     <path d="M236,34 L232,6 L246,6 L250,32z M262,30 L262,4 L276,4 L276,31z M286,36 L294,8 L307,12 L298,42z" fill="${R}" stroke="${INK}" stroke-width="1.5"/></g>
   <!-- valves -->
   <g${hl('av')} fill="#fff" stroke="${INK}" stroke-width="2"><path d="M96,241 L118,241 L110,268z M126,241 L150,241 L140,268z"/><path d="M268,239 L288,239 L280,266z M296,239 L320,239 L308,266z"/></g>
-  <g${hl('sl')} fill="#fff" stroke="${INK}" stroke-width="2"><path d="M166,250 Q174,236 180,250z M181,250 Q188,236 196,250z"/><path d="M221,250 Q228,236 233,250z M234,250 Q240,236 245,250z"/></g>
+  <g${hl('sl')} fill="#fff" stroke="${INK}" stroke-width="2"><path d="M166,258 Q173,228 181,258z M181,258 Q189,228 196,258z"/><path d="M221,258 Q227,228 233,258z M233,258 Q239,228 245,258z"/></g>
   ${cor}${pacer}${flow}
   ${lab(111,10,'וריד נבוב עליון')}${lab(118,196,'עלייה ימנית')}${lab(134,322,'חדר ימני')}${lab(297,196,'עלייה שמאלית')}${lab(268,330,'חדר שמאלי')}
   ${lab(352,30,'אבי העורקים')}${lab(362,118,'עורק הריאה')}${lab(58,62,'עורק הריאה')}${lab(372,244,'ורידי הריאה')}${lab(112,444,'וריד נבוב תחתון')}
@@ -53,6 +55,7 @@ const HEART_CSS=`.heart{width:100%;height:auto;max-height:72vh;font-family:Assis
 .heart .lb{font-size:17px;font-weight:800;fill:#13233A;paint-order:stroke;stroke:#fff;stroke-width:4px}
 .heart .hl{filter:drop-shadow(0 0 0 #F2B705) drop-shadow(0 0 6px #F2B705)}
 .heart .hl path{stroke:#F2B705!important;stroke-width:4!important}
+.heart .lead{fill:none;stroke:#13233A;stroke-width:3;paint-order:stroke}
 .heart .spot circle{fill:#fff;stroke:#13233A;stroke-width:2.5}.heart .spot text{font-size:14px;font-weight:800;fill:#13233A;pointer-events:none}
 .heart .spot{cursor:pointer}.heart .spot.cur circle{fill:#F2B705}.heart .spot.good circle{fill:#1E7B4D;stroke:#1E7B4D}.heart .spot.good text{fill:#fff}
 .heart .spot.bad circle{fill:#B3261E;stroke:#B3261E}.heart .spot.bad text{fill:#fff}`;

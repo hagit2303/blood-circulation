@@ -91,7 +91,7 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 <div class="wrap">
   <nav class="homebar" aria-label="ניווט"><a href="../index.html">🏠 דף הבית</a><a href="index.html">→ לשיעור</a><span class="who" data-fill="name"></span></nav>
   <section class="hero">
-    <div class="kick">ביולוגיה · כיתה י' · שיעור 4 · תרגול</div>
+    <div class="kick">ביולוגיה · כיתה י' · שיעור 4 · תרגיל</div>
     <h1>מעבדת <span>הלב</span></h1>
     <p><b>ניסיון אחד לכל שאלה.</b> אחרי הבדיקה השאלה ננעלת, ומופיעים התשובה הנכונה וההסבר. ממשיכים הלאה גם אחרי טעות. בסוף מורידים קובץ PDF ומעלים אותו למשימה ב־Classroom.</p>
     <div class="routine"><b>1 תפקידים</b><i>←</i><b>2 זיהוי מבנים</b><i>←</i><b>3 שאלות סגורות</b><i>←</i><b>4 מבנה ותפקוד</b><i>←</i><b>5 שאלת בגרות</b><i>←</i><b>📒 טעויות</b><i>←</i><b>⬇ קובץ</b></div>
@@ -166,8 +166,8 @@ $('rolesBtn').onclick=()=>{
 
 /* ---------- 2. זיהוי מבנים: בדיקה אחת ---------- */
 const NAMES=['עלייה ימנית','עלייה שמאלית','חדר ימני','חדר שמאלי','מחיצה','מסתם בין עלייה לחדר','מסתם בין חדר לעורק','אבי העורקים','עורק הריאה','וריד נבוב עליון','וריד נבוב תחתון','ורידי הריאה'];
-const SP=[{n:1,x:118,y:192,a:0},{n:2,x:130,y:318,a:2},{n:3,x:297,y:192,a:1},{n:4,x:268,y:325,a:3},{n:5,x:209,y:318,a:4},{n:6,x:124,y:256,a:5},{n:7,x:294,y:254,a:5},
-  {n:8,x:233,y:160,a:7},{n:9,x:181,y:172,a:8},{n:10,x:111,y:62,a:9},{n:11,x:43,y:380,a:10},{n:12,x:362,y:186,a:11},{n:13,x:233,y:244,a:6}];
+const SP=[{n:1,x:118,y:192,a:0},{n:2,x:130,y:318,a:2},{n:3,x:297,y:192,a:1},{n:4,x:276,y:352,a:3},{n:5,x:209,y:318,a:4},{n:6,x:124,y:256,a:5},{n:7,x:294,y:254,a:5},
+  {n:8,x:233,y:160,a:7},{n:9,x:181,y:172,a:8},{n:10,x:111,y:62,a:9},{n:11,x:43,y:380,a:10},{n:12,x:362,y:186,a:11},{n:13,x:254,y:304,a:6,tx:236,ty:261}];
 $('fig').innerHTML=heartSVG({spots:SP});
 const sorted=NAMES.map((n,i)=>[n,i]).sort((a,b)=>a[0].localeCompare(b[0],'he'));
 $('idl').innerHTML=SP.map(s=>`<li data-n="${s.n}"><span class="k">${s.n}</span><select aria-label="מבנה ${s.n}"><option value="">בחרו…</option>${sorted.map(([n,i])=>`<option value="${i}">${n}</option>`).join('')}</select></li>`).join('');
