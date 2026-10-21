@@ -1,0 +1,1461 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>מערכת הדם: משחק מקרן</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap">
+<style>
+/* מבנה משותף. ערכת העיצוב (themes/*.css) מגדירה את המשתנים ומשנה את הפריסה */
+:root {
+  --bg: #F4F7FA; --card: #FFFFFF; --ink: #13233A; --mut: #5E6E82; --line: #DCE3EA;
+  --a: #D7263D; --b: #2457C5; --ok: #1E7B4D; --okbg: #E6F4EC; --no: #B3261E; --nobg: #FBE9E7;
+  --t1: #2457C5; --t2: #C98A00; --t3: #1E7B4D; --t4: #B8336A;
+  --font: 'Assistant', Arial, sans-serif; --hfont: var(--font);
+  --r: 14px; --gap: 18px; --q: clamp(26px, 2.4vw, 40px);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 20px; line-height: 1.5; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { cursor: default; opacity: .55; }
+h1, h2, h3 { font-family: var(--hfont); margin: 0; line-height: 1.15; }
+
+.app {
+  max-width: 1440px; margin: 0 auto; padding: 16px clamp(16px, 2.4vw, 32px) 24px;
+  display: grid; gap: var(--gap); grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "top" "scores" "track" "stage" "nav";
+}
+.top { grid-area: top; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.scores { grid-area: scores; }
+.track { grid-area: track; }
+.stage { grid-area: stage; }
+.nav { grid-area: nav; }
+
+.eyebrow { display: block; font-weight: 800; font-size: 15px; letter-spacing: .02em; color: var(--a); }
+.top h1 { font-size: clamp(26px, 3.2vw, 44px); font-weight: 800; }
+#gSub { margin: 2px 0 0; color: var(--mut); font-size: 17px; }
+.tools { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.btn { border: 2px solid var(--ink); background: var(--ink); color: #fff; border-radius: 999px; padding: 8px 18px; font-weight: 700; font-size: 18px; }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn.big { font-size: 22px; padding: 12px 28px; }
+.btn.danger { border-color: var(--no); color: var(--no); }
+
+/* ניקוד */
+.scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.score { --tc: var(--t1); display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--card); border: 2px solid var(--tc); border-radius: var(--r); padding: 8px 10px; transition: transform .2s ease, box-shadow .2s ease; }
+.score.t2 { --tc: var(--t2); } .score.t3 { --tc: var(--t3); } .score.t4 { --tc: var(--t4); }
+.score.is-turn { outline: 3px solid var(--tc); box-shadow: 0 0 0 2px var(--card), 0 4px 16px rgba(0,0,0,0.12); }
+.sc-body { display: flex; align-items: baseline; gap: 10px; flex: 1; justify-content: center; min-width: 0; }
+.sc-name { font-weight: 800; color: var(--tc); outline: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-name:focus { text-decoration: underline; }
+.sc-turn-tag { font-size: 13px; font-weight: 800; color: var(--tc); background: rgba(0,0,0,0.05); padding: 1px 8px; border-radius: 4px; margin-bottom: 2px; }
+.sc-num { font-size: 34px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+.pm { width: 34px; height: 34px; border-radius: 10px; border: 2px solid var(--tc); background: transparent; color: var(--tc); font-weight: 800; font-size: 20px; line-height: 1; flex: none; }
+.score.pop { animation: pop .45s ease; }
+@keyframes pop { 40% { transform: scale(1.06); } }
+
+/* תג תור בסבב */
+.head-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 4px; flex-wrap: wrap; }
+.turn-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 999px; font-weight: 800; font-size: 16px; border: 2px solid var(--tc); color: var(--tc); background: var(--card); }
+.turn-pill.t1 { --tc: var(--t1); background: rgba(36, 87, 197, 0.08); }
+.turn-pill.t2 { --tc: var(--t2); background: rgba(201, 138, 0, 0.10); }
+.turn-pill.t3 { --tc: var(--t3); background: rgba(30, 123, 77, 0.08); }
+.turn-pill.t4 { --tc: var(--t4); background: rgba(184, 51, 106, 0.08); }
+.turn-pill.bonus { --tc: #D97706; background: #FEF3C7; color: #92400E; border-color: #F59E0B; }
+
+/* קובייה תלת-ממדית */
+.dice-btn { font-weight: 800; border-color: var(--b); color: var(--b); }
+.dice-modal { border: 2px solid var(--ink); border-radius: 20px; padding: 24px 32px; background: var(--card); color: var(--ink); max-width: 440px; width: 90vw; text-align: center; box-shadow: 0 16px 48px rgba(0,0,0,0.25); }
+.dice-modal::backdrop { background: rgba(19, 35, 58, 0.65); backdrop-filter: blur(4px); }
+.dice-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.dice-stage { perspective: 700px; width: 140px; height: 140px; margin: 12px auto; display: flex; align-items: center; justify-content: center; }
+.cube-3d {
+  width: 86px; height: 86px; position: relative; transform-style: preserve-3d;
+  transition: transform 1.1s cubic-bezier(0.2, 0.85, 0.35, 1.1);
+  transform: rotateX(-22deg) rotateY(32deg);
+}
+.cube-3d.rolling { animation: diceRollAnim 1.1s ease-in-out infinite; }
+@keyframes diceRollAnim {
+  0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+  25% { transform: rotateX(180deg) rotateY(90deg) rotateZ(45deg) scale(1.1); }
+  50% { transform: rotateX(360deg) rotateY(270deg) rotateZ(180deg) scale(1.15); }
+  75% { transform: rotateX(540deg) rotateY(450deg) rotateZ(270deg) scale(1.08); }
+  100% { transform: rotateX(720deg) rotateY(720deg) rotateZ(360deg); }
+}
+.cube-3d .face {
+  position: absolute; width: 86px; height: 86px; background: #fff; border: 3px solid var(--b);
+  border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-size: 38px; font-weight: 900; color: var(--b); box-shadow: inset 0 0 12px rgba(36, 87, 197, 0.15);
+}
+.cube-3d .f1 { transform: rotateY(0deg) translateZ(43px); }
+.cube-3d .f2 { transform: rotateY(90deg) translateZ(43px); }
+.cube-3d .f3 { transform: rotateY(180deg) translateZ(43px); }
+.cube-3d .f4 { transform: rotateY(-90deg) translateZ(43px); }
+.cube-3d .f5 { transform: rotateX(90deg) translateZ(43px); }
+.cube-3d .f6 { transform: rotateX(-90deg) translateZ(43px); }
+.dice-result { display: flex; flex-direction: column; align-items: center; gap: 8px; animation: pop .4s ease; }
+.res-num { font-size: 44px; font-weight: 900; color: var(--a); line-height: 1; }
+.res-title { font-size: 20px; font-weight: 700; color: var(--ink); }
+.dice-actions { display: flex; gap: 10px; justify-content: center; margin-top: 6px; }
+
+/* מסלול */
+.track { display: flex; gap: 6px; flex-wrap: wrap; }
+.stop { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--line); background: var(--card); font-weight: 700; font-size: 15px; color: var(--mut); padding: 0; }
+.stop.done { border-color: var(--b); color: var(--b); }
+.stop.now { background: var(--a); border-color: var(--a); color: #fff; }
+.stop.bonus { border-color: #F59E0B; color: #B45309; font-size: 16px; }
+.stop.bonus.now { background: #F59E0B; border-color: #F59E0B; color: #fff; }
+.stop.home { border-color: var(--mut); font-size: 16px; }
+.stop.home.now { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+/* לוח שאלות ראשי */
+.stage.k-board { display: block; width: 100%; max-width: 1200px; margin: 0 auto; }
+.board-wrap { display: flex; flex-direction: column; gap: 18px; width: 100%; }
+.board-header {
+  background: var(--card); border: 2px solid var(--line); border-radius: var(--r);
+  padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px; box-shadow: 0 4px 16px rgba(19, 35, 58, 0.05);
+}
+.board-turn { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.board-label { font-size: 19px; font-weight: 700; color: var(--mut); }
+.board-turn-badge {
+  font-size: 22px; font-weight: 900; padding: 6px 22px; border-radius: 999px;
+  border: 2px solid var(--tc); color: var(--tc); background: var(--card);
+}
+.board-turn-badge.t1 { --tc: var(--t1); background: rgba(36, 87, 197, 0.08); }
+.board-turn-badge.t2 { --tc: var(--t2); background: rgba(201, 138, 0, 0.10); }
+.board-turn-badge.t3 { --tc: var(--t3); background: rgba(30, 123, 77, 0.08); }
+.board-turn-badge.t4 { --tc: var(--t4); background: rgba(184, 51, 106, 0.08); }
+.board-info { font-size: 16px; color: var(--mut); }
+
+.board-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%;
+}
+@media (max-width: 900px) {
+  .board-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.q-card {
+  background: var(--card); border: 2px solid var(--line); border-radius: var(--r);
+  padding: 18px 14px; display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 8px; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  min-height: 170px; justify-content: space-between; position: relative;
+}
+.q-card:hover:not(.locked) {
+  transform: translateY(-4px); border-color: var(--b);
+  box-shadow: 0 8px 24px rgba(36, 87, 197, 0.15);
+}
+.q-card.locked {
+  background: #F1F4F8; border-color: #D1D8E0; cursor: not-allowed; opacity: 0.65;
+}
+.q-card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.q-card-num { font-size: 28px; font-weight: 900; color: var(--b); line-height: 1; }
+.q-card.locked .q-card-num { color: #8C9BAE; }
+.q-card-badge { font-size: 13px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--bg); color: var(--mut); }
+.q-card-icon-center {
+  font-size: 46px; line-height: 1; margin: 4px 0;
+  transition: transform .25s ease, filter .25s ease;
+  filter: drop-shadow(0 2px 6px rgba(215, 38, 61, 0.25));
+}
+.q-card:hover:not(.locked) .q-card-icon-center {
+  transform: scale(1.18);
+  filter: drop-shadow(0 4px 10px rgba(215, 38, 61, 0.4));
+}
+.q-card.locked .q-card-icon-center {
+  filter: grayscale(1); opacity: 0.35;
+}
+.q-card-title { font-size: 19px; font-weight: 800; color: var(--ink); line-height: 1.2; }
+.q-card.locked .q-card-title { color: #6C7D93; }
+.q-card-status { font-size: 14px; font-weight: 800; color: var(--ok); padding: 4px 10px; border-radius: 6px; background: var(--okbg); }
+.q-card-btn { font-size: 15px; padding: 6px 14px; font-weight: 800; width: 100%; }
+
+.q-card.bonus-card {
+  grid-column: 1 / -1; background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  border-color: #F59E0B; flex-direction: row; justify-content: space-between;
+  padding: 16px 24px; text-align: start; min-height: auto;
+}
+.bonus-card-left { display: flex; align-items: center; gap: 16px; }
+.bonus-card-left .q-card-num { font-size: 36px; color: #B45309; }
+.bonus-desc { font-size: 15px; color: #92400E; display: block; margin-top: 2px; }
+
+/* זכות חטיפה */
+.steal-box {
+  background: #FFFBEB; border: 2px dashed #F59E0B; border-radius: var(--r);
+  padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;
+  animation: pop .4s ease;
+}
+.steal-header { font-weight: 800; font-size: 16px; color: #B45309; }
+.steal-actions { display: flex; gap: 8px; }
+.steal-btn-ok { background: var(--ok); border: 2px solid var(--ok); color: #fff; font-weight: 800; padding: 6px 14px; border-radius: 8px; font-size: 16px; }
+.steal-btn-no { background: var(--no); border: 2px solid var(--no); color: #fff; font-weight: 800; padding: 6px 14px; border-radius: 8px; font-size: 16px; }
+.back-to-board-btn {
+  margin-top: 14px; width: 100%; font-size: 20px; padding: 12px 20px;
+  background: var(--ink); color: #fff; border-radius: 12px; border: 2px solid var(--ink);
+  font-weight: 800; cursor: pointer; transition: transform .2s ease;
+}
+.back-to-board-btn:hover { transform: scale(1.02); }
+
+/* במה ואחידות גובה שאלות */
+.stage { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr); gap: var(--gap); align-items: start; }
+.r-main, .r-side > * { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); }
+.r-main { padding: clamp(16px, 2vw, 28px); display: flex; flex-direction: column; gap: 16px; min-height: 480px; }
+.r-side { display: grid; gap: 12px; }
+.r-side > * { padding: 14px 16px; }
+.r-head h2 { font-size: clamp(24px, 2.4vw, 34px); font-weight: 800; margin-top: 4px; }
+.q { font-size: var(--q); font-weight: 700; margin: 0; line-height: 1.35; min-height: 70px; }
+
+.opts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.opt { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-items: center; border: 2px solid var(--line); border-radius: calc(var(--r) - 4px); padding: 10px 14px; font-size: clamp(19px, 1.6vw, 25px); background: var(--card); cursor: pointer; min-height: 52px; }
+.opt .let { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); font-weight: 800; }
+.opt.picked { border-color: var(--b); box-shadow: inset 0 0 0 2px var(--b); }
+.opt.right { border-color: var(--ok); background: var(--okbg); cursor: default; }
+.opt.right .let { background: var(--ok); color: #fff; }
+.opt.wrong { opacity: .62; cursor: default; }
+.opt.wrong.picked { opacity: 1; border-color: var(--no); background: var(--nobg); box-shadow: none; }
+.onote { grid-column: 2; font-size: 17px; color: var(--mut); }
+
+.reveal { border-inline-start: 6px solid var(--ok); background: var(--okbg); border-radius: 10px; padding: 14px 18px; font-size: clamp(19px, 1.7vw, 25px); display: grid; gap: 6px; }
+.reveal.small { font-size: 19px; padding: 10px 14px; }
+.fix-old { text-decoration: line-through; color: var(--no); }
+.fix-new { font-weight: 700; color: var(--ok); }
+.why { color: var(--ink); }
+.src { margin: 0; font-size: 15px; color: var(--mut); }
+.reveal-btn { justify-self: start; }
+
+/* טיימר */
+.timer { display: grid; gap: 10px; justify-items: center; text-align: center; }
+.t-stages { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.t-stages span { font-size: 15px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--mut); }
+.t-stages span.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.t-face { width: 150px; height: 150px; border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(var(--b) calc(var(--p, 1) * 360deg), var(--line) 0); }
+.t-face::before { content: ""; grid-area: 1/1; width: 124px; height: 124px; border-radius: 50%; background: var(--card); }
+.t-num { grid-area: 1/1; font-size: 40px; font-weight: 800; font-variant-numeric: tabular-nums; z-index: 1; }
+.timer.low .t-num { color: var(--a); }
+.t-btns { display: flex; gap: 8px; }
+
+/* הימור וניקוד */
+.panel-h { font-weight: 800; margin-bottom: 8px; }
+.bets { display: grid; gap: 8px; }
+.bet-row { --tc: var(--t1); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.bet-row.t2, .aw.t2 { --tc: var(--t2); } .bet-row.t3, .aw.t3 { --tc: var(--t3); } .bet-row.t4, .aw.t4 { --tc: var(--t4); }
+.bet-name { font-weight: 800; color: var(--tc); min-width: 84px; }
+.chips { display: flex; gap: 6px; }
+.chip { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--tc); background: transparent; font-weight: 800; color: var(--tc); }
+.chip.on { background: var(--tc); color: #fff; }
+.verdict { display: flex; gap: 6px; margin-inline-start: auto; }
+.mini { width: 38px; height: 38px; border-radius: 10px; border: 2px solid; font-weight: 800; background: transparent; }
+.mini.ok, b.ok { color: var(--ok); border-color: var(--ok); }
+.mini.no, b.no { color: var(--no); border-color: var(--no); }
+.award-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.aw { --tc: var(--t1); border: 2px solid var(--tc); color: var(--tc); background: transparent; border-radius: 999px; padding: 6px 14px; font-weight: 700; font-size: 17px; }
+.aw.on { background: var(--tc); color: #fff; opacity: 1; }
+
+/* רמזים */
+.clues { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; counter-reset: c; }
+.clue { border: 2px dashed var(--line); border-radius: 10px; padding: 12px 16px; color: var(--mut); font-size: 20px; }
+.clue.shown { border-style: solid; border-color: var(--b); color: var(--ink); font-size: clamp(22px, 2.2vw, 32px); font-weight: 700; background: var(--card); }
+.hint-ctl { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.worth { font-size: 20px; color: var(--mut); } .worth b { color: var(--a); font-size: 30px; }
+
+/* בלש */
+.story { font-size: clamp(21px, 2vw, 28px); background: var(--bg); border-radius: 10px; padding: 14px 18px; }
+.steps { display: grid; gap: 14px; }
+.step { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 14px; }
+.step:not(.cur) { opacity: .8; }
+.step-q { font-size: clamp(22px, 2.1vw, 30px); display: flex; gap: 10px; align-items: baseline; }
+.sn { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--a); color: #fff; font-size: 18px; display: grid; place-items: center; }
+.step-meter { font-size: 20px; text-align: center; } .step-meter b { font-size: 30px; color: var(--a); }
+
+/* ניווט */
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+#count { font-weight: 700; color: var(--mut); }
+#bar { flex-basis: 100%; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+#bar i { display: block; height: 100%; width: 0; background: linear-gradient(to left, var(--a), var(--b)); transition: width .3s; }
+
+/* ספירה לאחור */
+.countdown { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(255,255,255,.88); z-index: 50; }
+.countdown[hidden] { display: none; }
+.countdown span { font-family: var(--hfont); font-size: min(40vw, 320px); font-weight: 800; color: var(--a); animation: pop .6s ease; }
+
+/* חלונות */
+dialog { border: 1px solid var(--line); border-radius: var(--r); padding: 22px; width: min(560px, 92vw); color: var(--ink); background: var(--card); font-family: var(--font); }
+dialog::backdrop { background: rgba(19,35,58,.25); }
+dialog form { display: grid; gap: 12px; }
+dialog textarea, dialog input[type=url], dialog input[type=number] { font: inherit; font-size: 18px; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; width: 100%; }
+dialog input[type=number] { width: 80px; }
+.field { display: grid; gap: 6px; } .field label { display: inline-flex; gap: 6px; align-items: center; margin-inline-end: 10px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.hint { color: var(--mut); font-size: 16px; margin: 0; }
+.radios label { margin-inline-start: 8px; }
+.split-out { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.grp { --tc: var(--t1); border: 2px solid var(--tc); border-radius: 10px; padding: 8px; display: grid; }
+.grp.t2 { --tc: var(--t2); } .grp.t3 { --tc: var(--t3); } .grp.t4 { --tc: var(--t4); }
+.grp b { color: var(--tc); }
+
+@media (max-width: 900px) {
+  .stage { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  body { font-size: 18px; }
+  .scores { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .score { padding: 6px; gap: 4px; }
+  .sc-body { gap: 6px; }
+  .sc-num { font-size: 26px; }
+  .pm { width: 28px; height: 28px; }
+  .t-face { width: 120px; height: 120px; } .t-face::before { width: 98px; height: 98px; } .t-num { font-size: 32px; }
+}
+
+/* גרסה 2 · לוח בקרה (נבחרה): ניקוד בעמודה קבועה, פאנלים צפופים, Rubik, בצבעי האטלס */
+.theme-dash {
+  --bg: #F4F7FA; --ink: #13233A; --mut: #5E6E82; --line: #DCE3EA;
+  --a: #D7263D; --b: #2457C5;
+  --font: 'Rubik', Arial, sans-serif; --r: 8px; --gap: 12px; --q: clamp(26px, 2.5vw, 38px);
+}
+.theme-dash .app {
+  max-width: none; grid-template-columns: 250px minmax(0, 1fr);
+  grid-template-areas: "top top" "scores track" "scores stage" "scores nav";
+}
+.theme-dash .top { background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--a); border-radius: var(--r); padding: 10px 16px; align-items: center; }
+.theme-dash .scores { grid-template-columns: 1fr; align-content: start; position: sticky; top: 12px; }
+.theme-dash .score { padding: 12px; border-width: 2px; border-inline-start-width: 8px; }
+.theme-dash .score { display: grid; grid-template-columns: 34px 1fr 34px; align-items: center; }
+.theme-dash .score.is-turn { outline: 3px solid var(--tc); box-shadow: 0 0 0 2px var(--card), 0 6px 20px rgba(0,0,0,0.15); }
+.theme-dash .sc-body { flex-direction: column; align-items: center; gap: 0; }
+.theme-dash .sc-num { font-size: 56px; font-weight: 900; color: var(--tc); }
+.theme-dash .track { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 8px; }
+.theme-dash .stop { border-radius: 6px; }
+.theme-dash .stop.now { background: var(--a); border-color: var(--a); }
+.theme-dash .r-main, .theme-dash .r-side > * { box-shadow: 0 1px 0 var(--line); }
+.theme-dash .r-head .eyebrow { color: var(--a); text-transform: none; }
+.theme-dash .opt { border-radius: 6px; }
+.theme-dash .t-face { border-radius: 10px; background: var(--bg); width: 100%; height: auto; padding: 10px; }
+.theme-dash .t-face::before { display: none; }
+.theme-dash .t-num { font-size: 58px; }
+.theme-dash .btn { border-radius: 6px; }
+@media (max-width: 900px) {
+  .theme-dash .app { grid-template-columns: 1fr; grid-template-areas: "top" "scores" "track" "stage" "nav"; }
+  .theme-dash .scores { grid-template-columns: 1fr 1fr; position: static; }
+  .theme-dash .sc-num { font-size: 32px; }
+}
+
+</style>
+</head>
+<body class="theme-dash">
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow">משחק מקרן</span>
+      <h1 id="gTitle"></h1>
+      <p id="gSub"></p>
+    </div>
+    <div class="tools">
+      <button class="btn ghost" id="openSplit">חלוקה לקבוצות</button>
+      <button class="btn ghost" id="openSet">⚙ הגדרות</button>
+    </div>
+  </header>
+  <section class="scores" id="scores" aria-label="ניקוד"></section>
+  <nav class="track" id="track" aria-label="סבבים"></nav>
+  <main class="stage" id="stage"></main>
+  <footer class="nav">
+    <button class="btn" id="prev">→ הקודם</button>
+    <span id="count"></span>
+    <button class="btn" id="next">הבא ←</button>
+    <div id="bar"><i></i></div>
+  </footer>
+  <p class="credit" style="text-align:center;font-size:14px;color:var(--mut);margin-top:12px;">היחידה מתבססת על חומרי מט״ח ומורחבת בחומרים נוספים. נבנתה על ידי חגית ברגמן.</p>
+</div>
+
+<div id="countdown" class="countdown" hidden><span>3</span></div>
+
+<dialog id="split">
+  <form method="dialog">
+    <h3>חלוקה אקראית לקבוצות</h3>
+    <p class="hint">מדביקים שמות, מופרדים בפסיק או בשורה חדשה.</p>
+    <textarea id="names" rows="4" placeholder="נועה, איתי, מאיה, יונתן, שירה, עומר…"></textarea>
+    <div class="radios">מספר קבוצות:
+      <label><input type="radio" name="k" value="2"> 2</label>
+      <label><input type="radio" name="k" value="3"> 3</label>
+      <label><input type="radio" name="k" value="4" checked> 4</label>
+    </div>
+    <div class="row"><button type="button" class="btn" id="doSplit">ערבבו</button><button class="btn ghost">סגירה</button></div>
+    <div id="splitOut" class="split-out"></div>
+  </form>
+</dialog>
+
+<dialog id="settings">
+  <form method="dialog">
+    <h3>הגדרות</h3>
+    <label class="field">מספר קבוצות (2–4) <input id="tn" type="number" min="2" max="4"></label>
+    <div class="field">טיימר בשניות:
+      <label>לבד <input id="t0" type="number" min="5"></label>
+      <label>בקבוצה <input id="t1" type="number" min="5"></label>
+      <label>הכרזה <input id="t2" type="number" min="5"></label>
+    </div>
+    <label class="field">בנק שאלות מ-Google Sheet (קישור CSV מפורסם)
+      <input id="sheetUrl" type="url" dir="ltr" placeholder="https://docs.google.com/spreadsheets/d/e/…/pub?output=csv">
+    </label>
+    <div class="row"><button type="button" class="btn" id="loadSheet">טעינה מהגיליון</button><button type="button" class="btn ghost" id="useFile">השאלות שבקובץ</button></div>
+    <p id="sheetMsg" class="hint"></p>
+    <div class="row"><button class="btn" id="saveSet">שמירה</button><button type="button" class="btn ghost danger" id="resetAll">איפוס המשחק</button></div>
+  </form>
+</dialog>
+
+<script type="application/json" id="game-data">
+{
+ "id": "blood-projector-v1",
+ "title": "מערכת הדם: משחק מקרן",
+ "subtitle": "ביולוגיה · כיתה י׳ · הלב, המחזורים וויסות זרימת הדם",
+ "timers": [
+  30,
+  60,
+  20
+ ],
+ "rounds": [
+  {
+   "type": "mcq",
+   "title": "מסתם פגום",
+   "q": "לאדם יש פגיעה במסתם הנמצא בין החדר הימני ובין עורק הריאה. הפגיעה מונעת מן המסתם להיסגר כראוי. לְמה פגיעה זו עלולה לגרום?",
+   "opts": [
+    "לחזרה של דם דל בחמצן לחדר הימני",
+    "לערבוב של דם עשיר בחמצן עם דם דל בחמצן",
+    "לזרימת דם מן החדר הימני לחדר השמאלי",
+    "לחסימה של העורקים הכליליים"
+   ],
+   "ans": 0,
+   "why": "מסתם שאינו נסגר כראוי מאפשר זרימה של דם לאחור, מעורק הריאה אל החדר הימני.",
+   "no": [
+    "",
+    "ערבוב נגרם מפתח במחיצה, לא ממסתם. בבגרות כ־70% בחרו בתשובה זו.",
+    "בין שני החדרים מפרידה המחיצה. המסתם הזה נמצא בין החדר הימני לעורק הריאה.",
+    "העורקים הכליליים יוצאים מאבי העורקים, ואין להם קשר למסתם של עורק הריאה."
+   ],
+   "src": "בגרות תשפ״ב, שאלה 9 (כלשונה)"
+  },
+  {
+   "type": "hints",
+   "title": "מי אני? כלי דם אל הלב",
+   "clues": [
+    "אני כלי דם שמוביל דם אל הלב.",
+    "אני שייך למחזור הקטן.",
+    "הדם שזורם בי עשיר בחמצן.",
+    "אני נכנס לעלייה השמאלית."
+   ],
+   "answer": "ורידי הריאה",
+   "why": "ורידי הריאה מובילים דם עשיר בחמצן מנימי הריאות אל העלייה השמאלית. בוורידי המחזור הגדול זורם דם דל בחמצן.",
+   "src": "בוחן שיעור 2, שאלה 2 (הותאמה לרמזים)"
+  },
+  {
+   "type": "teleology",
+   "title": "תפוס את הטלאולוגיה: הלב",
+   "q": "איזה משפט מנוסח בטלאולוגיה או בהאנשה?",
+   "opts": [
+    "כאשר המסתם בין העלייה לחדר נסגר, הדם אינו זורם מהחדר חזרה לעלייה.",
+    "המסתמים נסגרים כדי שהדם לא יזרום לאחור.",
+    "דופן החדר השמאלי עבה, ולכן התכווצותו יוצרת לחץ גבוה.",
+    "בדופן העלייה הימנית יש תאי קוצב, שיוצרים אותות חשמליים."
+   ],
+   "ans": 1,
+   "fix": "סגירת המסתמים מונעת זרימה של דם לאחור.",
+   "why": "המסתם נסגר כתוצאה מהפרש הלחצים בין שני צדדיו. הזרימה בכיוון אחד היא תוצאה של הסגירה, לא הסיבה לה.",
+   "src": "מבוסס על בוחן שיעור 4 (שאלות 1–3, 12). לא מבגרות"
+  },
+  {
+   "type": "mcq",
+   "title": "המסלול הארוך",
+   "q": "איזה מן המסלולים האלה, שהדם עובר בהם, הוא הארוך ביותר?",
+   "opts": [
+    "מן החדר השמאלי לעלייה השמאלית",
+    "מן העלייה הימנית לחדר הימני",
+    "מן החדר הימני לעלייה השמאלית",
+    "מן החדר השמאלי לעלייה הימנית"
+   ],
+   "ans": 0,
+   "why": "מהחדר השמאלי הדם עובר במחזור הגדול עד העלייה הימנית, ומשם במחזור הקטן עד העלייה השמאלית. זה המסלול היחיד בשאלה שכולל את שני המחזורים.",
+   "no": [
+    "",
+    "זה מעבר קצר בתוך הלב, דרך מסתם אחד.",
+    "זה המחזור הקטן בלבד.",
+    "זה המחזור הגדול בלבד, המסלול השני באורכו. בבגרות 45% בחרו בתשובה זו."
+   ],
+   "src": "בגרות תש״ף, שאלה 19 (כלשונה)"
+  },
+  {
+   "type": "detective",
+   "title": "בלש הניסוי: הארווי",
+   "story": "ויליאם הארווי (המאה ה־17) בדק לב פועם של בעל חיים. בניסוי אחד הוא חסם את הוורידים שנכנסים ללב, ובניסוי אחר חסם את העורקים שיוצאים מהלב. אחרי כל חסימה הוא התיר אותה.",
+   "steps": [
+    {
+     "q": "מהי שאלת המחקר?",
+     "opts": [
+      "מה כיוון זרימת הדם ביחס ללב?",
+      "מהו צבע הדם בעורקים?",
+      "כמה פעמים בדקה הלב פועם?",
+      "באיזה איבר נוצר הדם?"
+     ],
+     "ans": 0,
+     "why": "הניסוי בודק מאיפה הדם נכנס ללב ולאן הוא יוצא ממנו."
+    },
+    {
+     "q": "מהו המשתנה הבלתי תלוי?",
+     "opts": [
+      "סוג כלי הדם שנחסם: ורידים או עורקים",
+      "נפח הלב וצבעו",
+      "סוג בעל החיים",
+      "משך הניסוי"
+     ],
+     "ans": 0,
+     "why": "המשתנה הבלתי תלוי הוא מה שהחוקר משנה. הארווי שינה את סוג כלי הדם שנחסם."
+    },
+    {
+     "q": "מהו המשתנה התלוי?",
+     "opts": [
+      "נפח הלב וצבעו אחרי החסימה",
+      "סוג כלי הדם שנחסם",
+      "הטמפרטורה בחדר",
+      "מספר הוורידים בגוף"
+     ],
+     "ans": 0,
+     "why": "המשתנה התלוי הוא מה שנמדד או נצפה: אם הלב מתרוקן מדם או מתמלא בדם."
+    },
+    {
+     "q": "מה משמש בקרה בניסוי?",
+     "opts": [
+      "הלב לפני החסימה ואחרי התרתה",
+      "לב של בעל חיים מת",
+      "חסימה של שני סוגי כלי הדם יחד",
+      "אין בניסוי בקרה"
+     ],
+     "ans": 0,
+     "why": "מצב הלב בלי חסימה מאפשר השוואה, ומראה שהשינוי נגרם מהחסימה."
+    },
+    {
+     "q": "כשנחסמו העורקים, הלב התנפח והכחיל. איזה רכיב חקר זה?",
+     "opts": [
+      "תוצאה",
+      "מסקנה",
+      "השערה",
+      "הסבר"
+     ],
+     "ans": 0,
+     "why": "זו תצפית: מה שנראה בניסוי. המסקנה נגזרת מהתוצאות.",
+     "no": [
+      "",
+      "מסקנה היא מה שהתוצאות מראות, למשל כיוון זרימת הדם.",
+      "השערה נכתבת לפני הניסוי.",
+      "הסבר מתאר מנגנון ביולוגי."
+     ]
+    },
+    {
+     "q": "איזו מסקנה התוצאות תומכות בה?",
+     "opts": [
+      "הדם נכנס ללב בוורידים ויוצא ממנו בעורקים",
+      "הלב מייצר דם",
+      "הדם נבלע ברקמות ואינו חוזר ללב",
+      "הדם עובר בין החדרים דרך חורים במחיצה"
+     ],
+     "ans": 0,
+     "why": "חסימת הוורידים גרמה להתרוקנות הלב, וחסימת העורקים גרמה להצטברות דם בלב. התוצאות תומכות בכך שהדם נכנס ללב בוורידים ויוצא בעורקים."
+    }
+   ],
+   "src": "שיעור 1, גילוי מחזור הדם: ניסוי החסימה. לא מבגרות"
+  },
+  {
+   "type": "mcq",
+   "title": "תפוקת הלב",
+   "q": "איזה מן השינויים יגדיל את תפוקת הלב?",
+   "opts": [
+    "הגברה של קצב חילוף הגזים בנאדיות",
+    "הגברת ההזעה",
+    "האטת הדופק",
+    "הגדלה של נפח הפעימה"
+   ],
+   "ans": 3,
+   "why": "תפוקת לב = קצב לב × נפח פעימה. הגדלה של נפח הפעימה מגדילה את המכפלה.",
+   "no": [
+    "חילוף הגזים בנאדיות אינו גורם בחישוב של תפוקת הלב.",
+    "הזעה קשורה לוויסות טמפרטורת הגוף, לא לתפוקת הלב.",
+    "האטת הדופק מקטינה את קצב הלב, ולכן מקטינה את תפוקת הלב.",
+    ""
+   ],
+   "src": "בגרות קיץ תשע״ט (043381), שאלה 6 (כלשונה)"
+  },
+  {
+   "type": "teleology",
+   "title": "תפוס את הטלאולוגיה: ויסות",
+   "q": "איזה משפט מנוסח בטלאולוגיה או בהאנשה?",
+   "opts": [
+    "בזמן מאמץ כלי הדם בעור מתרחבים כדי לפלוט את עודף החום.",
+    "התרחבות כלי הדם בעור מגבירה את מעבר החום מהגוף לסביבה.",
+    "בזמן מאמץ עולים קצב הלב ונפח הפעימה, ולכן תפוקת הלב עולה.",
+    "בזמן עיכול מתרחבים כלי הדם המובילים לקיבה ולמעיים."
+   ],
+   "ans": 0,
+   "fix": "בזמן מאמץ כלי הדם בעור מתרחבים, וההתרחבות מגבירה את מעבר החום מהגוף לסביבה.",
+   "why": "הניסוח השגוי מציג את פליטת החום כסיבה להתרחבות. פליטת החום היא תוצאה של ההתרחבות.",
+   "src": "מבוסס על בגרות קיץ תשע״ה (043211), שאלה 2ב, ועל בוחן שיעור 3"
+  },
+  {
+   "type": "detective",
+   "title": "בלש הנתונים: רכיבה על אופניים",
+   "story": "קצב זרימת הדם לשרירי הרגליים: במנוחה 1,200 מ״ל לדקה, ברכיבה על אופניים 12,500 מ״ל לדקה. קצב זרימת הדם למעיים: במנוחה 1,400 מ״ל לדקה, ברכיבה 600 מ״ל לדקה.",
+   "steps": [
+    {
+     "q": "מהו המשתנה הבלתי תלוי?",
+     "opts": [
+      "מצב הפעילות: מנוחה או רכיבה",
+      "קצב זרימת הדם (מ״ל לדקה)",
+      "סוג האופניים",
+      "כמות הדם הכללית בגוף"
+     ],
+     "ans": 0,
+     "why": "המשתנה הבלתי תלוי הוא מה שמשתנה בין שני המצבים: מנוחה או רכיבה."
+    },
+    {
+     "q": "מהו המשתנה התלוי?",
+     "opts": [
+      "קצב זרימת הדם לאיבר (מ״ל לדקה)",
+      "מצב הפעילות",
+      "מספר האיברים שנבדקו",
+      "גיל הרוכב"
+     ],
+     "ans": 0,
+     "why": "המשתנה התלוי הוא מה שנמדד, ויש לו יחידות: מ״ל לדקה."
+    },
+    {
+     "q": "איזה משפט מתאר תוצאה?",
+     "opts": [
+      "ברכיבה הזרימה לרגליים גדלה פי 10 בערך, והזרימה למעיים קטנה לפחות ממחצית",
+      "במאמץ הדם מתחלק מחדש בין האיברים לפי הפעילות שלהם",
+      "כלי הדם המובילים לשרירי הרגליים מתרחבים",
+      "יותר חמצן מגיע לתאי השריר"
+     ],
+     "ans": 0,
+     "why": "‏12,500 ÷ 1,200 ≈ 10, ו־600 קטן ממחצית 1,400. זה תיאור של הנתונים. שאר המשפטים הם מסקנה או הסבר.",
+     "no": [
+      "",
+      "זו מסקנה כללית מהנתונים, לא התוצאה עצמה.",
+      "זה הסבר: המנגנון שגורם לשינוי בזרימה.",
+      "זה הסבר לחשיבות של השינוי, לא נתון שנמדד."
+     ]
+    },
+    {
+     "q": "מה היתרון בעלייה בזרימת הדם לשרירי הרגליים בזמן רכיבה?",
+     "opts": [
+      "יותר חמצן וגלוקוז מגיעים לתאי השריר, והנשימה התאית בהם מתרחשת בקצב גבוה",
+      "יותר דם מגיע לרגליים, ולכן כמות הדם בגוף גדלה",
+      "פחות חום נוצר בשרירים",
+      "תאי השריר מפסיקים לייצר פחמן דו־חמצני"
+     ],
+     "ans": 0,
+     "why": "בשרירים פעילים קצב הנשימה התאית גבוה. זרימת דם מוגברת מספקת להם יותר חמצן וגלוקוז ומסלקת מהם יותר פחמן דו־חמצני."
+    }
+   ],
+   "src": "בגרות קיץ תשפ״א (043182), שאלה 11 (הטבלה, הותאמה לשלבים)"
+  },
+  {
+   "type": "hints",
+   "title": "מי אני? אספקת דם ללב",
+   "clues": [
+    "אני כלי דם שנמצא על פני הלב.",
+    "דרכי מגיעים חמצן וגלוקוז לתאי שריר הלב.",
+    "אני יוצא מאבי העורקים, סמוך ליציאתו מהלב.",
+    "חסימה שלי גורמת לאוטם שריר הלב."
+   ],
+   "answer": "העורקים הכליליים",
+   "why": "לשריר הלב יש כלי דם משלו: כלי הדם הכליליים. חסימה של עורק כלילי מונעת הגעה של חמצן לתאי השריר שמעבר לחסימה, וחלק מהם מתים.",
+   "src": "בוחן שיעור 4, שאלות 9 ו־11 (הותאמו לרמזים). שאלה 11 לא מבגרות"
+  },
+  {
+   "type": "mcq",
+   "title": "מבנה הלב: עובי דופן החדרים",
+   "q": "דופן החדר השמאלי בלב עבה ושרירית בהרבה מדופן החדר הימני. מהו ההסבר להבדל זה?",
+   "opts": [
+    "חדר שמאל מזרים דם למחזור הגדול אל כל חלקי הגוף, כנגד התנגדות גבוהה",
+    "בחדר שמאל זורם בכל פעימה נפח דם גדול בהרבה מנפח הדם שזורם בחדר ימין",
+    "הדם הזורם בחדר שמאל עשיר בחמצן בהשוואה לדם בחדר ימין",
+    "חדר שמאל מתכווץ בתדירות גבוהה יותר מאשר חדר ימין"
+   ],
+   "ans": 0,
+   "why": "חדר שמאל מזרים דם במחזור הגדול לכל איברי הגוף (מרחק והתנגדות גדולים), ולכן נדרש לחץ דם גבוה הנוצר מהתכווצות דופן שרירית עבה. נפח הפעימה ותדירות הפעימה זהים בשני החדרים!",
+   "no": [
+    "",
+    "תפיסה שגויה שכיחה. נפח הפעימה של חדר שמאל ושל חדר ימין זהה לחלוטין (כ־70 מ״ל במנוחה).",
+    "ריכוז הגזים בדם אינו משפיע על עובי דופן שריר הלב.",
+    "שני החדרים מתכווצים יחד באותו קצב בדיוק."
+   ],
+   "src": "בגרות קיץ תשע״ט (043381), שאלה 7 (הותאמה)"
+  },
+  {
+   "type": "mcq",
+   "title": "הרפיה והתכווצות",
+   "q": "בזמן התכווצות החדרים (סיסטולת חדרים), מהו מצב המסתמים וכיוון זרימת הדם בלב?",
+   "opts": [
+    "מסתמי העורקים נפתחים והדם זורם לעורקים, ומסתמי העליות-חדרים נסגרים",
+    "כל מסתמי הלב נפתחים בו־זמנית, והדם זורם מהעליות ישירות לתוך העורקים",
+    "מסתמי העליות-חדרים נפתחים, והדם זורם מן החדרים חזרה אל העליות",
+    "מסתמי העורקים נסגרים, והדם זורם מן הוורידים ישירות אל החדרים"
+   ],
+   "ans": 0,
+   "why": "בהתכווצות החדרים עולה הלחץ בתוכם. הפרש הלחצים סוגר את מסתמי העליות-חדרים ומונע חזרה של דם לעליות, ופותח את מסתמי הכיסים המובילים לאבי העורקים ולעורק הריאה.",
+   "no": [
+    "",
+    "המסתמים אינם נפתחים כולם יחד; פתיחתם וסגירתם מוכתבות על ידי הפרשי הלחצים בין חללי הלב.",
+    "מסתמי העליות-חדרים נסגרים בזמן התכווצות החדרים, ומבנה הכיסים שלהם מונע מעבר דם לעליות.",
+    "בזמן התכווצות החדרים מסתמי העורקים נפתחים כתוצאה מהלחץ הגבוה שנוצר בחדרים."
+   ],
+   "src": "בוחן שיעור 4 (הלב ומחזור הדם)"
+  },
+  {
+   "type": "hints",
+   "title": "מי אני? קצב פעילות הלב",
+   "clues": [
+    "אני צבר תאי שריר מיוחדים הנמצאים בדופן העלייה הימנית.",
+    "אני מייצר אותות חשמליים באופן עצמוני ובקצב קבוע.",
+    "האותות החשמליים שאני מייצר מתפשטים בלב וגורמים להתכווצותו.",
+    "מערכת העצבים והורמונים משנים את קצב האותות שאני מייצר לפי פעילות הגוף."
+   ],
+   "answer": "קוצב הלב",
+   "why": "קוצב הלב מייצר דחפים חשמליים שמכתיבים את קצב התכווצות שריר הלב. קצב זה מווסת בהתאם לרמת הפעילות של הגוף.",
+   "src": "בוחן שיעור 4, שאלות 1 ו־3 (הותאמו לרמזים)"
+  },
+  {
+   "type": "mcq",
+   "bonus": true,
+   "title": "שאלת בונוס · אמת או שקר?",
+   "q": "אמת או שקר: רופאים בארצות הברית השתילו בהצלחה באדם חי לב שנלקח מחזיר.",
+   "opts": [
+    "אמת",
+    "שקר"
+   ],
+   "ans": 0,
+   "why": "אמת! בינואר 2022 הושתל לראשונה לב חזיר מהונדס גנטית באדם כניסוי חמלה (למטופל דייוויד בנט). לב החזיר דומה מאוד בגודלו ובמבנהו (4 חללים, מסתמים וכלי דם) ללב אדם, ולכן משתמשים בלב חזיר ללמידה ולניתוח (דיסקציה) במעבדה. המטופל שרד כחודשיים עם הלב המושתל.",
+   "no": [
+    "",
+    "זה קרה במציאות! אירוע היסטורי ברפואה (קסנוטרנספלנטציה)."
+   ],
+   "src": "אירוע רפואי (אוניברסיטת מרילנד 2022). הכנה לדיסקציה"
+  }
+ ]
+}
+</script>
+<script>
+/* מנוע משחק המקרן. התוכן נקרא מ-#game-data, או מ-Google Sheet (?sheet=…) */
+(function () {
+  'use strict';
+  var L = ['א', 'ב', 'ג', 'ד', 'ה', 'ו'];
+  var KIND = { mcq: 'שאלה', teleology: 'תפוס את הטלאולוגיה', hints: 'מי אני?', detective: 'בלש הניסוי' };
+  var TEAM_DEF = [
+    { name: 'הכחולים', c: 't1' }, { name: 'הצהובים', c: 't2' },
+    { name: 'הירוקים', c: 't3' }, { name: 'הוורודים', c: 't4' }
+  ];
+  var BASE = JSON.parse(document.getElementById('game-data').textContent);
+  var DATA = BASE;
+  var KEY = 'game:' + (BASE.id || BASE.title);
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var el = function (tag, cls, html) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  };
+  var esc = function (s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  };
+
+  /* ---------- מצב ---------- */
+  function fresh() {
+    return {
+      started: false,
+      turn: 0,
+      i: -1,
+      n: 4, scores: [0, 0, 0, 0], names: TEAM_DEF.map(function (t) { return t.name; }),
+      timers: (DATA.timers || [30, 60, 20]).slice(), r: {}
+    };
+  }
+  var S = fresh();
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY));
+    if (saved && saved.r) {
+      S = saved;
+      if (S.turn === undefined) S.turn = 0;
+      if (S.i === undefined) S.i = -1;
+      if (S.started === undefined) S.started = (S.i !== -1);
+    }
+  } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function R(idx) {
+    var k = idx !== undefined ? idx : S.i;
+    if (k < 0) return {};
+    return S.r[k] || (S.r[k] = { bets: {}, done: {}, hints: 0, step: 0, open: false, pick: null });
+  }
+
+  /* ---------- סדר תשובות מעורבב, קבוע לכל סבב ---------- */
+  function order(n, seed) {
+    var a = [], s = seed * 9301 + 49297;
+    for (var k = 0; k < n; k++) a.push(k);
+    for (k = n - 1; k > 0; k--) {
+      s = (s * 9301 + 49297) % 233280;
+      var j = Math.floor(s / 233280 * (k + 1)), t = a[k];
+      a[k] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  /* ---------- לוח ניקוד ---------- */
+  function renderScores() {
+    var box = $('#scores');
+    box.innerHTML = '';
+    var activeTurn = S.turn % S.n;
+    for (var t = 0; t < S.n; t++) {
+      var isTurn = t === activeTurn;
+      var c = el('div', 'score ' + TEAM_DEF[t].c + (isTurn ? ' is-turn' : ''));
+      c.innerHTML =
+        '<button class="pm" data-t="' + t + '" data-d="-1" aria-label="הורדת נקודה">−</button>' +
+        '<div class="sc-body">' +
+        (isTurn ? '<span class="sc-turn-tag">תור לבחור</span>' : '') +
+        '<span class="sc-name" contenteditable="true" data-t="' + t + '">' + esc(S.names[t]) + '</span>' +
+        '<b class="sc-num">' + S.scores[t] + '</b></div>' +
+        '<button class="pm" data-t="' + t + '" data-d="1" aria-label="הוספת נקודה">+</button>';
+      box.appendChild(c);
+    }
+  }
+  function addScore(t, d) {
+    S.scores[t] += d; save(); renderScores();
+    var c = $('#scores').children[t];
+    if (c) { c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); }
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('.pm');
+    if (b) addScore(+b.dataset.t, +b.dataset.d);
+  });
+  document.addEventListener('blur', function (e) {
+    if (e.target.classList && e.target.classList.contains('sc-name')) {
+      S.names[+e.target.dataset.t] = e.target.textContent.trim() || TEAM_DEF[+e.target.dataset.t].name;
+      save(); render();
+    }
+  }, true);
+
+  /* ---------- מסלול הסבבים ---------- */
+  function renderTrack() {
+    var tr = $('#track');
+    tr.innerHTML = '';
+    var homeBtn = el('button', 'stop home' + (!S.started ? ' now' : ''), '<span>🏠</span>');
+    homeBtn.title = 'מסך פתיחה';
+    homeBtn.onclick = function () { go(-1); };
+    tr.appendChild(homeBtn);
+
+    var boardBtn = el('button', 'stop' + (S.started && S.i === -1 ? ' now' : ''), '<span>📋</span>');
+    boardBtn.title = 'לוח שאלות';
+    boardBtn.onclick = function () { S.started = true; S.i = -1; save(); render(); };
+    tr.appendChild(boardBtn);
+
+    DATA.rounds.forEach(function (rd, k) {
+      var teamK = TEAM_DEF[k % S.n];
+      var isDone = S.r[k] && (S.r[k].open || S.r[k].resolved);
+      var cls = 'stop ' + (rd.bonus ? 'bonus' : teamK.c) + (S.started && k === S.i ? ' now' : '') + (isDone ? ' done' : '');
+      var label = rd.bonus ? '⭐' : (k + 1);
+      var b = el('button', cls, '<span>' + label + '</span>');
+      b.title = (rd.bonus ? 'שאלת בונוס: ' : ('שאלה ' + (k + 1) + ': ')) + (rd.title || KIND[rd.type]);
+      b.onclick = function () { go(k); };
+      tr.appendChild(b);
+    });
+    $('#count').textContent = !S.started ? 'מסך פתיחה' : (S.i === -1 ? 'לוח שאלות' : ((S.i + 1) + ' / ' + DATA.rounds.length));
+    $('#bar i').style.width = !S.started ? '0%' : (S.i === -1 ? '0%' : (((S.i + 1) / DATA.rounds.length * 100) + '%'));
+    $('#prev').disabled = !S.started;
+  }
+
+  /* ---------- טיימר מדורג ---------- */
+  var TL = ['לבד', 'בקבוצה', 'הכרזה'], tm = { st: 0, left: 0, run: null };
+  function timerBox() {
+    var w = el('div', 'timer');
+    w.innerHTML =
+      '<div class="t-stages">' + TL.map(function (l, k) { return '<span data-k="' + k + '">' + (k + 1) + '. ' + l + '</span>'; }).join('') + '</div>' +
+      '<div class="t-face"><b class="t-num">0:00</b></div>' +
+      '<div class="t-btns"><button class="btn t-go">התחלה</button><button class="btn ghost t-reset">איפוס</button></div>';
+    w.querySelector('.t-go').onclick = function () { tm.run ? pause() : start(); };
+    w.querySelector('.t-reset').onclick = function () { pause(); tm.st = 0; tm.left = S.timers[0]; paint(); };
+    return w;
+  }
+  function paint() {
+    var w = $('.timer'); if (!w) return;
+    var m = Math.floor(tm.left / 60), s = tm.left % 60;
+    w.querySelector('.t-num').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    w.querySelectorAll('.t-stages span').forEach(function (sp, k) { sp.classList.toggle('on', k === tm.st); });
+    w.querySelector('.t-go').textContent = tm.run ? 'עצירה' : 'התחלה';
+    w.classList.toggle('low', tm.left <= 5 && tm.run);
+    w.style.setProperty('--p', S.timers[tm.st] ? tm.left / S.timers[tm.st] : 0);
+  }
+  function start() {
+    if (tm.left <= 0) { tm.left = S.timers[tm.st]; }
+    tm.run = setInterval(function () {
+      tm.left--;
+      if (tm.left <= 0) {
+        if (tm.st < 2) { tm.st++; tm.left = S.timers[tm.st]; } else { tm.left = 0; pause(); }
+      }
+      paint();
+    }, 1000);
+    paint();
+  }
+  function pause() { clearInterval(tm.run); tm.run = null; paint(); }
+  function resetTimer() { pause(); tm.st = 0; tm.left = S.timers[0]; }
+
+  /* ---------- ספירה לאחור לפני חשיפה ---------- */
+  function countdown(cb) {
+    var o = $('#countdown'), n = 3;
+    o.hidden = false; o.firstElementChild.textContent = n;
+    var iv = setInterval(function () {
+      n--;
+      if (n > 0) { o.firstElementChild.textContent = n; return; }
+      clearInterval(iv); o.hidden = true; cb();
+    }, 650);
+  }
+
+  /* ---------- הימור ביטחון + חטיפה ---------- */
+  function betsBox(rd, st) {
+    var w = el('div', 'bets');
+    var activeT = S.turn % S.n;
+    var nextT = (S.turn + 1) % S.n;
+    w.appendChild(el('div', 'panel-h', st.open ? 'עדכון ניקוד ותוצאה' : 'הימור ביטחון: 1, 3 או 5'));
+    for (var t = 0; t < S.n; t++) {
+      var isActive = t === activeT;
+      var row = el('div', 'bet-row ' + TEAM_DEF[t].c + (isActive ? ' active-turn-row' : ''));
+      var nameHtml = esc(S.names[t]) + (isActive ? ' <b style="font-size:13px;opacity:0.85;">(התור שלהם)</b>' : '');
+      row.appendChild(el('span', 'bet-name', nameHtml));
+      var chips = el('span', 'chips');
+      [1, 3, 5].forEach(function (v) {
+        var b = el('button', 'chip' + (st.bets[t] === v ? ' on' : ''), v);
+        b.disabled = !!st.done[t];
+        b.onclick = (function (tt) { return function () { st.bets[tt] = v; save(); render(); }; })(t);
+        chips.appendChild(b);
+      });
+      row.appendChild(chips);
+      if (st.open) {
+        var res = el('span', 'verdict');
+        if (st.done[t] !== undefined) {
+          res.innerHTML = st.done[t] > 0 ? '<b class="ok">+' + st.done[t] + '</b>' : '<b class="no">' + st.done[t] + '</b>';
+        } else {
+          var bet = st.bets[t] || (isActive ? 3 : 1);
+          var y = el('button', 'mini ok', '✓'), x = el('button', 'mini no', '✗');
+          y.title = 'צדקו'; x.title = 'טעו';
+          y.onclick = (function (tt, bb) {
+            return function () {
+              st.done[tt] = bb; addScore(tt, bb);
+              save(); render();
+            };
+          })(t, bet);
+          x.onclick = (function (tt, bb) {
+            return function () {
+              st.done[tt] = -bb; addScore(tt, -bb);
+              if (tt === activeT) st.activeFailed = true;
+              save(); render();
+            };
+          })(t, bet);
+          res.appendChild(y); res.appendChild(x);
+        }
+        row.appendChild(res);
+      }
+      w.appendChild(row);
+    }
+
+    if (st.open && st.activeFailed && !st.stealDone) {
+      var sBox = el('div', 'steal-box');
+      sBox.innerHTML =
+        '<div class="steal-header">⚡ זכות חטיפה לקבוצה הבאה: <b>' + esc(S.names[nextT]) + '</b></div>' +
+        '<div class="steal-actions">' +
+          '<button type="button" class="steal-btn-ok" id="stOk">✓ צדקו בחטיפה (+3)</button>' +
+          '<button type="button" class="steal-btn-no" id="stNo">✗ טעו בחטיפה</button>' +
+        '</div>';
+      sBox.querySelector('#stOk').onclick = function () {
+        st.stealDone = true; st.stealWinner = nextT; addScore(nextT, 3); save(); render();
+      };
+      sBox.querySelector('#stNo').onclick = function () {
+        st.stealDone = true; save(); render();
+      };
+      w.appendChild(sBox);
+    } else if (st.open && st.stealDone && st.stealWinner !== undefined) {
+      w.appendChild(el('div', 'steal-header', '⚡ חטיפה מוצלחת: ' + esc(S.names[st.stealWinner]) + ' זכו ב-3 נקודות!'));
+    }
+
+    if (st.open && (st.done[activeT] !== undefined || st.stealDone)) {
+      var nextTeamName = esc(S.names[(S.turn + 1) % S.n]);
+      var btn = el('button', 'back-to-board-btn', 'חזרה ללוח השאלות (תור ' + nextTeamName + ' לבחור) ←');
+      btn.onclick = function () {
+        st.resolved = true;
+        S.turn++;
+        S.i = -1;
+        save(); render();
+      };
+      w.appendChild(btn);
+    }
+
+    return w;
+  }
+
+  /* ---------- כפתורי ניקוד ישיר (רמזים ובלש) ---------- */
+  function awardBox(label, pts, key, st) {
+    var w = el('div', 'award');
+    w.appendChild(el('div', 'panel-h', label));
+    var row = el('div', 'award-row');
+    for (var t = 0; t < S.n; t++) {
+      var k = key + ':' + t;
+      var b = el('button', 'aw ' + TEAM_DEF[t].c + (st.done[k] ? ' on' : ''), esc(S.names[t]) + ' <b>+' + pts + '</b>');
+      b.disabled = !!st.done[k];
+      b.onclick = (function (tt, kk) { return function () { st.done[kk] = pts; addScore(tt, pts); render(); }; })(t, k);
+      row.appendChild(b);
+    }
+    w.appendChild(row);
+    return w;
+  }
+
+  /* ---------- תשובות ---------- */
+  function optionsBox(opts, ans, open, no, seed, pick, onPick) {
+    var ord = order(opts.length, seed), w = el('ol', 'opts');
+    ord.forEach(function (oi, pos) {
+      var li = el('li', 'opt');
+      if (open) li.classList.add(oi === ans ? 'right' : 'wrong');
+      if (pick === oi) li.classList.add('picked');
+      li.innerHTML = '<span class="let">' + L[pos] + '</span><span class="otext">' + esc(opts[oi]) + '</span>' +
+        (open && no && no[oi] && oi !== ans ? '<span class="onote">' + esc(no[oi]) + '</span>' : '');
+      if (!open && onPick) { li.tabIndex = 0; li.onclick = function () { onPick(oi); }; }
+      w.appendChild(li);
+    });
+    return w;
+  }
+  function letterOf(ans, n, seed) { return L[order(n, seed).indexOf(ans)]; }
+
+  /* ---------- סבבים ---------- */
+  function head(rd) {
+    var h = el('div', 'r-head');
+    var isBonus = !!rd.bonus;
+    var turnIdx = S.turn % S.n;
+    var turnTeam = TEAM_DEF[turnIdx];
+    var turnName = esc(S.names[turnIdx] || turnTeam.name);
+    var badgeHtml = isBonus
+      ? '<span class="turn-pill bonus">⭐ שאלת בונוס · מי שעונה ראשונה!</span>'
+      : '<span class="turn-pill ' + turnTeam.c + '">תור: ' + turnName + '</span>';
+    var backBtnHtml = '<button type="button" class="btn ghost btn-board-link" id="btnBackBoard" title="חזרה ללוח השאלות" style="margin-inline-start:auto;font-size:15px;padding:4px 12px;border-radius:8px;">📋 לוח שאלות</button>';
+    h.innerHTML =
+      '<div class="head-top">' +
+        '<span class="eyebrow">סבב ' + (S.i + 1) + ' · ' + (isBonus ? 'בונוס' : KIND[rd.type]) + '</span>' +
+        badgeHtml +
+        backBtnHtml +
+      '</div>' +
+      (rd.title && rd.title !== KIND[rd.type] ? '<h2>' + esc(rd.title) + '</h2>' : '');
+    var bBtn = h.querySelector('#btnBackBoard');
+    if (bBtn) {
+      bBtn.onclick = function () {
+        S.i = -1;
+        save();
+        render();
+      };
+    }
+    return h;
+  }
+  function srcLine(rd) { return rd.src ? el('p', 'src', 'מקור: ' + esc(rd.src)) : document.createTextNode(''); }
+
+  function rMcq(rd, st, box) {
+    var main = el('div', 'r-main'), side = el('aside', 'r-side');
+    main.appendChild(head(rd));
+    main.appendChild(el('p', 'q', esc(rd.q)));
+    main.appendChild(optionsBox(rd.opts, rd.ans, st.open, rd.no, S.i + 1, st.pick, function (oi) {
+      st.pick = st.pick === oi ? null : oi; save(); render();
+    }));
+    if (st.open) {
+      var fb = el('div', 'reveal');
+      var html = '<b>התשובה: ' + letterOf(rd.ans, rd.opts.length, S.i + 1) + '</b> ';
+      if (rd.type === 'teleology') {
+        html += '<span class="fix-old">' + esc(rd.opts[rd.ans]) + '</span><span class="fix-new">' + esc(rd.fix || '') + '</span>';
+        if (rd.why) html += '<span class="why">' + esc(rd.why) + '</span>';
+      } else html += esc(rd.why || '');
+      fb.innerHTML = html;
+      main.appendChild(fb);
+      main.appendChild(srcLine(rd));
+      if (rd.bonus) {
+        var btn = el('button', 'back-to-board-btn', 'חזרה ללוח השאלות ←');
+        btn.onclick = function () {
+          st.resolved = true;
+          S.i = -1;
+          save(); render();
+        };
+        main.appendChild(btn);
+      }
+    } else {
+      var rv = el('button', 'btn big reveal-btn', 'חשיפת התשובה');
+      rv.onclick = function () { pause(); countdown(function () { st.open = true; save(); render(); }); };
+      main.appendChild(rv);
+    }
+    side.appendChild(timerBox());
+    if (rd.bonus) {
+      side.appendChild(awardBox('מי ענתה ראשונה? (+5 נקודות)', 5, 'bonus', st));
+    } else {
+      side.appendChild(betsBox(rd, st));
+    }
+    box.appendChild(main); box.appendChild(side);
+  }
+
+  function rHints(rd, st, box) {
+    var main = el('div', 'r-main'), side = el('aside', 'r-side');
+    var n = rd.clues.length, worth = Math.max(1, n - st.hints + 1);
+    main.appendChild(head(rd));
+    var ol = el('ol', 'clues');
+    rd.clues.forEach(function (c, k) {
+      var li = el('li', 'clue' + (k < st.hints ? ' shown' : ''), k < st.hints ? esc(c) : 'רמז ' + (k + 1));
+      ol.appendChild(li);
+    });
+    main.appendChild(ol);
+    var ctr = el('div', 'hint-ctl');
+    if (!st.open) {
+      var nx = el('button', 'btn', st.hints === 0 ? 'רמז ראשון' : 'רמז הבא');
+      nx.disabled = st.hints >= n;
+      nx.onclick = function () { st.hints++; save(); render(); };
+      ctr.appendChild(nx);
+      ctr.appendChild(el('span', 'worth', st.hints ? 'שווה עכשיו: <b>' + worth + '</b>' : 'שווה עד ' + n));
+    }
+    main.appendChild(ctr);
+    if (st.open) {
+      main.appendChild(el('div', 'reveal', '<b>' + esc(rd.answer) + '</b> ' + esc(rd.why || '')));
+      main.appendChild(srcLine(rd));
+      var nextTeamName = esc(S.names[(S.turn + 1) % S.n]);
+      var btn = el('button', 'back-to-board-btn', 'חזרה ללוח השאלות (תור ' + nextTeamName + ' לבחור) ←');
+      btn.onclick = function () {
+        st.resolved = true;
+        S.turn++;
+        S.i = -1;
+        save(); render();
+      };
+      main.appendChild(btn);
+    } else if (st.hints) {
+      var rv = el('button', 'btn big reveal-btn', 'חשיפת התשובה');
+      rv.onclick = function () { pause(); countdown(function () { st.open = true; save(); render(); }); };
+      main.appendChild(rv);
+    }
+    side.appendChild(timerBox());
+    if (st.hints) side.appendChild(awardBox('מי ענה נכון אחרי רמז ' + st.hints + '?', worth, 'h', st));
+    box.appendChild(main); box.appendChild(side);
+  }
+
+  function rDetective(rd, st, box) {
+    var main = el('div', 'r-main'), side = el('aside', 'r-side');
+    main.appendChild(head(rd));
+    main.appendChild(el('div', 'story', esc(rd.story)));
+    var list = el('div', 'steps');
+    rd.steps.forEach(function (sp, k) {
+      if (k > st.step) return;
+      var open = !!st.done['s' + k];
+      var card = el('section', 'step' + (k === st.step ? ' cur' : ''));
+      card.appendChild(el('h3', 'step-q', '<span class="sn">' + (k + 1) + '</span>' + esc(sp.q)));
+      card.appendChild(optionsBox(sp.opts, sp.ans, open, sp.no, (S.i + 1) * 31 + k, null, null));
+      if (open) card.appendChild(el('div', 'reveal small', '<b>' + letterOf(sp.ans, sp.opts.length, (S.i + 1) * 31 + k) + '.</b> ' + esc(sp.why || '')));
+      else {
+        var rv = el('button', 'btn reveal-btn', 'חשיפה');
+        rv.onclick = function () { pause(); countdown(function () { st.done['s' + k] = 1; save(); render(); }); };
+        card.appendChild(rv);
+      }
+      list.appendChild(card);
+    });
+    main.appendChild(list);
+    var cur = st.step, curOpen = !!st.done['s' + cur];
+    if (curOpen && cur < rd.steps.length - 1) {
+      var nx = el('button', 'btn big', 'לשלב הבא ↓');
+      nx.onclick = function () { st.step++; resetTimer(); save(); render(); };
+      main.appendChild(nx);
+    }
+    if (curOpen && cur === rd.steps.length - 1) {
+      if (!st.open) { st.open = true; save(); }
+      main.appendChild(srcLine(rd));
+      var nextTeamName = esc(S.names[(S.turn + 1) % S.n]);
+      var btn = el('button', 'back-to-board-btn', 'חזרה ללוח השאלות (תור ' + nextTeamName + ' לבחור) ←');
+      btn.onclick = function () {
+        st.resolved = true;
+        S.turn++;
+        S.i = -1;
+        save(); render();
+      };
+      main.appendChild(btn);
+    }
+    side.appendChild(timerBox());
+    side.appendChild(el('div', 'step-meter', 'שלב <b>' + (cur + 1) + '</b> מתוך ' + rd.steps.length));
+    if (curOpen) side.appendChild(awardBox('מי צדק בשלב ' + (cur + 1) + '?', 1, 's' + cur, st));
+    box.appendChild(main); box.appendChild(side);
+  }
+
+  function rBoard(box) {
+    var wrap = el('div', 'board-wrap');
+    var activeT = S.turn % S.n;
+    var tDef = TEAM_DEF[activeT];
+    var tName = esc(S.names[activeT] || tDef.name);
+
+    var header = el('div', 'board-header');
+    header.innerHTML =
+      '<div class="board-turn">' +
+        '<span class="board-label">הקבוצה שבוחרת שאלה:</span>' +
+        '<span class="board-turn-badge ' + tDef.c + '">🫀 ' + tName + '</span>' +
+      '</div>';
+    wrap.appendChild(header);
+
+    var grid = el('div', 'board-grid');
+    DATA.rounds.forEach(function (rd, k) {
+      var st = S.r[k];
+      var isLocked = st && (st.open || st.resolved);
+      var isBonus = !!rd.bonus;
+
+      var card = el('div', 'q-card' + (isLocked ? ' locked' : '') + (isBonus ? ' bonus-card' : ''));
+      if (isBonus) {
+        card.innerHTML =
+          '<div class="bonus-card-left">' +
+            '<span class="q-card-icon" style="font-size:38px;">⭐ 🫀</span>' +
+            '<div>' +
+              '<div class="q-card-title">שאלה 13 · שאלת בונוס</div>' +
+              '<span class="bonus-desc">קרב מהיר בין כל הקבוצות · מי שעונה ראשונה זוכה ב-5 נקודות!</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="bonus-card-right">' +
+            (isLocked
+              ? '<span class="q-card-status">✓ נפתרה / נעולה</span>'
+              : '<button type="button" class="btn q-card-btn">לשאלת הבונוס ←</button>') +
+          '</div>';
+      } else {
+        card.innerHTML =
+          '<div class="q-card-top">' +
+            '<span class="q-card-num">' + (k + 1) + '</span>' +
+            '<span class="q-card-badge">' + KIND[rd.type] + '</span>' +
+          '</div>' +
+          '<div class="q-card-icon-center" aria-hidden="true">🫀</div>' +
+          '<div class="q-card-title">שאלה ' + (k + 1) + '</div>' +
+          (isLocked
+            ? '<span class="q-card-status">✓ נפתרה / נעולה</span>'
+            : '<button type="button" class="btn ghost q-card-btn">בחירת שאלה זו</button>');
+      }
+
+      if (!isLocked) {
+        card.onclick = function () {
+          go(k);
+        };
+      }
+      grid.appendChild(card);
+    });
+
+    wrap.appendChild(grid);
+    box.appendChild(wrap);
+  }
+
+  function rWelcome(box) {
+    var card = el('div', 'welcome-card');
+    card.innerHTML =
+      '<div class="welcome-badge">משחק מקרן לכיתה 🫀</div>' +
+      '<h2>' + esc(DATA.title) + '</h2>' +
+      '<p class="welcome-desc">' + esc(DATA.subtitle || '') + '</p>' +
+      '<div class="welcome-rules">' +
+        '<div class="rule-item">' +
+          '<span class="rule-icon">👥</span>' +
+          '<b>חלוקה לקבוצות</b>' +
+          '<span>' + S.n + ' קבוצות מול מסך אחד</span>' +
+        '</div>' +
+        '<div class="rule-item">' +
+          '<span class="rule-icon">🫀</span>' +
+          '<b>לוח 12 שאלות</b>' +
+          '<span>כל קבוצה בתורה בוחרת שאלה מהלוח</span>' +
+        '</div>' +
+        '<div class="rule-item">' +
+          '<span class="rule-icon">⚡</span>' +
+          '<b>זכות חטיפה (+3)</b>' +
+          '<span>אם הקבוצה טועה, הבאה בתור מקבלת הזדמנות</span>' +
+        '</div>' +
+        '<div class="rule-item">' +
+          '<span class="rule-icon">⭐</span>' +
+          '<b>שאלת בונוס</b>' +
+          '<span>שאלה 13: קרב מהיר בין כל הקבוצות</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="welcome-cta">' +
+        '<button type="button" class="btn big start-btn" id="startBtn">📋 כניסה ללוח השאלות והתחלת המשחק</button>' +
+      '</div>';
+    box.appendChild(card);
+    card.querySelector('#startBtn').onclick = function () {
+      S.started = true;
+      S.i = -1;
+      save();
+      render();
+    };
+  }
+
+  function render() {
+    var box = $('#stage');
+    box.innerHTML = '';
+    document.title = DATA.title;
+    $('#gTitle').textContent = DATA.title;
+    $('#gSub').textContent = DATA.subtitle || '';
+
+    if (!S.started) {
+      box.className = 'stage k-welcome';
+      rWelcome(box);
+      renderScores();
+      renderTrack();
+      paint();
+      return;
+    }
+
+    if (S.i === -1) {
+      box.className = 'stage k-board';
+      rBoard(box);
+      renderScores();
+      renderTrack();
+      paint();
+      return;
+    }
+
+    var rd = DATA.rounds[S.i], st = R();
+    box.className = 'stage k-' + rd.type;
+    if (rd.type === 'hints') rHints(rd, st, box);
+    else if (rd.type === 'detective') rDetective(rd, st, box);
+    else rMcq(rd, st, box);
+    renderScores();
+    renderTrack();
+    paint();
+  }
+  function go(k) {
+    if (k === -1) {
+      S.started = false;
+      S.i = -1;
+      save();
+      render();
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (k < 0 || k >= DATA.rounds.length) return;
+    S.started = true;
+    S.i = k;
+    resetTimer();
+    save();
+    render();
+    window.scrollTo(0, 0);
+  }
+  $('#next').onclick = function () {
+    if (!S.started) {
+      S.started = true; S.i = -1; save(); render();
+    } else if (S.i === -1) {
+      go(0);
+    } else {
+      go(S.i + 1);
+    }
+  };
+  $('#prev').onclick = function () {
+    if (S.started && S.i === 0) { S.i = -1; save(); render(); }
+    else if (S.started && S.i === -1) go(-1);
+    else if (S.started) go(S.i - 1);
+  };
+  document.addEventListener('keydown', function (e) {
+    if (e.target.isContentEditable || /INPUT|TEXTAREA/.test(e.target.tagName) || document.querySelector('dialog[open]')) return;
+    if (e.key === 'ArrowLeft') {
+      if (!S.started) { S.started = true; S.i = -1; save(); render(); }
+      else if (S.i === -1) go(0);
+      else go(S.i + 1);
+    }
+    if (e.key === 'ArrowRight') {
+      if (S.started && S.i === 0) { S.i = -1; save(); render(); }
+      else if (S.started && S.i === -1) go(-1);
+      else if (S.started) go(S.i - 1);
+    }
+  });
+
+
+
+  /* ---------- חלוקה לקבוצות ---------- */
+  $('#openSplit').onclick = function () { $('#split').showModal(); };
+  $('#doSplit').onclick = function () {
+    var names = $('#names').value.split(/[,\n،]+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    var k = +$('#split input[name=k]:checked').value, out = $('#splitOut');
+    for (var a = names.length - 1; a > 0; a--) { var j = Math.floor(Math.random() * (a + 1)), t = names[a]; names[a] = names[j]; names[j] = t; }
+    S.n = k; save(); render();
+    out.innerHTML = '';
+    for (var g = 0; g < k; g++) {
+      var col = el('div', 'grp ' + TEAM_DEF[g].c, '<b>' + esc(S.names[g]) + '</b>');
+      names.filter(function (_, x) { return x % k === g; }).forEach(function (nm) { col.appendChild(el('span', '', esc(nm))); });
+      out.appendChild(col);
+    }
+  };
+
+  /* ---------- הגדרות + Google Sheet ---------- */
+  $('#openSet').onclick = function () {
+    $('#tn').value = S.n;
+    [0, 1, 2].forEach(function (k) { $('#t' + k).value = S.timers[k]; });
+    $('#sheetMsg').textContent = DATA === BASE ? 'עכשיו: השאלות שבקובץ.' : 'עכשיו: השאלות מהגיליון.';
+    $('#settings').showModal();
+  };
+  $('#saveSet').onclick = function () {
+    S.n = Math.min(4, Math.max(2, +$('#tn').value || 4));
+    [0, 1, 2].forEach(function (k) { S.timers[k] = Math.max(5, +$('#t' + k).value || 30); });
+    resetTimer(); save(); render();
+  };
+  $('#resetAll').onclick = function () {
+    if (!confirm('לאפס ניקוד ומצב של כל הסבבים?')) return;
+    var n = S.n, names = S.names, timers = S.timers;
+    S = fresh(); S.n = n; S.names = names; S.timers = timers; save(); render();
+  };
+  $('#loadSheet').onclick = function () { loadSheet($('#sheetUrl').value.trim()); };
+  $('#useFile').onclick = function () { DATA = BASE; S.i = 0; S.r = {}; save(); render(); $('#sheetMsg').textContent = 'חזרנו לשאלות שבקובץ.'; };
+
+  function parseCSV(text) {
+    var rows = [], row = [], f = '', q = false;
+    for (var k = 0; k < text.length; k++) {
+      var ch = text[k];
+      if (q) {
+        if (ch === '"' && text[k + 1] === '"') { f += '"'; k++; }
+        else if (ch === '"') q = false;
+        else f += ch;
+      } else if (ch === '"') q = true;
+      else if (ch === ',') { row.push(f); f = ''; }
+      else if (ch === '\n') { row.push(f); rows.push(row); row = []; f = ''; }
+      else if (ch !== '\r') f += ch;
+    }
+    if (f || row.length) { row.push(f); rows.push(row); }
+    return rows;
+  }
+  function rowsToRounds(rows) {
+    var out = [], skipped = 0, LET = { 'א': 0, 'ב': 1, 'ג': 2, 'ד': 3 };
+    rows.slice(1).forEach(function (c) {
+      c = c.map(function (x) { return (x || '').trim(); });
+      var type = c[0], opts = c.slice(3, 7).filter(Boolean), base = { title: c[1], src: c[9] };
+      if (type === 'שאלה') out.push(Object.assign(base, { type: 'mcq', q: c[2], opts: opts, ans: LET[c[7]] || 0, why: c[8] }));
+      else if (type === 'טלאולוגיה') out.push(Object.assign(base, { type: 'teleology', q: c[2] || 'איזה משפט מנוסח בטלאולוגיה או בהאנשה?', opts: opts, ans: LET[c[7]] || 0, fix: c[8] }));
+      else if (type === 'רמזים') out.push(Object.assign(base, { type: 'hints', clues: opts, answer: c[7], why: c[8] }));
+      else if (type === 'בלש') out.push(Object.assign(base, { type: 'detective', story: c[2], steps: [] }));
+      else if (type === 'בלש-שלב' && out.length && out[out.length - 1].type === 'detective')
+        out[out.length - 1].steps.push({ q: c[2], opts: opts, ans: LET[c[7]] || 0, why: c[8] });
+      else if (c.join('')) skipped++;
+    });
+    out = out.filter(function (r) { return r.type !== 'detective' || r.steps.length; });
+    return { rounds: out, skipped: skipped };
+  }
+  function loadSheet(url) {
+    var msg = $('#sheetMsg');
+    if (!url) { msg.textContent = 'לא הודבק קישור.'; return; }
+    msg.textContent = 'טוען…';
+    fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
+      var res = rowsToRounds(parseCSV(t));
+      if (!res.rounds.length) throw new Error('empty');
+      DATA = Object.assign({}, BASE, { rounds: res.rounds });
+      S.i = 0; S.r = {}; save(); render();
+      msg.textContent = 'נטענו ' + res.rounds.length + ' סבבים' + (res.skipped ? ', ודילגנו על ' + (res.skipped === 1 ? 'שורה אחת' : res.skipped + ' שורות') : '') + '.';
+    }).catch(function () {
+      msg.textContent = 'הטעינה לא הצליחה. בודקים שהגיליון פורסם כ-CSV. המשחק נשאר עם השאלות שבקובץ.';
+    });
+  }
+
+  /* ---------- התחלה ---------- */
+  if (S.i >= DATA.rounds.length) S.i = 0;
+  tm.left = S.timers[0];
+  render();
+  var qs = new URLSearchParams(location.search).get('sheet');
+  if (qs) { $('#sheetUrl').value = qs; loadSheet(qs); }
+})();
+
+</script>
+</body>
+</html>
