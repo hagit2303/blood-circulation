@@ -43,6 +43,7 @@ h1, h2, h3 { font-family: var(--hfont); margin: 0; line-height: 1.15; }
 .btn.ghost { background: transparent; color: var(--ink); }
 .btn.big { font-size: 22px; padding: 12px 28px; }
 .btn.danger { border-color: var(--no); color: var(--no); }
+.btn.danger:hover { background: var(--no); color: #fff; }
 
 /* ניקוד */
 .scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
@@ -353,6 +354,7 @@ dialog input[type=number] { width: 80px; }
       <p id="gSub"></p>
     </div>
     <div class="tools">
+      <button class="btn ghost danger" id="resetBtn" title="איפוס המשחק, הניקוד והשאלות">🔄 איפוס משחק</button>
       <button class="btn ghost" id="openSplit">חלוקה לקבוצות</button>
       <button class="btn ghost" id="openSet">⚙ הגדרות</button>
     </div>
@@ -1196,7 +1198,11 @@ dialog input[type=number] { width: 80px; }
       '<div class="board-turn">' +
         '<span class="board-label">הקבוצה שבוחרת שאלה:</span>' +
         '<span class="board-turn-badge ' + tDef.c + '">🫀 ' + tName + '</span>' +
+      '</div>' +
+      '<div class="board-actions">' +
+        '<button type="button" class="btn ghost danger" id="boardResetBtn" title="איפוס המשחק, הניקוד והשאלות">🔄 איפוס משחק</button>' +
       '</div>';
+    header.querySelector('#boardResetBtn').onclick = resetAll;
     wrap.appendChild(header);
 
     var grid = el('div', 'board-grid');
@@ -1393,11 +1399,13 @@ dialog input[type=number] { width: 80px; }
     [0, 1, 2].forEach(function (k) { S.timers[k] = Math.max(5, +$('#t' + k).value || 30); });
     resetTimer(); save(); render();
   };
-  $('#resetAll').onclick = function () {
-    if (!confirm('לאפס ניקוד ומצב של כל הסבבים?')) return;
+  function resetAll() {
+    if (!confirm('לאפס את כל הנקודות והשאלות ולהתחיל משחק חדש?')) return;
     var n = S.n, names = S.names, timers = S.timers;
-    S = fresh(); S.n = n; S.names = names; S.timers = timers; save(); render();
-  };
+    S = fresh(); S.n = n; S.names = names; S.timers = timers; S.started = true; S.i = -1; save(); render();
+  }
+  if ($('#resetBtn')) $('#resetBtn').onclick = resetAll;
+  if ($('#resetAll')) $('#resetAll').onclick = resetAll;
   $('#loadSheet').onclick = function () { loadSheet($('#sheetUrl').value.trim()); };
   $('#useFile').onclick = function () { DATA = BASE; S.i = 0; S.r = {}; save(); render(); $('#sheetMsg').textContent = 'חזרנו לשאלות שבקובץ.'; };
 
