@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ניתוח לב חזיר</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Atlas lab worksheet: students write what they see, then reveal the identification cues and self-mark once (locked); mistakes page + PDF report */
+:root{--bg:#F4F7FA;--paper:#fff;--ink:#13233A;--muted:#5E6E82;--rich:#D7263D;--poor:#2457C5;--line:#DCE3EA;--accent:#13233A;--accent-soft:#EAF0F6;--tag:#D7263D;--tag-ink:#fff;--good:#1E7B4D;--good-bg:#E8F4EE;--bad:#B3261E;--bad-bg:#FBE7E5;--warn-bg:#FFF8E1;--gold:#F2B705}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:Assistant,Arial,sans-serif;font-size:18px;line-height:1.5;padding-inline:16px;overflow-x:hidden}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:1000px;margin:auto;padding-block:14px 40px;display:flex;flex-direction:column;gap:14px}
+.homebar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.homebar a{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:20px;padding:4px 14px;font-weight:800;font-size:14px;text-decoration:none}
+.homebar .who{margin-inline-start:auto;font-weight:800;color:var(--rich)}
+.kick{font-weight:800;color:var(--rich);font-size:14px}
+h1{font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1.05}h1 span{color:var(--rich)}
+h2{font-size:clamp(20px,2.6vw,26px);font-weight:800}
+.hero{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset-inline:0;bottom:0;height:6px;background:linear-gradient(to left,var(--rich),var(--poor))}
+.routine{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:15px}
+.routine b{background:var(--accent-soft);border-radius:20px;padding:3px 12px}.routine i{font-style:normal;color:var(--muted)}
+.part-h{display:flex;gap:12px;align-items:center;margin-top:14px}
+.part-h .n{width:44px;height:44px;border-radius:12px;background:var(--ink);color:#fff;font-weight:800;font-size:22px;display:flex;align-items:center;justify-content:center;flex:none}
+.part-h:nth-of-type(even) .n{background:var(--poor)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.hint{color:var(--muted);font-size:.92rem}
+.fb{border-radius:12px;padding:10px 14px;line-height:1.5}
+.fb:empty{display:none}
+.fb.ok{background:var(--good-bg);border-inline-start:6px solid var(--good)}
+.fb.no{background:var(--bad-bg);border-inline-start:6px solid var(--bad)}
+.note{background:var(--warn-bg);border-inline-start:6px solid var(--gold);border-radius:12px;padding:10px 14px}
+.ck{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:9px 18px;font-weight:700;align-self:flex-start}
+.ck[disabled]{opacity:.45;cursor:not-allowed}
+.ck.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+/* worksheet table */
+.tbl{display:flex;flex-direction:column;border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
+.tr{display:grid;grid-template-columns:minmax(9em,.6fr) minmax(0,2fr);border-top:1px solid var(--line)}
+.tr:first-child{border-top:0}
+.tr.th{background:var(--ink);color:#fff;font-weight:800}
+.tr.th>div{padding:8px 12px}
+.tr .nm{padding:10px 12px;font-weight:800;background:var(--accent-soft);display:flex;align-items:flex-start}
+.tr .cell{padding:8px 10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+textarea{width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);resize:vertical}
+textarea[readonly]{opacity:.85}
+.key{background:var(--warn-bg);border-radius:10px;padding:8px 12px;font-size:16px}
+.key b{display:block;font-size:14px;color:var(--muted)}
+.key label{display:flex;gap:8px;align-items:flex-start;margin-top:6px;font-weight:700;cursor:pointer}
+.key input{margin-top:5px;accent-color:var(--good);flex:none}
+.tr.y .nm{background:var(--good-bg)}.tr.n .nm{background:var(--bad-bg)}
+ol.do{padding-inline-start:1.4em;display:flex;flex-direction:column;gap:4px}
+.done-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.mi{border-inline-start:4px solid var(--bad);background:var(--bg);border-radius:8px;padding:8px 12px;margin-bottom:8px}.mi p{margin:2px 0}
+.ri{color:var(--good);font-weight:700}
+.dl{background:var(--tag);color:var(--tag-ink);border:0;border-radius:14px;font-size:1.15rem;font-weight:800;padding:14px 24px;align-self:flex-start}
+.sgate{position:fixed;inset:0;z-index:100;background:rgba(19,35,58,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+.sgate[hidden]{display:none}
+.sgate .gbox{background:#fff;border:3px solid var(--tag);border-radius:18px;max-width:420px;width:100%;padding:20px;display:grid;gap:10px}
+.sgate label{display:grid;gap:4px;font-weight:700}
+.sgate input{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.sgate .gerr{color:var(--bad);font-weight:700;min-height:1em}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:10px 20px;font-weight:800}
+#report{position:fixed;left:0;top:0;display:none;z-index:-1;pointer-events:none;width:760px;background:#fff;color:#13233A;font-family:Arial,sans-serif;padding:24px;direction:rtl}
+#report h1{font-size:24px;margin-bottom:6px}
+#report .rr{border-bottom:1px solid #DCE3EA;padding:5px 0;font-size:14px;display:flex;gap:8px}
+#report .rr b{min-width:200px}
+#report .y{color:#1E7B4D;font-weight:700}#report .n{color:#B3261E;font-weight:700}
+footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:12px}
+@media(max-width:640px){.tr{grid-template-columns:1fr}.tr.th>div+div{display:none}.tr .nm{padding:8px 12px}}
+</style>
+</head>
+<body>
+<div class="sgate" id="gate"><div class="gbox" role="dialog" aria-modal="true" aria-labelledby="gTitle"><h2 id="gTitle">לפני שמתחילים</h2><p>כתבו שם מלא וכיתה. הם יופיעו בקובץ שתעלו למשימה ב־Classroom.</p><label>שם מלא<input id="gName" autocomplete="name"></label><label>כיתה<input id="gClass"></label><p class="gerr" id="gErr"></p><button class="btn" id="gGo" type="button">מתחילים ←</button></div></div>
+
+<div class="wrap">
+  <nav class="homebar" aria-label="ניווט"><a href="../index.html">🏠 דף הבית</a><a href="index.html">→ לשיעור</a><span class="who" data-fill="name"></span></nav>
+  <section class="hero">
+    <div class="kick">ביולוגיה · כיתה י' · שיעור 5 · מעבדה</div>
+    <h1>ניתוח <span>לב חזיר</span></h1>
+    <p>עובדים עם הלב שעל המגש, ורושמים כאן את מה שרואים. אחרי שכתבתם, נפתחים סימני הזיהוי, ומסמנים פעם אחת אם הזיהוי שלכם מתאים להם. בסוף מורידים קובץ PDF ומעלים אותו למשימה ב־Classroom.</p>
+    <div class="routine"><b>1 מבחוץ</b><i>←</i><b>2 הזרמת מים</b><i>←</i><b>3 חיתוך</b><i>←</i><b>4 מבפנים</b><i>←</i><b>⬇ קובץ</b></div>
+  </section>
+
+  <div class="part-h"><span class="n">1</span><h2>הלב מבחוץ</h2></div>
+  <section class="card">
+    <p><b>מצאו כל חלק בלב. רשמו כיצד לדעתכם ניתן לזהות אותו.</b></p>
+    <div class="tbl" id="t1"></div>
+    <button class="ck" id="b1" type="button">סיימנו — הצגת סימני הזיהוי</button><div class="fb" id="f1" role="status"></div>
+  </section>
+
+  <div class="part-h"><span class="n">2</span><h2>הזרמת מים</h2></div>
+  <section class="card">
+    <p><b>הזרימו מים לעורקים, לחצו ובדקו האם הזרמתם בכיוון הנכון?</b></p>
+    <textarea id="w" rows="4" aria-label="מה ראיתם בהזרמת המים" placeholder="לאיזה כלי דם הזרמתם? לאן הגיעו המים? מה קרה כשלחצתם על הלב?"></textarea>
+    <button class="ck" id="b2" type="button">סיימנו — הצגת ההסבר</button><div class="fb" id="f2" role="status"></div>
+    <div class="key" id="k2" hidden>
+      <b>מה צפוי לקרות, ולמה</b>
+      מים שמוזרמים לתוך אבי העורקים או לתוך עורק הריאה כמעט לא עוברים לחדר: המסתם בבסיס העורק נסגר כשהלחץ בעורק גבוה מהלחץ בחדר. מים שמוזרמים לעלייה (דרך הוורידים) עוברים לחדר, וכשלוחצים על החדר הם יוצאים דרך העורק. כך המסתמים מאפשרים זרימה בכיוון אחד: וריד ← עלייה ← חדר ← עורק.
+      <label><input type="checkbox" id="c2"> התצפית וההסבר שלנו מתאימים לכיוון הזרימה הזה</label>
+      <button class="ck" id="s2" type="button" style="margin-top:6px">שמירת הסימון</button>
+    </div>
+  </section>
+
+  <div class="part-h"><span class="n">3</span><h2>חיתוך הלב</h2></div>
+  <section class="card">
+    <p><b>כעת, בצעו חיתוך של הלב. שימו לב: עליכם לחתוך את הלב כך שלא יופרדו שני החלקים.</b></p>
+    <p class="note">חותכים על המגש, עם תנועה הרחק מהגוף. אחרי החיתוך פותחים את הלב כמו ספר, ושני החלקים נשארים מחוברים.</p>
+    <div class="done-row"><button class="ck ghost" id="b3" type="button">✓ חתכנו ופתחנו את הלב</button><span class="hint" id="f3"></span></div>
+  </section>
+
+  <div class="part-h"><span class="n">4</span><h2>הלב מבפנים</h2></div>
+  <section class="card">
+    <p><b>לאחר פתיחת הלב, מצאו את החלקים הבאים. תארו כיצד זיהיתם אותם.</b></p>
+    <div class="tbl" id="t4"></div>
+    <button class="ck" id="b4" type="button">סיימנו — הצגת סימני הזיהוי</button><div class="fb" id="f4" role="status"></div>
+  </section>
+
+  <section class="card">
+    <h2>⬇ סיימתם? מורידים את הקובץ</h2>
+    <p class="hint">בקובץ: השם, כל מה שכתבתם, הסימון שלכם מול סימני הזיהוי ודף הטעויות. אחר כך מעלים אותו למשימה ב־Classroom.</p>
+    <button class="dl" id="dl" type="button">⬇ הורדת קובץ PDF</button><p class="hint" id="dlmsg"></p>
+  </section>
+
+  <footer>ביולוגיה · מערכת הדם · שיעור 5: מעבדת ניתוח לב חזיר · היחידה מתבססת על חומרי מט״ח ומורחבת בחומרים נוספים. נבנתה על ידי חגית ברגמן.</footer>
+</div>
+<div id="report"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="../assets/lab.js"></script>
+<script src="../assets/pdf.js"></script>
+<script>
+window.REPORT_FOOT='ביולוגיה · מערכת הדם · שיעור 5: מעבדת ניתוח לב חזיר';
+
+/* ---------- טבלאות דף העבודה: כותבים ← סימני זיהוי ← סימון אחד ננעל ---------- */
+const OUT=[
+ ['צד שמאל','הדופן עבה וקשיחה: בלחיצה מרגישים שריר מוצק שכמעט לא נלחץ. החריץ האלכסוני בחזית הלב, שבו עוברים כלי הדם הכליליים, מפריד בינו לבין הצד הימני. כשחזית הלב כלפיכם, הצד השמאלי של הלב נמצא מימינכם.'],
+ ['צד ימין','הדופן דקה ורכה, ונלחצת בקלות. מהצד הזה יוצא עורק הריאה, בחזית הלב.'],
+ ['עורקים/ורידים כליליים','כלי דם דקים שמסתעפים על פני השטח של שריר הלב, בתוך חריצים עם שומן. החריץ האלכסוני בחזית מסמן את מקום המחיצה בין החדרים.'],
+ ['אבי העורקים','כלי הדם העבה ביותר בבסיס הלב. הדופן עבה וגמישה, והפתח נשאר פתוח ולא קורס. יוצא מהחדר השמאלי, מאחורי עורק הריאה, ומתקשת.'],
+ ['עורק הריאה','יוצא מהחדר הימני, בחזית בסיס הלב, לפני אבי העורקים, ומתפצל לשני ענפים. הדופן שלו דקה מזו של אבי העורקים.'],
+ ['וריד נבוב','דופן דקה ורכה שקורסת כשאין בה נוזל. נכנס לעלייה הימנית. (בלב מהקצב הוא לפעמים חתוך קצר.)'],
+ ['וריד הריאה','כמה פתחים של כלי דם בעלי דופן דקה, בגב הלב, שנכנסים לעלייה השמאלית.'],
+ ['קודקוד הלב','הקצה המחודד בתחתית הלב. הוא בנוי בעיקר מדופן החדר השמאלי.']
+];
+const IN=[
+ ['מחיצה','דופן שריר עבה שמפרידה בין החדר הימני לחדר השמאלי. אין בה פתח, ולכן אין מעבר דם בין שני הצדדים. בחוץ, החריץ עם כלי הדם הכליליים נמצא מעליה.'],
+ ['דופן ימנית','דופן דקה. חלל החדר הימני צר ובצורת סהר, והוא עוטף חלק מהחדר השמאלי.'],
+ ['דופן שמאלית','הדופן העבה ביותר בלב: עבה בערך פי שלושה מהדופן הימנית. חלל החדר השמאלי עגול יחסית.'],
+ ['שסתומי המפרש','קרומים דקים בין העלייה לחדר, בכל צד. הקצוות שלהם מחוברים בחוטים לבנים (מיתרי גידים) לבליטות שריר בדופן החדר. בצד ימין יש שלושה עלים, ובצד שמאל שניים.'],
+ ['חדרים','שני החללים הגדולים בחלק התחתון של הלב, עם דופן שריר עבה. מעליהם העליות: חללים קטנים יותר עם דופן דקה.']
+];
+function table(box,rows,tag){
+  box.innerHTML=`<div class="tr th"><div>שם החלק</div><div>איך מזהים?</div></div>`+rows.map(([n,k],i)=>`<div class="tr" id="${tag}r${i}"><div class="nm">${n}</div><div class="cell"><textarea rows="2" aria-label="איך מזהים: ${n}"></textarea><div class="key" hidden><b>סימני זיהוי</b>${k}<label><input type="checkbox"> הזיהוי שלנו מתאים לסימנים האלה</label></div></div></div>`).join('');
+}
+function sheet(tag,rows,part,btn,out){
+  table($(tag),rows,tag);let stage=0;
+  btn.onclick=()=>{
+    const tas=[...$(tag).querySelectorAll('textarea')];
+    if(stage===0){
+      const empty=tas.filter(t=>t.value.trim().length<3);
+      if(empty.length){empty[0].focus();fb(out,false,`כתבו בכל שורה איך זיהיתם את החלק (נשארו ${empty.length}). לא מצאתם? כתבו "לא מצאנו" ומה חיפשתם.`);return}
+      tas.forEach(t=>t.readOnly=true);$(tag).querySelectorAll('.key').forEach(k=>k.hidden=false);
+      stage=1;btn.textContent='שמירת הסימון';
+      fb(out,true,'קראו את סימני הזיהוי בכל שורה, וסמנו ביושר אם הזיהוי שלכם מתאים. הסימון נשמר פעם אחת, והמורה רואה בקובץ גם את מה שכתבתם וגם את הסימון.');return}
+    let good=0;
+    rows.forEach(([n,k],i)=>{const r=$(tag+'r'+i),c=r.querySelector('input'),ok=c.checked;c.disabled=true;r.classList.add(ok?'y':'n');if(ok)good++;
+      Lab.rec(`${part}: ${n}`,ok,`"${tas[i].value.trim()}"`,plain(k),'')});
+    btn.disabled=true;
+    fb(out,good===rows.length,`סימנתם התאמה ב־${good} מתוך ${rows.length} חלקים.`+(good<rows.length?' השורות באדום נכנסות לדף הטעויות, עם סימני הזיהוי. נסו לזהות אותן שוב על הלב.':''))};
+}
+sheet('t1',OUT,'מבחוץ',$('b1'),$('f1'));
+sheet('t4',IN,'מבפנים',$('b4'),$('f4'));
+
+/* ---------- 2. הזרמת מים ---------- */
+$('b2').onclick=()=>{const w=$('w').value.trim();
+  if(w.length<15||w.split(/\s+/).length<3){$('w').focus();fb($('f2'),false,'כתבו מה ראיתם (לפחות משפט אחד) לפני שפותחים את ההסבר.');return}
+  $('w').readOnly=true;$('b2').hidden=true;$('f2').className='fb';$('f2').textContent='';$('k2').hidden=false};
+$('s2').onclick=()=>{const ok=$('c2').checked;$('c2').disabled=$('s2').disabled=true;
+  fb($('f2'),ok,ok?'✓ נשמר.':'נשמר. ההסבר נכנס לדף הטעויות.');
+  Lab.rec('הזרמת מים',ok,`"${$('w').value.trim()}"`,'וריד ← עלייה ← חדר ← עורק. מים שמוזרמים לעורק כמעט לא עוברים לחדר, כי המסתם בבסיס העורק נסגר.','')};
+
+/* ---------- 3. חיתוך ---------- */
+$('b3').onclick=()=>{$('b3').disabled=true;$('f3').textContent='✓ ממשיכים לחלק 4.'};
+
+/* ---------- הורדה ---------- */
+$('dl').onclick=()=>{if(!(window.STUDENT&&window.STUDENT.name)){$('gate').hidden=false;$('gErr').textContent='לפני ההורדה: כתבו שם וכיתה, הם יופיעו בקובץ.';$('gName').focus();window.AFTER_GATE=()=>$('dl').click();return}labPdf('מעבדה: ניתוח לב חזיר','מעבדה-ניתוח-לב-חזיר')};
+</script>
+<script>(function(){const g=document.getElementById('gate'),n=document.getElementById('gName'),c=document.getElementById('gClass');
+try{const s=JSON.parse(localStorage.getItem('hadam-student')||'{}');n.value=s.name||'';c.value=s.cls||''}catch(e){}
+document.getElementById('gGo').onclick=()=>{const nm=n.value.trim(),cl=c.value.trim();
+ if(nm.replace(/\s/g,'').length<2||!cl){document.getElementById('gErr').textContent='כתבו שם (לפחות 2 אותיות) וכיתה.';return}
+ try{localStorage.setItem('hadam-student',JSON.stringify({name:nm,cls:cl}))}catch(e){}
+ document.querySelectorAll('[data-fill="name"]').forEach(e=>e.textContent='👋 '+nm+' · '+cl);
+ window.STUDENT={name:nm,cls:cl};g.hidden=true;if(window.AFTER_GATE){const f=window.AFTER_GATE;window.AFTER_GATE=null;f()}};
+n.addEventListener('keydown',e=>{if(e.key==='Enter')c.focus()});c.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('gGo').click()});
+n.focus()})();</script>
+</body>
+</html>
