@@ -69,6 +69,24 @@ ol.do{padding-inline-start:1.4em;display:flex;flex-direction:column;gap:4px}
 #report .rr{border-bottom:1px solid #DCE3EA;padding:5px 0;font-size:14px;display:flex;gap:8px}
 #report .rr b{min-width:200px}
 #report .y{color:#1E7B4D;font-weight:700}#report .n{color:#B3261E;font-weight:700}
+.qn{display:inline-block;align-self:flex-start;font-size:.78rem;font-weight:800;padding:2px 10px;border-radius:999px;background:var(--tag);color:var(--tag-ink)}
+.src{font-size:.8rem;color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts label{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;line-height:1.45;cursor:pointer}
+.opts label:hover{border-color:var(--accent)}
+.opts label input{margin-top:5px;accent-color:var(--accent);flex:none}
+.opts label.right{background:var(--good-bg);border-color:var(--good)}
+.opts label.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.vid{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden}
+.vid iframe,.vid #yt{position:absolute;inset:0;width:100%;height:100%;border:0}
+.terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px 14px;font-size:15px}
+.terms b{color:var(--rich)}
+.vq .lockmsg{display:none;font-weight:800;color:var(--muted)}
+.vq.locked{border-style:dashed;background:#FAFBFC}
+.vq.locked>*:not(.qn):not(.lockmsg){display:none}
+.vq.locked .lockmsg{display:block}
+.resume{background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:12px;padding:7px 16px;font-weight:700;align-self:flex-start;display:none}
+.vq.answered .resume{display:inline-block}
 footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:12px}
 @media(max-width:640px){.tr{grid-template-columns:1fr}.tr.th>div+div{display:none}.tr .nm{padding:8px 12px}}
 </style>
@@ -81,18 +99,37 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
   <section class="hero">
     <div class="kick">ביולוגיה · כיתה י' · שיעור 5 · מעבדה</div>
     <h1>ניתוח <span>לב חזיר</span></h1>
-    <p>עובדים עם הלב שעל המגש, ורושמים כאן את מה שרואים. אחרי שכתבתם, נפתחים סימני הזיהוי, ומסמנים פעם אחת אם הזיהוי שלכם מתאים להם. בסוף מורידים קובץ PDF ומעלים אותו למשימה ב־Classroom.</p>
-    <div class="routine"><b>1 מבחוץ</b><i>←</i><b>2 הזרמת מים</b><i>←</i><b>3 חיתוך</b><i>←</i><b>4 מבפנים</b><i>←</i><b>⬇ קובץ</b></div>
+    <p>קודם צופים בסרטון של ניתוח לב חזיר ועונים על השאלות בעצירות. אחר כך עובדים עם הלב שעל המגש, ורושמים כאן את מה שרואים. אחרי שכתבתם, נפתחים סימני הזיהוי, ומסמנים פעם אחת אם הזיהוי שלכם מתאים להם. בסוף מורידים קובץ PDF ומעלים אותו למשימה ב־Classroom.</p>
+    <div class="routine"><b>1 סרטון</b><i>←</i><b>2 מבחוץ</b><i>←</i><b>3 הזרמת מים</b><i>←</i><b>4 חיתוך</b><i>←</i><b>5 מבפנים</b><i>←</i><b>⬇ קובץ</b></div>
   </section>
 
-  <div class="part-h"><span class="n">1</span><h2>הלב מבחוץ</h2></div>
+  <div class="part-h"><span class="n">1</span><h2>לפני המעבדה: הסרטון</h2></div>
+  <section class="card">
+    <p>צפו בסרטון. הסרטון נעצר חמש פעמים, ובכל עצירה נפתחת שאלה מתחתיו. עונים, ואז ממשיכים לצפות.</p>
+    <div class="vid"><div id="yt"></div></div>
+    <div class="note"><b>הסרטון באנגלית.</b> כתוביות בעברית: ⚙ ← Subtitles ← Auto-translate ← Hebrew.
+      <div class="terms" style="margin-top:6px">
+        <span><b>atria / ventricle</b>: עליות / חדר</span>
+        <span><b>coronary artery</b>: עורק כלילי</span>
+        <span><b>aorta / pulmonary artery</b>: אבי העורקים / עורק הריאה</span>
+        <span><b>valve</b>: מסתם</span>
+        <span><b>tendinous cords</b>: מיתרי גידים</span>
+        <span><b>incision</b>: חתך</span>
+      </div>
+    </div>
+    <p class="hint" id="ytHelp" hidden>הסרטון לא נטען? אפשר לצפות בו <a href="https://www.youtube.com/watch?v=WBwPhWAP394" target="_blank" rel="noopener">ביוטיוב</a>. השאלות פתוחות לכם כאן.</p>
+    <p class="src">הסרטון: "Heart Dissection", ערוץ Rachel Hamilton (Ava Hearts Biology) ביוטיוב, 5:33 דקות. בסרטון העליות כבר חתוכות.</p>
+  </section>
+  <div id="vqs" style="display:grid;gap:14px"></div>
+
+  <div class="part-h"><span class="n">2</span><h2>הלב מבחוץ</h2></div>
   <section class="card">
     <p><b>מצאו כל חלק בלב. רשמו כיצד לדעתכם ניתן לזהות אותו.</b></p>
     <div class="tbl" id="t1"></div>
     <button class="ck" id="b1" type="button">סיימנו — הצגת סימני הזיהוי</button><div class="fb" id="f1" role="status"></div>
   </section>
 
-  <div class="part-h"><span class="n">2</span><h2>הזרמת מים</h2></div>
+  <div class="part-h"><span class="n">3</span><h2>הזרמת מים</h2></div>
   <section class="card">
     <p><b>הזרימו מים לעורקים, לחצו ובדקו האם הזרמתם בכיוון הנכון?</b></p>
     <textarea id="w" rows="4" aria-label="מה ראיתם בהזרמת המים" placeholder="לאיזה כלי דם הזרמתם? לאן הגיעו המים? מה קרה כשלחצתם על הלב?"></textarea>
@@ -105,14 +142,14 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
     </div>
   </section>
 
-  <div class="part-h"><span class="n">3</span><h2>חיתוך הלב</h2></div>
+  <div class="part-h"><span class="n">4</span><h2>חיתוך הלב</h2></div>
   <section class="card">
     <p><b>כעת, בצעו חיתוך של הלב. שימו לב: עליכם לחתוך את הלב כך שלא יופרדו שני החלקים.</b></p>
     <p class="note">חותכים על המגש, עם תנועה הרחק מהגוף. אחרי החיתוך פותחים את הלב כמו ספר, ושני החלקים נשארים מחוברים.</p>
     <div class="done-row"><button class="ck ghost" id="b3" type="button">✓ חתכנו ופתחנו את הלב</button><span class="hint" id="f3"></span></div>
   </section>
 
-  <div class="part-h"><span class="n">4</span><h2>הלב מבפנים</h2></div>
+  <div class="part-h"><span class="n">5</span><h2>הלב מבפנים</h2></div>
   <section class="card">
     <p><b>לאחר פתיחת הלב, מצאו את החלקים הבאים. תארו כיצד זיהיתם אותם.</b></p>
     <div class="tbl" id="t4"></div>
@@ -121,7 +158,7 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 
   <section class="card">
     <h2>⬇ סיימתם? מורידים את הקובץ</h2>
-    <p class="hint">בקובץ: השם, כל מה שכתבתם, הסימון שלכם מול סימני הזיהוי ודף הטעויות. אחר כך מעלים אותו למשימה ב־Classroom.</p>
+    <p class="hint">בקובץ: השם, התשובות לשאלות הסרטון, כל מה שכתבתם, הסימון שלכם מול סימני הזיהוי ודף הטעויות. אחר כך מעלים אותו למשימה ב־Classroom.</p>
     <button class="dl" id="dl" type="button">⬇ הורדת קובץ PDF</button><p class="hint" id="dlmsg"></p>
   </section>
 
@@ -135,6 +172,47 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 <script src="../assets/pdf.js"></script>
 <script>
 window.REPORT_FOOT='ביולוגיה · מערכת הדם · שיעור 5: מעבדת ניתוח לב חזיר';
+
+/* ---------- 1. סרטון: עצירות עם שאלות, ניסיון אחד ---------- */
+const VQ=[
+{at:50,src:'הסרטון, 0:36–0:50',stem:'החתך הראשון בסרטון נעשה במקביל לעורק הכלילי. מה עובר בעורק הכלילי?',
+ opts:['דם עשיר בחמצן ובגלוקוז, שמגיע לתאי שריר הלב','דם דל בחמצן, שזורם מהלב לריאות','דם שחוזר מהגוף אל העלייה הימנית','אותות חשמליים שגורמים להתכווצות הלב'],ans:0,
+ ok:'נכון. הדם שבחללי הלב לא מגיע לרוב תאי הדופן העבה. חמצן וגלוקוז מגיעים לתאי שריר הלב דרך העורקים הכליליים, שעוברים על פני השטח של הלב.',
+ no:['','בדרך מהלב לריאות זורם דם בעורק הריאה, לא בעורק הכלילי.','הדם מהגוף חוזר לעלייה הימנית בוורידים הנבובים.','האותות החשמליים נוצרים בקוצב הלב ועוברים בתאי השריר, לא בכלי דם.']},
+{at:151,src:'הסרטון, 0:50–2:30',stem:'בתוך החדר השמאלי רואים חוטים לבנים (tendinous cords, מיתרי גידים). מה הם מחברים?',
+ opts:['את המסתם שבין העלייה לחדר אל דופן השריר של החדר','את המחיצה אל הדופן החיצונית של הלב','את העורק הכלילי אל חלל החדר','את אבי העורקים אל החדר הימני'],ans:0,
+ ok:'נכון. מיתרי הגידים מחברים את קצות המסתם שבין העלייה לחדר (שסתום המפרש) לבליטות שריר בדופן החדר. תמצאו אותם גם בלב שלכם, בחלק 5.',
+ no:['','המחיצה היא חלק מדופן השריר עצמה. אין חוטים שמחברים אותה לדופן החיצונית.','העורק הכלילי עובר על פני השטח החיצוני של הלב, לא בתוך החלל.','אבי העורקים יוצא מהחדר השמאלי, ואינו מחובר לחדר הימני.']},
+{at:198,src:'הסרטון, 2:30–3:18',stem:'דופן החדר הימני דקה בהרבה מדופן החדר השמאלי. איזה הסבר ניתן בסרטון?',
+ opts:['החדר הימני מזרים דם רק לריאות, בלחץ נמוך יותר','בחדר הימני זורם דם דל בחמצן','החדר הימני קולט את הדם שחוזר מהגוף','החדר הימני מתכווץ אחרי החדר השמאלי'],ans:0,
+ ok:'נכון. החדר השמאלי מזרים דם לכל הגוף, ובדופן העבה שלו יש יותר תאי שריר: ההתכווצות חזקה יותר, והלחץ באבי העורקים גבוה. החדר הימני מזרים דם רק לריאות הקרובות.',
+ no:['','מה קשור לעובי הדופן: סוג הדם, או המרחק שאליו מזרימים אותו? ריכוז החמצן לא משפיע על עובי הדופן.','את הדם מהגוף קולטת העלייה הימנית. חדרים מזרימים דם החוצה, לעורקים.','שני החדרים מתכווצים באותו זמן.']},
+{at:233,src:'הסרטון, 3:18–3:53',stem:'מכניסים אצבע לכלי דם בבסיס הלב, והיא מגיעה לחדר בעל הדופן העבה. איזה כלי דם זה?',
+ opts:['אבי העורקים','עורק הריאה','וריד נבוב','וריד הריאה'],ans:0,
+ ok:'נכון. אבי העורקים יוצא מהחדר השמאלי, בעל הדופן העבה. כלי הדם הדק יותר מוביל לחדר הימני: זה עורק הריאה. כך תזהו אותם גם בלב שלכם.',
+ no:['','עורק הריאה מוביל לחדר הימני, בעל הדופן הדקה.','ורידים מגיעים לעליות, לא לחדרים. הווריד הנבוב מגיע לעלייה הימנית.','ורידי הריאה מגיעים לעלייה השמאלית, לא לחדר.']},
+{at:263,src:'הסרטון, 3:53–4:23',stem:'בסרטון נאמר שהמסתמים "are there to stop backflow". ניסוח מדויק מתאר מה קורה, בלי מטרה. מתי נסגר המסתם שבין העלייה לחדר?',
+ opts:['כשהלחץ בחדר גבוה מהלחץ בעלייה','כשהלחץ בעלייה גבוה מהלחץ בחדר','כשהחדר נרפה ומתמלא בדם','המסתם סגור כל הזמן'],ans:0,
+ ok:'נכון. כשהחדר מתכווץ, הלחץ בו עולה מעל הלחץ בעלייה, והמסתם נסגר. לכן הדם זורם בכיוון אחד: מהחדר לעורק, ולא בחזרה לעלייה. את זה תבדקו בהזרמת המים, בחלק 3.',
+ no:['','כשהלחץ בעלייה גבוה מהלחץ בחדר, המסתם נפתח, והדם זורם מהעלייה לחדר.','כשהחדר נרפה ומתמלא, המסתם בין העלייה לחדר פתוח.','מסתם שסגור כל הזמן לא מאפשר זרימה בכלל. המסתמים נפתחים ונסגרים לפי הפרשי הלחץ.']}];
+renderQuestions($('vqs'),VQ,'v');
+const mmss=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+VQ.forEach((q,i)=>{const c=$('v'+i);c.classList.add('vq','locked');
+  c.querySelector('.qn').textContent=`עצירה ${i+1} בסרטון`;
+  c.insertAdjacentHTML('beforeend',`<p class="lockmsg">🔒 השאלה נפתחת כשהסרטון מגיע ל־${mmss(q.at)}</p><button type="button" class="resume">▶ המשך הסרטון</button>`)});
+$('vqs').addEventListener('change',e=>{if(e.target.type==='radio')e.target.closest('.vq').classList.add('answered')});
+$('vqs').addEventListener('click',e=>{if(!e.target.closest('.resume'))return;if(window.YTP&&YTP.playVideo){YTP.playVideo();document.querySelector('.vid').scrollIntoView({behavior:'smooth',block:'center'})}});
+let vqNext=0;
+function openVQ(i,scroll){const c=$('v'+i);if(!c.classList.contains('locked'))return;c.classList.remove('locked');if(scroll)c.scrollIntoView({behavior:'smooth',block:'center'})}
+function openAllVQ(){VQ.forEach((q,i)=>openVQ(i,false));$('ytHelp').hidden=false}
+window.onYouTubeIframeAPIReady=()=>{window.YTP=new YT.Player('yt',{videoId:'WBwPhWAP394',host:'https://www.youtube-nocookie.com',
+  playerVars:{rel:0,playsinline:1,cc_load_policy:1,hl:'he'},
+  events:{onReady:()=>{clearTimeout(ytFail);setInterval(()=>{if(vqNext>=VQ.length||!YTP.getCurrentTime)return;const now=YTP.getCurrentTime();
+      if(now>=VQ[vqNext].at){YTP.pauseVideo();openVQ(vqNext,true);vqNext++}},300)},
+    onStateChange:e=>{if(e.data===0){while(vqNext<VQ.length){openVQ(vqNext,vqNext===VQ.length-1);vqNext++}}},
+    onError:()=>openAllVQ()}})};
+const ytFail=setTimeout(openAllVQ,12000);
+(()=>{const sc=document.createElement('script');sc.src='https://www.youtube.com/iframe_api';sc.onerror=openAllVQ;document.head.appendChild(sc)})();
 
 /* ---------- טבלאות דף העבודה: כותבים ← סימני זיהוי ← סימון אחד ננעל ---------- */
 const OUT=[
@@ -185,7 +263,7 @@ $('s2').onclick=()=>{const ok=$('c2').checked;$('c2').disabled=$('s2').disabled=
   Lab.rec('הזרמת מים',ok,`"${$('w').value.trim()}"`,'וריד ← עלייה ← חדר ← עורק. מים שמוזרמים לעורק כמעט לא עוברים לחדר, כי המסתם בבסיס העורק נסגר.','')};
 
 /* ---------- 3. חיתוך ---------- */
-$('b3').onclick=()=>{$('b3').disabled=true;$('f3').textContent='✓ ממשיכים לחלק 4.'};
+$('b3').onclick=()=>{$('b3').disabled=true;$('f3').textContent='✓ ממשיכים לחלק 5.'};
 
 /* ---------- הורדה ---------- */
 $('dl').onclick=()=>{if(!(window.STUDENT&&window.STUDENT.name)){$('gate').hidden=false;$('gErr').textContent='לפני ההורדה: כתבו שם וכיתה, הם יופיעו בקובץ.';$('gName').focus();window.AFTER_GATE=()=>$('dl').click();return}labPdf('מעבדה: ניתוח לב חזיר','מעבדה-ניתוח-לב-חזיר')};
